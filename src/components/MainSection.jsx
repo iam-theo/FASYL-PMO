@@ -2,8 +2,9 @@ import React from 'react'
 import { useEffect, useState, useRef } from 'react'
 import Dashboard from './Dashboard'
 import Projects from './Projects'
+import ViewProjectsBody from './ViewProjectsBody'
 
-function MainSection({activeTab}) {
+function MainSection( {activeTab, setSelectedProject }) {
     const [projects, setProjects] = useState([])
     const [isLoading, setisLoading] = useState(true)
     const [currentPage, setCurrentPage] = useState(1)
@@ -29,7 +30,6 @@ function MainSection({activeTab}) {
                 }
     
                 const data = await res.json()
-                console.log(data)
                 setProjects(data)
             } catch (err) {
                 console.error(err);
@@ -38,7 +38,7 @@ function MainSection({activeTab}) {
             }
         }
         getProjects();
-    }, [])
+    }, [projects])
     
     if(isLoading) return <p>Loading...</p>
 
@@ -75,7 +75,17 @@ function MainSection({activeTab}) {
             </header>
             <section className='mt-18'>
                 {activeTab === "dashboard" && <Dashboard />}
-                {activeTab === "projects" && <Projects projects={projects} currentProjects={currentProjects} currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} itemsPerPage={itemsPerPage} />}
+                {activeTab === "projects" && (
+                    <Projects
+                        projects={projects} 
+                        currentProjects={currentProjects} 
+                        currentPage={currentPage} 
+                        totalPages={totalPages} 
+                        setCurrentPage={setCurrentPage} 
+                        itemsPerPage={itemsPerPage}
+                        setSelectedProject={setSelectedProject} 
+                    />
+                )}
             </section>
         </div>
     )

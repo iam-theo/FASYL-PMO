@@ -1,7 +1,14 @@
 import React from 'react'
 import { useEffect, useState, useRef } from 'react'
 
-function Projects({ projects, currentProjects, currentPage, totalPages, setCurrentPage, itemsPerPage }) {
+function Projects({ 
+    projects, 
+    currentProjects, 
+    currentPage, 
+    totalPages, 
+    setCurrentPage, 
+    itemsPerPagec,
+    setSelectedProject }) {
 
     return (
         <div className='p-4 flex flex-col h-[92%]'>
@@ -40,6 +47,7 @@ function Projects({ projects, currentProjects, currentPage, totalPages, setCurre
                             <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909]'>Client</th>
                             <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909]'>Product</th>
                             <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909]'>Status</th>
+                            <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909]'></th>
                         </tr>
                     </thead>
 
@@ -51,9 +59,18 @@ function Projects({ projects, currentProjects, currentPage, totalPages, setCurre
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363]'>{project["Project Name"]}</td>
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363]'>{project["Client"]}</td>
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363]'>{project["Product"]}</td>
-                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#FFFFFF] flex items-center justify-between'>
+                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#FFFFFF] flex items-center justify-between relative'>
                                         <p className='rounded-2xl py-1 px-2 bg-[#228CEE]'>{project["Status"]}</p>
-                                        <i className="fa-solid fa-ellipsis-vertical fa-lg cursor-pointer text-[#98a2b3] hover:text-[#1B3C4A]"></i>
+                                    </td>
+                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] relative'>
+                                        <i onClick={() => setSelectedProject(project)} className="fa-solid fa-ellipsis-vertical fa-lg cursor-pointer text-[#98a2b3] hover:text-[#1B3C4A]"></i>
+
+                                        {/* <button 
+                                            onClick={() => setSelectedProject(project)}
+                                            className='absolute px-4 py-2.5 bg-[#FFFFFF] rounded-lg shadow-[0_12px_16px] shadow-[#10182808] text-[#000000] flex items-center gap-2 cursor-pointer'>
+                                                <i className="fa-regular fa-eye fa-sm"></i>
+                                                <p className='font-normal text-[12px]/[20px] text-[#090909]'>View project</p>
+                                        </button> */}
                                     </td>
                                 </tr>
                             ))

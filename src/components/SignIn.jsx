@@ -1,14 +1,19 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import bgSignIn from "../assets/bgSignIn.jpg"
 import bgSignInTwo from "../assets/bgSignInTwo.jpg"
 
 function SignIn() {
+    const navigate = useNavigate()
+    const handleLogin = () => {
+        navigate("/app")
+    };
+
     return (
         <div className='flex max-w-360 max-h-screen'>
             <div className='w-238 h-screen relative'>
                 <img src={bgSignIn} alt="" className='w-full h-full object-cover absolute'/>
                 <div className='bg-linear-to-bl from-[#1B3C4A] to-[#1A5C78] w-full h-full top-0 opacity-80 text-[#FFFFFF] flex flex-col items-start justify-center px-25'>
-                    <img src="" alt="" className='w-auto'/>
                     <h1 className='text-[48px]/[100%] font-semibold tracking-[-2%] mb-3.5'>Welcome to Fasyl help-desk</h1>
                     <p className='font-normal text-[20px]/[30px] tracking[0%]'>Login to the help-desk to manage your dashboard</p>
                 </div>
@@ -30,7 +35,7 @@ function SignIn() {
                             <input type="password" placeholder='........' className='w-90 h-11 rounded-lg bg-[#FFFFFF] border border-[#D0D5DD] shadow-[#1018280D] shadow-[2px] py-2.5 px-3.5'/>
                         </div>
                         <label htmlFor="" className='text-[14px]/[20px] tracking-[0%] text-[#1B3C4A] font-medium'>Forgot password?</label>
-                        <button type='submit' className='text-[16px]/[24px] tracking-[0%] text-[#FFFFFF] font-medium bg-[#1B3C4A] shadow-[#1018280D] shadow-[2px] w-90 h-11 rounded-lg py-2.5 px-4.5' mt-2>Sign in</button>
+                        <button onClick={handleLogin} type='submit' className='text-[16px]/[24px] tracking-[0%] text-[#FFFFFF] font-medium bg-[#1B3C4A] shadow-[#1018280D] shadow-[2px] w-90 h-11 rounded-lg py-2.5 px-4.5 mt-2' >Sign in</button>
                     </form>
                 </div>
             </div>

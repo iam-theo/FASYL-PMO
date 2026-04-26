@@ -1,15 +1,14 @@
 import React from 'react'
+import { Routes, Route } from 'react-router-dom'
 import SignIn from './components/SignIn'
-import SideBar from './components/SideBar'
 import MainBody from './components/MainBody'
 
 function App() {
   return (
-    <>
-      {/* <SignIn /> */}
-      {/* <SideBar /> */}
-      <MainBody />
-    </>
+    <Routes>
+      <Route path="/" element={<SignIn />} />
+      <Route path="/app" element={<MainBody />} />
+    </Routes>
   )
 }
 

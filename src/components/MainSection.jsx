@@ -1,8 +1,47 @@
 import React from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Dashboard from './Dashboard'
 import Projects from './Projects'
 
-function MainSection() {
+function MainSection({activeTab}) {
+    const [projects, setProjects] = useState([])
+    const [isLoading, setisLoading] = useState(true)
+    const [currentPage, setCurrentPage] = useState(1)
+    const hasFetched = useRef(false)
+    
+    const itemsPerPage = 10
+    const totalPages = Math.ceil(projects.length / itemsPerPage)
+    const startIndex = (currentPage -1) * itemsPerPage
+    const currentProjects = projects.slice(
+        startIndex, startIndex + itemsPerPage
+    )
+    
+    useEffect(() => {
+        const getProjects = async () => {
+            if(hasFetched.current) return;
+    
+            hasFetched.current = true;
+            try {
+                const res = await fetch("/mockProjects/projects.json")
+                    
+                if(!res.ok) {
+                    throw new Error("Failed to fetch data")
+                }
+    
+                const data = await res.json()
+                console.log(data)
+                setProjects(data)
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setisLoading(false)
+            }
+        }
+        getProjects();
+    }, [])
+    
+    if(isLoading) return <p>Loading...</p>
+
     return (
         <div className='w-[80.55%] ml-[19.44%] relative'>
             <header className='border-b-[1.5px] border-[#0000000D] p-4 flex items-center justify-between bg-[#FFFFFF] fixed w-[80.55%] h-18 z-1000'>
@@ -35,8 +74,8 @@ function MainSection() {
                 </div>
             </header>
             <section className='mt-18'>
-                {/* <Dashboard /> */}
-                <Projects />
+                {activeTab === "dashboard" && <Dashboard />}
+                {activeTab === "projects" && <Projects projects={projects} currentProjects={currentProjects} currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} itemsPerPage={itemsPerPage} />}
             </section>
         </div>
     )

@@ -7,9 +7,14 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "node backend/server.js"
   },
   "dependencies": {
+    "@prisma/client": "^7.8.0",
+    "express": "^5.2.1",
+    "pg": "^8.20.0",
+    "prisma": "^7.8.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5"
   },
@@ -25,5 +30,18 @@
     "globals": "^17.5.0",
     "tailwindcss": "^4.2.4",
     "vite": "^8.0.10"
-  }
+  },
+  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
+  "main": "eslint.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SheksDev/fasyl_pmo_portal.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SheksDev/fasyl_pmo_portal/issues"
+  },
+  "homepage": "https://github.com/SheksDev/fasyl_pmo_portal#readme"
 }

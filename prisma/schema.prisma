@@ -15,3 +15,20 @@ model User {
   role      String   @default("staff")
   createdAt DateTime @default(now())
 }
+
+model Project {
+  id            Int     @id @default(autoincrement())
+  projectName   String
+  client        String
+  type          String
+  location      String
+  siteCode      String
+  AMC           String
+  projectManager String
+  product       String
+  status        String
+  registerFor   String[]
+  purchaseDate  DateTime
+  expectedDate  DateTime
+  createdAt     DateTime @default(now())
+}

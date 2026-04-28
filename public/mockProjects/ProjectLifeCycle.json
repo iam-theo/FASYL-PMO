@@ -1,11 +1,15 @@
 [
     {
-        "id": 1,
         "status": "Client ID",
         "next-status": "Engagement",
         "title": "Client Identification",
         "desc":"Record and qualify the prospective client before any engagemnet begins",
-        "stages": [
+        "requiredDocs": [
+            "NDA", 
+            "KYC Form", 
+            "Opportunity Register"
+        ],
+        "checklist": [
             {
                 "title": "Client Name And Legal Entity Confirmed",
                 "desc": "Full registered name required",
@@ -49,12 +53,16 @@
         ]
     },
     {
-        "id": 2,
         "status": "Engagement",
         "next-status": "Initiation",
         "title": "Client Engagement",
         "desc":"Pre-sales and proposal activities. All items must be complete before initiation.",
-        "stages": [
+        "requiredDocs": [
+            "Proposal", 
+            "Award Letter", 
+            "Commercial Terms Sheet"
+        ],
+        "checklist": [
             {
                 "title": "RFP / Tender Document Received & Reviewed",
                 "desc": "Log receipt date",
@@ -98,12 +106,16 @@
         ]
     },
     {
-        "id": 3,
         "status": "Initiation",
         "next-status": "Planning",
         "title": "Project Initiation",
         "desc":"Mandatory pre-project documents per policy. ",
-        "stages": [
+        "requiredDocs": [
+            "Project Initiation Form", 
+            "KYC Form", 
+            "Award Letter"
+        ],
+        "checklist": [
             {
                 "title": "Order / Award Letter On File",
                 "desc": "Original signed copy required",
@@ -147,12 +159,17 @@
         ]
     },
     {
-        "id": 4,
         "status": "Planning",
         "next-status": "Execution",
         "title": "Project Planning",
         "desc":"Mandatory pre-project documents per policy. ",
-        "stages": [
+        "requiredDocs": [
+            "Project Charter", 
+            "Project Plan", 
+            "Risk Register",
+            "Comms Plan"
+        ],
+        "checklist": [
             {
                 "title": "Project Charter signed By Client",
                 "desc": "Scope, objectives, assumptions, exclusions",
@@ -201,12 +218,17 @@
         ]
     },
     {
-        "id": 5,
         "status": "Execution",
         "next-status": "UAT",
         "title": "Execution & Delivery",
         "desc":"Track milestones and mandatory sign-offs at each delivery gate. ",
-        "stages": [
+        "requiredDocs": [
+            "Status Report", 
+            "CR Form", 
+            "Issue Log",
+            "SIT Report"
+        ],
+        "checklist": [
             {
                 "title": "Weekly Status Reports Issued",
                 "desc": "Format: RAG status, issues, next steps",
@@ -255,12 +277,16 @@
         ]
     },
     {
-        "id": 6,
         "status": "UAT",
         "next-status": "Go-Live",
         "title": "User Acceptance Testing",
         "desc":"Client-led testing. All critical issues must be resolved before go-live approval. ",
-        "stages": [
+        "requiredDocs": [
+            "UAT Test Plan", 
+            "UAT Issues Log", 
+            "UAT Sign-Off Form"
+        ],
+        "checklist": [
             {
                 "title": "UAT Test Plan Approved By Client",
                 "desc": "Scenarios, expected outcomes, acceptance criteria",
@@ -299,12 +325,16 @@
         ]
     },
     {
-        "id": 7,
         "status": "Go-Live",
         "next-status": "Closure",
         "title": "Go-Live & Cut-Over",
         "desc":"Final production deployment. Requires all prior stage gets cleared. ",
-        "stages": [
+        "requiredDocs": [
+            "UAT Test Plan", 
+            "UAT Issues Log", 
+            "UAT Sign-Off Form"
+        ],
+        "checklist": [
             {
                 "title": "Go-live Readiness Assessment Completed",
                 "desc": "All P1 UAT issues resolved",
@@ -353,11 +383,15 @@
         ]
     },
     {
-        "id": 8,
         "status": "Closure",
         "title": "Go-Live & Cut-Over",
         "desc":"Final production deployment. Requires all prior stage gets cleared. ",
-        "stages": [
+        "requiredDocs": [
+            "UAT Test Plan", 
+            "UAT Issues Log", 
+            "UAT Sign-Off Form"
+        ],
+        "checklist": [
             {
                 "title": "Go-live Readiness Assessment Completed",
                 "desc": "All P1 UAT issues resolved",

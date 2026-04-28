@@ -9,6 +9,7 @@ import ProjectLifeCycle from './ProjectLifeCycle'
 
 function MainBody() {
     const [activeTab, setActiveTab] = useState("dashboard")
+    const [activeDetails, setActiveDetails] = useState("project_lifecycle")
     const [selectedProject, setSelectedProject] = useState(null)
     const [isOpen, setIsOpen] = useState(false)
 
@@ -22,6 +23,8 @@ function MainBody() {
                 <ViewProjectsBody 
                     project={selectedProject} 
                     onClose={() => setSelectedProject(null)}
+                    activeDetails={activeDetails}
+                    setActiveDetails={setActiveDetails}
                 />
             )}
         </div>

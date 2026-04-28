@@ -39,11 +39,14 @@ function MainSection( {activeTab, setSelectedProject }) {
         }
         getProjects();
     }, [projects])
+
+    // save to localStorage
+    localStorage.setItem('projects', JSON.stringify(projects));
     
     if(isLoading) return <p>Loading...</p>
 
     return (
-        <div className='w-[80.55%] ml-[19.44%] relative'>
+        <div className='w-[80.55%] h-screen ml-[19.44%] relative'>
             <header className='border-b-[1.5px] border-[#0000000D] p-4 flex items-center justify-between bg-[#FFFFFF] fixed w-[80.55%] h-18 z-1000'>
                 <ul className='flex gap-2'>
                     <li className='w-43.5 h-10 flex justify-between rounded-md px-3 py-2 bg-[#EBEBEB]'>
@@ -73,7 +76,7 @@ function MainSection( {activeTab, setSelectedProject }) {
                     </div>
                 </div>
             </header>
-            <section className='mt-18'>
+            <section className='mt-18 h-full'>
                 {activeTab === "dashboard" && <Dashboard />}
                 {activeTab === "projects" && (
                     <Projects

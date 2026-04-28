@@ -3,10 +3,15 @@ import ProjectLifeCycle from './ProjectLifeCycle'
 import ProjectDetails from './ProjectDetails'
 import { useState, useEffect, useRef } from 'react'
 
-function ViewProjectsBody({ project, onClose }) {
+function ViewProjectsBody({ project, onClose, activeDetails, setActiveDetails }) {
     const [lifecycle, setLifecycle] = useState([])
     const [isLoading, setisLoading] = useState(true)
     const hasFetched = useRef(false)
+
+    const tabs = [
+        { name: "project_lifecycle", label: "Project Lifecycle"},
+        { name: "project_details", label: "Project Details"}
+    ]
 
     useEffect(() => {
         const getLifeCycle = async () => {
@@ -46,13 +51,23 @@ function ViewProjectsBody({ project, onClose }) {
                 </div>
                 
                 <div className='flex items-center justify-between mb-4'>
-                    <button className='rounded-lg border border-[#0000000D] w-56.25 h-10 px-4 py-2.5 font-medium text-[14px]/[20px] text-[#636363] text-center cursor-pointer'>Project Lifecycle</button>
-                    <button className='rounded-lg border border-[#0000000D] w-56.25 h-10 px-4 py-2.5 font-medium text-[14px]/[20px] text-[#636363] text-center cursor-pointer'>Project Details</button>
+                    {
+                        tabs.map((tab) => (
+                            <button 
+                            key={tab.name}
+                            onClick={() => setActiveDetails(tab.name)}
+                            className={`rounded-lg border border-[#0000000D] w-56.25 h-10 px-4 py-2.5 font-medium text-[14px]/[20px] text-center cursor-pointer hover:text-[#1B3C4A] ${
+                            activeDetails === `${tab.name}`
+                            ? "bg-[#E8E8E8] text-[#1B3C4A]"
+                            : "text-[#636363]"
+                        }`}>{tab.label}</button>
+                        ))
+                    }
                 </div>
 
                 <section>
-                    <ProjectLifeCycle lifecycle={lifecycle} project={project}/>
-                    {/* <ProjectDetails /> */}
+                    {activeDetails === "project_lifecycle" && <ProjectLifeCycle lifecycle={lifecycle} project={project}/>}
+                    {activeDetails === "project_details" && <ProjectDetails project={project}/>}
                 </section>
             </div>
         </div>

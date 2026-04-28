@@ -7,11 +7,11 @@ function Projects({
     currentPage, 
     totalPages, 
     setCurrentPage, 
-    itemsPerPagec,
+    itemsPerPage,
     setSelectedProject }) {
 
     return (
-        <div className='p-4 flex flex-col h-[92%]'>
+        <div className='px-4 pt-4 flex flex-col h-screen'>
             <div className='cursor-pointer'>
                 <span className='font-medium text-[14px]/[20px] text-[#949494]'>Dashboard</span> <span className='text-[#949494]'>/</span> <span className='font-medium text-[14px]/[20px] text-[#1B3C4A]'>Projects</span>
             </div>
@@ -38,9 +38,9 @@ function Projects({
                 </div> */}
             </div>
 
-            <section className='w-full'>
-                <table className='border-collapse rounded-lg border border-[#0000000D] w-full'>
-                    <thead>
+            <section className='w-full h-176 overflow-y-auto overscroll-contain border-collapse rounded-lg border border-[#0000000D] relative'>
+                <table className='w-full'>
+                    <thead className='sticky top-0 z-2000 h-11'>
                         <tr className='text-left'>
                             <th className='w-47 py-3 px-6 bg-[#F9FAFB] font-semibold text-[12px]/[18px] text-[#090909]'>ID</th>
                             <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909]'>Project Name</th>
@@ -54,13 +54,13 @@ function Projects({
                     <tbody className=''>
                         {
                             currentProjects.map((project) => (
-                                <tr key={project["ID"]} className='border-y border-[#0000000D]'>
-                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363]'>{project["ID"]}</td>
-                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363]'>{project["Project Name"]}</td>
-                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363]'>{project["Client"]}</td>
-                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363]'>{project["Product"]}</td>
+                                <tr key={project.id} className='border-y border-[#0000000D]'>
+                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363]'>{project.id}</td>
+                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363]'>{project.project_name}</td>
+                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363]'>{project.client}</td>
+                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363]'>{project.product}</td>
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#FFFFFF] flex items-center justify-between relative'>
-                                        <p className='rounded-2xl py-1 px-2 bg-[#228CEE]'>{project["Status"]}</p>
+                                        <p className='rounded-2xl py-1 px-2 bg-[#228CEE]'>{project.current_status}</p>
                                     </td>
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] relative'>
                                         <i onClick={() => setSelectedProject(project)} className="fa-solid fa-ellipsis-vertical fa-lg cursor-pointer text-[#98a2b3] hover:text-[#1B3C4A]"></i>
@@ -79,7 +79,7 @@ function Projects({
                 </table>
             </section>
 
-            <div className='border-t border-[#0000000D] mt-auto flex items-center justify-between w-full py-6'>
+            <div className='mt-auto flex items-center justify-between w-full py-6'>
                 <p className='font-medium text-[14px]/[20px] text-[#636363]'>Page {currentPage} of {totalPages}</p>
                 <div className='flex items-center gap-2'>
                     <button onClick={() => setCurrentPage((p) => Math.max(p -1, 1))} className='rounded-md border border-[#0000000D] shadow-[2px] shadow-[#1018280D] py-2.25 px-4.25 bg-[#E8E8E8] hover:bg-[#1B3C4A] font-medium text-[14px]/[20px] text-[#1B3C4A] hover:text-[#FFFFFF] cursor-pointer'>Previous</button>

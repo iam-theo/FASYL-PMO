@@ -3,8 +3,8 @@ import bgSignInTwo from "../assets/bgSignInTwo.jpg"
 
 function Dashboard() {
     return (
-        <div className='h-[92%]'>
-            <div className='p-4 cursor-pointer'>
+        <div className=''>
+            <div className='cursor-pointer p-4'>
                 <span className='font-medium text-[14px]/[20px] text-[#949494]'>Home</span> <span className='text-[#949494]'>/</span> <span className='font-medium text-[14px]/[20px] text-[#1B3C4A]'>Dashboard</span>
             </div>
             <div className='flex flex-col gap-2 relative'>

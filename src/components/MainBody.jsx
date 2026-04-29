@@ -12,6 +12,7 @@ function MainBody() {
     const [activeDetails, setActiveDetails] = useState("project_lifecycle")
     const [selectedProject, setSelectedProject] = useState(null)
     const [isOpen, setIsOpen] = useState(false)
+    const [checkedList, setCheckedList] = useState([])
 
     return (
         <div className='relative flex max-w-360 h-screen bg-[#FFFFFF]'>
@@ -21,10 +22,13 @@ function MainBody() {
 
             {selectedProject && (
                 <ViewProjectsBody 
-                    project={selectedProject} 
+                    selectedProject={selectedProject}
+                    setSelectedProject={setSelectedProject} 
                     onClose={() => setSelectedProject(null)}
                     activeDetails={activeDetails}
                     setActiveDetails={setActiveDetails}
+                    checkedList={checkedList}
+                    setCheckedList={setCheckedList}
                 />
             )}
         </div>

@@ -4,14 +4,27 @@ import UploadBox from './UploadBox';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function ProjectLifeCycle({ lifecycle, project }) {
+function ProjectLifeCycle({ stageTemplate, selectedProject }) {
 
-    const status = project.current_status
-    const currentStage = lifecycle.find(s => s.status === status);
-    const totalStages = lifecycle.length
-    const required = currentStage.checklist.filter(o => o.isRequired === true)
-    const statusStages = currentStage.checklist.length
-    const requiredDocs = currentStage.requiredDocs
+    console.log(stageTemplate)
+    if(!stageTemplate.length) return
+
+    const status = selectedProject.current_status
+    console.log(status)
+    const totalStages = stageTemplate?.length
+    console.log(totalStages)
+    const currentStage = stageTemplate.find(s => s.status === selectedProject?.current_status);
+    console.log(currentStage)
+    const nextStage = currentStage?.next_status;
+    console.log(nextStage)
+    const totalChecklist = currentStage?.checklist.length
+    console.log(totalChecklist)
+    const required = currentStage?.checklist.filter(o => o.isRequired === true)
+    const totalRequired = required.length
+    console.log(required.length)
+    // const statusStages = currentStage.checklist.length
+    const requiredDocs = currentStage?.requiredDocs
+    console.log(requiredDocs)
     
 
     const [documents, setDocuments] = useState([])
@@ -31,28 +44,28 @@ function ProjectLifeCycle({ lifecycle, project }) {
                     <div className='flex items-center gap-2'>
                         {/* Current Stage Info */}
                         <p className='font-normal text-[16px]/[20px] text-[#636363]'>Stage 1/{totalStages}</p>
-                        <p className='rounded-2xl px-2 py-1 bg-[#228CEE] font-medium text-[14px]/[20px] text-center text-[#FFFFFF]'>{currentStage.status}</p>
+                        <p className='rounded-2xl px-2 py-1 bg-[#228CEE] font-medium text-[14px]/[20px] text-center text-[#FFFFFF]'>{status}</p>
                     </div>
                     {/* Next Stage */}
                     <div>
-                        <p className='font-normal text-[16px]/[20px] text-[#636363]'>Next- {currentStage["next-status"]}</p>
+                        <p className='font-normal text-[16px]/[20px] text-[#636363]'>Next- {nextStage}</p>
                     </div>
                 </div>
             </div>
 
             {/* Stage Description */}
             <div className='flex flex-col'>
-                <h3 className='font-semibold text-[16px]/[20px] text-[#090909] mb-2'>{currentStage.title}</h3>
-                <p className='font-normal text-[14px]/[20px] text-[#636363] mb-3'>{currentStage.desc}</p>
+                <h3 className='font-semibold text-[16px]/[20px] text-[#090909] mb-2'>{currentStage?.title}</h3>
+                <p className='font-normal text-[14px]/[20px] text-[#636363] mb-3'>{currentStage?.desc}</p>
                 {/* Number of Items */}
                 <div className='flex items-center gap-2 mb-3'>
                     <div className='w-62.75 h-22 rounded-lg border border-[#0000000D] p-4 flex flex-col justify-between gap-4 bg-[#F3F3F3]'>
-                        <p className='font-semibold text-[16px]/[20px] text-[#090909]'>{required.length}</p>
+                        <p className='font-semibold text-[16px]/[20px] text-[#090909]'>{totalRequired}</p>
                         <p className='font-normal text-[16px]/[20px] text-[#636363]'>Mandatory Items</p>
                     </div>
 
                     <div className='w-62.75 h-22 rounded-lg border border-[#0000000D] p-4 flex flex-col justify-between gap-4 bg-[#F3F3F3]'>
-                        <p className='font-semibold text-[16px]/[20px] text-[#090909]'>0/{statusStages}</p>
+                        <p className='font-semibold text-[16px]/[20px] text-[#090909]'>0/{totalChecklist}</p>
                         <p className='font-normal text-[16px]/[20px] text-[#636363]'>Completed</p>
                     </div>
                 </div>
@@ -64,8 +77,8 @@ function ProjectLifeCycle({ lifecycle, project }) {
                 {/* Checklist */}
                 <div className='flex flex-col gap-2'>
                     {
-                        currentStage.checklist.map((stage, index) => (
-                            <div key={index} className='flex items-center justify-between w-full h-21 rounded-lg border border-[#0000000D] p-4 bg-[#F3F3F3]'>
+                        currentStage?.checklist.map((stage, index) => (
+                            <div key={stage.id} className='flex items-center justify-between w-full h-21 rounded-lg border border-[#0000000D] p-4 bg-[#F3F3F3]'>
                                 <div className='flex flex-col gap-2'>
                                     <div className='flex items-center gap-3'>
                                         <input type="checkbox" name="" id="" className='w-5 h-5 rounded-md border border-[#D0D5DD] bg-[#FFFFFF] outline-none accent-[#7F56D9]' />
@@ -84,9 +97,9 @@ function ProjectLifeCycle({ lifecycle, project }) {
             <div className=''>
                 <h3 className='font-semibold text-[16px]/[20px] text-[#090909] mb-3'>Upload Supporting Documents</h3>
                 {/* <ClientIDDoc /> */}
-                {requiredDocs.map((doc) => (
+                {requiredDocs.map((doc,index) => (
                     <UploadBox 
-                        key={project.id}
+                        key={index}
                         title={doc.fileName}
                         onFileSelect={(file) => handleFileUpload(doc.fileName, file)}
                         onPreview={() => openPreview(documents[doc.fileName])}

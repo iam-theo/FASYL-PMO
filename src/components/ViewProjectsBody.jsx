@@ -3,8 +3,16 @@ import ProjectLifeCycle from './ProjectLifeCycle'
 import ProjectDetails from './ProjectDetails'
 import { useState, useEffect, useRef } from 'react'
 
-function ViewProjectsBody({ project, onClose, activeDetails, setActiveDetails }) {
-    const [lifecycle, setLifecycle] = useState([])
+function ViewProjectsBody({ 
+    selectedProject, 
+    setSelectedProject,
+    onClose, 
+    activeDetails, 
+    setActiveDetails,
+    }) {
+
+    const [stageTemplate, setStageTemplate] = useState([])
+    const [projectStages, setProjectStages] = useState({})
     const [isLoading, setisLoading] = useState(true)
     const hasFetched = useRef(false)
 
@@ -13,31 +21,36 @@ function ViewProjectsBody({ project, onClose, activeDetails, setActiveDetails })
         { name: "project_details", label: "Project Details"}
     ]
 
+    // const initializeProjectStages = (projectId) => {
+    //     const initialState = {};
+
+    //     stageTemplate.map((stage) => {
+    //         initialState[stage.status] = {
+    //             checklist: Object.fromEntries(
+    //                 stage.checklist.map =>
+    //             )
+    //         }
+    //     })
+    // }
     useEffect(() => {
-        const getLifeCycle = async () => {
-            if(hasFetched.current) return;
-
-            hasFetched.current = true
-
+        const getStageTemplate = async () => {
             try {
-                const res = await fetch("/mockProjects/ProjectLifeCycle.json")
+                const res = await fetch("/mockProjects/stageTemplate.json")
+                console.log(res.ok)
 
-                if(!res.ok) {
-                    throw new Error("failed to fetch data")
-                }
+                if(!res.ok) throw new Error("failed to fetch data")
 
                 const data = await res.json()
-                setLifecycle(data)
+                console.log(data)
+                setStageTemplate(data)
             } catch(err) {
                 console.log(err)
-            } finally {
-                setisLoading(false)
             }
-        }
-        getLifeCycle();
-    }, [lifecycle])
+        } 
+        getStageTemplate()
+    }, [])
 
-    if(isLoading) return <p>Loading...</p>
+    // if(isLoading) return <p>Loading...</p>
 
     return (
         <div className='absolute z-2000 w-full h-full bg-[#00000080] flex flex-col items-end overflow-y-auto overscroll-contain'>
@@ -66,8 +79,9 @@ function ViewProjectsBody({ project, onClose, activeDetails, setActiveDetails })
                 </div>
 
                 <section>
-                    {activeDetails === "project_lifecycle" && <ProjectLifeCycle lifecycle={lifecycle} project={project}/>}
-                    {activeDetails === "project_details" && <ProjectDetails project={project}/>}
+                    {activeDetails === "project_lifecycle" && <ProjectLifeCycle stageTemplate={stageTemplate} selectedProject={selectedProject}/>}
+
+                    {activeDetails === "project_details" && <ProjectDetails selectedProject={selectedProject}/>}
                 </section>
             </div>
         </div>

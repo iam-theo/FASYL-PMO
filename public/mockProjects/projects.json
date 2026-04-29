@@ -23,50 +23,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             }
         ]
     },
@@ -94,50 +94,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             }
         ]
     },
@@ -165,50 +165,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             }
         ]
     },
@@ -236,50 +236,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             }
         ]
     },
@@ -307,50 +307,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             }
         ]
     },
@@ -378,50 +378,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             }
         ]
     },
@@ -449,50 +449,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             }
         ]
     },
@@ -520,50 +520,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             }
         ]
     },
@@ -591,50 +591,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             }
         ]
     },
@@ -662,50 +662,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             }
         ]
     },
@@ -733,50 +733,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             }
         ]
     },
@@ -804,50 +804,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             }
         ]
     },
@@ -875,50 +875,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             }
         ]
     },
@@ -946,50 +946,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             }
         ]
     },
@@ -1017,50 +1017,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             }
         ]
     },
@@ -1088,50 +1088,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "completedChecklist": [],
-                "uploadedDocs": []
+                "checklist": {},
+                "uploadedDocs": {}
             }
         ]
     }

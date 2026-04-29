@@ -1,58 +1,58 @@
 import React from 'react'
 
-function ProjectDetails( {project} ) {
+function selectedProjectDetails( {selectedProject} ) {
     return (
         <div className='w-full flex flex-col gap-4 py-4'>
             <div className='w-full h-100 rounded-lg border border-[#0000000D] bg-[#F3F3F3] flex flex-col gap-4 justify-center p-4'>
-                <h3 className='font-semibold text-[16px]/[20px] text-[#090909]'>{project.project_name}</h3>
+                <h3 className='font-semibold text-[16px]/[20px] text-[#090909]'>{selectedProject.project_name}</h3>
                 <ul className='flex flex-col gap-4'>
                     <li className='font-normal text-[16px]/[20px] text-[#636363] flex items-center gap-2'>
                         <i className="fa-solid fa-user-tie fa-lg text-[#1b3c4a]"></i>
-                        <p>Client - {project.client}</p>
+                        <p>Client - {selectedProject.client}</p>
                     </li>
                     <li className='font-normal text-[16px]/[20px] text-[#636363] flex items-center gap-2'>
                         <i className="fa-solid fa-lg fa-square-poll-horizontal text-[#1b3c4a]"></i>
-                        <p>Type- {project.type}</p>
+                        <p>Type- {selectedProject.type}</p>
                     </li>
                     <li className='font-normal text-[16px]/[20px] text-[#636363] flex items-center gap-2'>
                         <i className="fa-brands fa-lg fa-product-hunt text-[#1b3c4a]"></i>
-                        <p>Product - {project.product}</p>
+                        <p>Product - {selectedProject.product}</p>
                     </li>
                     <li className='font-normal text-[16px]/[20px] text-[#636363] flex items-center gap-2'>
                         <i className="fa-solid fa-lg fa-globe text-[#1b3c4a]"></i>
-                        <p>Location - {project.location}</p>
+                        <p>Location - {selectedProject.location}</p>
                     </li>
                     <li className='font-normal text-[16px]/[20px] text-[#636363] flex items-center gap-2'>
                         <i className="fa-solid fa-lg fa-qrcode text-[#1b3c4a]"></i>
-                        <p>Sitecode - {project.site_code}</p>
+                        <p>Sitecode - {selectedProject.site_code}</p>
                     </li>
                     <li className='font-normal text-[16px]/[20px] text-[#636363] flex items-center gap-2'>
                         <i className="fa-solid fa-lg fa-coins text-[#1b3c4a]"></i>
-                        <p>AMC - {project.amc}</p>
+                        <p>AMC - {selectedProject.amc}</p>
                     </li>
                     <li className='font-normal text-[16px]/[20px] text-[#636363] flex items-center gap-2'>
                     <i className="fa-solid fa-lg fa-registered text-[#1b3c4a]"></i>
-                        <p>Register For - {project.register_for}</p>
+                        <p>Register For - {selectedProject.register_for}</p>
                     </li>
                     <li className='font-normal text-[16px]/[20px] text-[#636363] flex items-center gap-2'>
                         <i className="fa-solid fa-lg fa-calendar-day text-[#1b3c4a]"></i>
-                        <p>Purchase Order Date - {project.purchase_order_date}</p>
+                        <p>Purchase Order Date - {selectedProject.purchase_order_date}</p>
                     </li>
                     <li className='font-normal text-[16px]/[20px] text-[#636363] flex items-center gap-2'>
                         <i className="fa-solid fa-lg fa-calendar-day text-[#1b3c4a]"></i>
-                        <p>Expected Commencement Date - {project.commencement_date}</p>
+                        <p>Expected Commencement Date - {selectedProject.commencement_date}</p>
                     </li>
                 </ul>
             </div>
 
             <div className='flex flex-col gap-4'>
-                <h3 className='font-semibold text-[16px]/[20px] text-[#090909]'>Assigned Project Manager</h3>
+                <h3 className='font-semibold text-[16px]/[20px] text-[#090909]'>Assigned selectedProject Manager</h3>
                 <div className='w-full p-4 rounded-lg border border-[#0000000D] flex items-center gap-4'>
                     <div className='font-medium text-[16px]/[20px] text-[#090909] flex items-center gap-2'>
                         <i className="fa-solid fa-lg fa-user-secret text-[#1B3C4A]"></i>
-                        <p>{project.project_manager}</p>
+                        <p>{selectedProject.selectedProject_manager}</p>
                     </div>
-                    <p className='font-normal text-[16px]/[20px] text-[#636363]'>Project Manager</p>
+                    <p className='font-normal text-[16px]/[20px] text-[#636363]'>selectedProject Manager</p>
                         </div>
             </div>
 
@@ -61,7 +61,7 @@ function ProjectDetails( {project} ) {
                     <div className='w-full p-4 rounded-lg border border-[#0000000D] flex items-center justify-between'>
                         <div className='font-normal text-[14px]/[20px] text-[#636363] flex items-center gap-4'>
                             <i className="fa-solid fa-lg fa-circle-arrow-up text-[#1B3C4A]"></i>
-                            <p>{project.order_letter}</p>
+                            <p>{selectedProject.order_letter}</p>
                         </div>
                         <button className='font-medium text-[14px]/[20px] text-[#1B3C4A]'>View</button>
                     </div>
@@ -72,7 +72,7 @@ function ProjectDetails( {project} ) {
                 <div className='w-full p-4 rounded-lg border border-[#0000000D] flex items-center justify-between'>
                     <div className='font-normal text-[14px]/[20px] text-[#636363] flex items-center gap-4'>
                         <i className="fa-solid fa-lg fa-circle-arrow-up text-[#1B3C4A]"></i>
-                        <p>{project.cost_sheet}</p>
+                        <p>{selectedProject.cost_sheet}</p>
                     </div>
                     <button className='font-medium text-[14px]/[20px] text-[#1B3C4A]'>View</button>
                 </div>
@@ -81,15 +81,17 @@ function ProjectDetails( {project} ) {
             <div className='flex flex-col gap-4'>
                 <h3 className='font-semibold text-[16px]/[20px] text-[#090909]'>Addition Information</h3>
                 <div className='font-normal text-[16px]/[24px] text-[#636363] w-full px-3.5 py-2.5 rounded-lg border border-[#0000000D] flex items-center'>
-                    <p>{project.additional_info}</p>
+                    <p>{selectedProject.additional_info}</p>
                 </div>
             </div>
 
             <div className='flex flex-col gap-4'>
                 <h3 className='font-semibold text-[16px]/[20px] text-[#090909]'>Fasyl Sales</h3>
                 {
-                    project.sales.map((s) => (
-                        <div className='w-full p-4 rounded-lg border border-[#0000000D] flex flex-col justify-between gap-2.5'>
+                    selectedProject.sales.map((s) => (
+                        <div 
+                        key={s.id}
+                        className='w-full p-4 rounded-lg border border-[#0000000D] flex flex-col justify-between gap-2.5'>
                             <div className='font-semibold text-[16px]/[20px] text-[#090909] flex items-center gap-2'>
                                 <i className="fa-solid fa-lg fa-address-card text-[#1B3C4A]"></i>
                                 <p>{s.name}</p>
@@ -103,4 +105,4 @@ function ProjectDetails( {project} ) {
     )
 }
 
-export default ProjectDetails
+export default selectedProjectDetails

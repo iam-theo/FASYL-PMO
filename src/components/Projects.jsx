@@ -53,8 +53,8 @@ function Projects({
 
                     <tbody className=''>
                         {
-                            currentProjects.map((project) => (
-                                <tr key={project.id} className='border-y border-[#0000000D]'>
+                            currentProjects.map((project, index) => (
+                                <tr key={index} className='border-y border-[#0000000D]'>
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363]'>{project.id}</td>
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363]'>{project.project_name}</td>
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363]'>{project.client}</td>

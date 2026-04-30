@@ -1,32 +1,43 @@
-const { PrismaClient} = require('@prisma/client');
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
-const {hasPassword, comparePassword} = require('../../utils/password');
-const {
+import { hashPassword, comparePassword } from '../../utils/password.js';
+
+import {
     generateAccessToken,
     generateRefreshToken,
     verifyRefreshToken
-} = require('../../utils/jwt');
+} from '../../utils/jwt.js';
 
-exports.login = async({email, password}) => {
+export const login = async({email, password}) => {
     const user = await prisma.user.findUnique({where: {email}});
     if(!user) throw new Error("Invalid credentials");
+
+    const validPassword = await comparePassword(password, user.password);
+    if(!validPassword) throw new Error("Invalid credentials");
 
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    await prisma.refreshToken.create({
-        data: {
+    await prisma.refreshToken.upsert({
+        where: {
+            userId: user.id
+        },
+        update: {
             token: refreshToken,
-            userId: user.id,
             expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-        };
-    });
+        },
+        create: {
+            userId: user.id,
+            token: refreshToken,
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+        }
+});
     
     return {accessToken, refreshToken};
 };
 
-exports.refresh = async(token) => {
+export const refresh = async(token) => {
     if(!token) throw new Error("No token");
 
     const stored = await prisma.refreshToken.findUnique({
@@ -37,18 +48,21 @@ exports.refresh = async(token) => {
 
     const decoded = verifyRefreshToken(token);
 
-    const newAccessToken = generateAccessToken({
-        id: decoded.id,
-        role: decoded.role
-    });
+    const user = await prisma.user.findUnique({
+        where: {id: decoded.id}
+    })
+
+    if(!user) throw new Error("User not found");
+
+    const newAccessToken = generateAccessToken(user);
 
     return({accessToken: newAccessToken});
-}
+};
 
-exports.logout = async(token) => {
-    await prisma.refreshToken.delete({
+export const logout = async(token) => {
+    await prisma.refreshToken.deleteMany({
         where: {token}
     });
 
     return {message: "Logged Out"};
-}
+};

@@ -1,0 +1,252 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  HEADOFOPERATIONS
+  PROJECTMANAGER
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  fullName  String
+  email     String   @unique
+  password  String
+  role      String   @default("staff")
+  createdAt DateTime @default(now())
+
+  //relations
+  refreshTokens RefreshToken[]
+}
+
+model Project {
+  id                Int             @id @default(autoincrement())
+  projectName       String
+  clientName        String
+  industry          String?
+  productName       String?
+  projectManager    String?
+  salesId           String?
+  pmoId             String?
+  status            String          @default("stage_1")
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  stage2            Stage2ClientEngagement?
+  stage3            Stage3Initiation?
+  stage4            Stage4Planning?
+  stage5            Stage5Execution?
+  stage6            Stage6UAT?
+  stage7            Stage7GoLive?
+}
+
+model Stage2ClientEngagement {
+  id                       Int       @id @default(autoincrement())
+  projectId                Int       @unique
+  project                  Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  rfpReviewed              Boolean   @default(false)
+  rfpDate                  DateTime?
+  technicalAssessment      Boolean   @default(false)
+  technicalSignoff         String?
+  proposalPrepared         Boolean   @default(false)
+  pricingReview            String?
+  proposalApproved         Boolean   @default(false)
+  approvalBy               String?
+  proposalSubmitted        Boolean   @default(false)
+  submissionDate           DateTime?
+  demosCompleted           Boolean   @default(false)
+  demoNotes                String?
+  awardReceived            Boolean   @default(false)
+  awardFile                String?
+  termsAgreed              Boolean   @default(false)
+  termsNotes               String?
+
+  businessDevLead          String?
+  financeSign              String?
+  ceoSign                  String?
+
+  proposalTemplate         String?
+  awardLetter              String?
+  termsSheet               String?
+
+  completed                Boolean   @default(false)
+  completedAt              DateTime?
+
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+}
+
+model Stage3Initiation {
+  id                       Int       @id @default(autoincrement())
+  projectId                Int       @unique
+  project                  Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  awardLetterOnFile        Boolean   @default(false)
+  awardLetterFile          String?
+  invoiceIssued            Boolean   @default(false)
+  invoiceRef               String?
+  signedScopeDoc           Boolean   @default(false)
+  scopeDocFile             String?
+  advancePaymentReceived   Boolean   @default(false)
+  paymentFile              String?
+  waiverObtained           Boolean   @default(false)
+  waiverFile               String?
+  initiationFormSigned     Boolean   @default(false)
+  initiationFormFile       String?
+  projectCodeAssigned      Boolean   @default(false)
+  projectCode              String?
+  resourcesDeployed        Boolean   @default(false)
+  resourceNotes            String?
+
+  projectHead              String?
+  legalCompliance          String?
+  financeSign              String?
+  marketing                String?
+
+  completed                Boolean   @default(false)
+  completedAt              DateTime?
+
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+}
+
+model Stage4Planning {
+  id                       Int       @id @default(autoincrement())
+  projectId                Int       @unique
+  project                  Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  charterSigned            Boolean   @default(false)
+  charterFile              String?
+  projectPlanShared        Boolean   @default(false)
+  projectPlanFile          String?
+  resourcePlanApproved     Boolean   @default(false)
+  resourceNotes            String?
+  riskRegisterInitiated    Boolean   @default(false)
+  riskNotes                String?
+  communicationPlan        Boolean   @default(false)
+  communicationNotes       String?
+  changeProcessDefined     Boolean   @default(false)
+  changeNotes              String?
+  environmentReady         Boolean   @default(false)
+  environmentNotes         String?
+  migrationPlanReviewed    Boolean   @default(false)
+  migrationNotes           String?
+  kickoffHeld              Boolean   @default(false)
+  kickoffDate              DateTime?
+
+  projectManager           String?
+  clientLead               String?
+  technicalLead            String?
+
+  completed                Boolean   @default(false)
+  completedAt              DateTime?
+
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+}
+
+model Stage5Execution {
+  id                       Int       @id @default(autoincrement())
+  projectId                Int       @unique
+  project                  Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  weeklyReports            Boolean   @default(false)
+  weeklyReportFile         String?
+  weeklyNotes              String?
+
+  milestone1               Boolean   @default(false)
+  milestone1File           String?
+  milestone2               Boolean   @default(false)
+  milestone2File           String?
+
+  changeRequests           Boolean   @default(false)
+  changeRequestNotes       String?
+
+  issueLog                 Boolean   @default(false)
+  issueLogFile             String?
+
+  trainingExecuted         Boolean   @default(false)
+  trainingFile             String?
+
+  sitCompleted             Boolean   @default(false)
+  sitFile                  String?
+
+  preUatReady              Boolean   @default(false)
+
+  projectManagerSign       String?
+  clientLeadSign           String?
+
+  completed                Boolean   @default(false)
+  completedAt              DateTime?
+
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+}
+
+model Stage6UAT {
+  id                       Int       @id @default(autoincrement())
+  projectId                Int       @unique
+  project                  Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  uatStarted               Boolean   @default(false)
+  testCasesExecuted        Boolean   @default(false)
+  defectsResolved          Boolean   @default(false)
+  userTrainingDone         Boolean   @default(false)
+  clientSignoffReceived    Boolean   @default(false)
+  signoffFile              String?
+
+  projectManagerSign       String?
+  clientLeadSign           String?
+
+  completed                Boolean   @default(false)
+  completedAt              DateTime?
+
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+}
+
+model Stage7GoLive {
+  id                       Int       @id @default(autoincrement())
+  projectId                Int       @unique
+  project                  Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  readinessComplete        Boolean   @default(false)
+  cutoverApproved          Boolean   @default(false)
+  productionValidated      Boolean   @default(false)
+  clientAuthorized         Boolean   @default(false)
+  cutoverExecuted          Boolean   @default(false)
+  smokeTestsPassed         Boolean   @default(false)
+  certificateIssued        Boolean   @default(false)
+  hypercareDefined         Boolean   @default(false)
+
+  projectManagerApproval   String?
+  clientCioApproval        String?
+  technicalLeadApproval    String?
+  financeApproval          String?
+
+  progressPercent          Int       @default(0)
+
+  completed                Boolean   @default(false)
+  completedAt              DateTime?
+
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+}
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@unique([userId])
+}

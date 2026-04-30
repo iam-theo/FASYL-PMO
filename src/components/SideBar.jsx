@@ -1,6 +1,6 @@
 import React from 'react'
 
-function SideBar({ activeTab, setActiveTab }) {
+function SideBar({ activeTab, setActiveTab, handleLogout }) {
     const tabs = [
         { name: "dashboard", label: "Dashboard", icon: "fa-gauge"},
         { name: "projects", label: "Projects", icon: "fa-bars-progress"}
@@ -17,36 +17,28 @@ function SideBar({ activeTab, setActiveTab }) {
             </div>
             <div className='flex flex-col items-start justify-between p-4 pb-4 h-full'>
                 <div className='cursor-pointer w-full flex flex-col gap-2'>
-                    {tabs.map((tab) => (
-                        <button 
-                        key={tab.name} 
-                        onClick={() => setActiveTab(tab.name)}  
-                        className={`w-full py-2 px-3 flex items-center gap-3 rounded-md cursor-pointer ${
-                            activeTab === `${tab.name}`
-                            ? "bg-[#0000000D] text-[#1B3C4A]"
-                            : "text-[#000000] hover:text-[#1B3C4A]"
-                        }`}>
-                            <div className='w-6 h-6 flex items-center justify-center rounded-full'>
-                                <i className={`fa-solid ${tab.icon} fa-lg text-[#1B3C4A]`}></i>
-                            </div>
-                            <p className='font-medium text-[16px]/[24px]'>{tab.label}</p>
-                        </button>
-                    ))}
-
-                    {/* <button 
-                    onClick={() => setActiveTab("projects")} 
-                    className={`w-full py-2 px-3 flex items-center gap-3 rounded-md cursor-pointer ${
-                        activeTab === "projects"
-                        ? "bg-[#0000000D] text-[#1B3C4A]"
-                        : "hover:bg-[#0000000D] text-[#000000] hover:text-[#1B3C4A]"
-                    }`}>
-                        <div className='w-6 h-6 flex items-center justify-center'>
-                            <i className="fa-solid fa-bars-progress fa-lg text-[#1B3C4A]"></i>
-                        </div>
-                        <p className='font-medium text-[16px]/[24px]'>Projects</p>
-                    </button> */}
+                    {
+                        tabs.map((tab) => (
+                            <button 
+                                key={tab.name} 
+                                onClick={() => setActiveTab(tab.name)}  
+                                className={`w-full py-2 px-3 flex items-center gap-3 rounded-md cursor-pointer ${
+                                    activeTab === `${tab.name}`
+                                    ? "bg-[#0000000D] text-[#1B3C4A]"
+                                    : "text-[#000000] hover:text-[#1B3C4A]"
+                            }`}>
+                                <div 
+                                className='w-6 h-6 flex items-center justify-center rounded-full'>
+                                    <i className={`fa-solid ${tab.icon} fa-lg text-[#1B3C4A]`}></i>
+                                </div>
+                                <p className='font-medium text-[16px]/[24px]'>{tab.label}</p>
+                            </button>
+                        ))
+                    }
                 </div>
-                <div className='flex items-center gap-2 cursor-pointer'>
+                <div 
+                onClick={handleLogout}
+                className='flex items-center gap-2 cursor-pointer'>
                     <i className="fa-solid fa-arrow-right-from-bracket fa-lg" style={{ "color": "#d20019" }}></i>
                     <p className='py-2 px-3 font-medium text-[16px]/[24px] text-[#D20019] mt-auto'>Logout</p>
                 </div>

@@ -4,11 +4,13 @@ import Dashboard from './Dashboard'
 import Projects from './Projects'
 import ViewProjectsBody from './ViewProjectsBody'
 
-function MainSection( {activeTab, setSelectedProject }) {
-    const [projects, setProjects] = useState([])
-    const [isLoading, setisLoading] = useState(true)
+function MainSection({
+    activeTab, 
+    setSelectedProject, 
+    projects, user }) {
+
     const [currentPage, setCurrentPage] = useState(1)
-    const hasFetched = useRef(false)
+
     
     const itemsPerPage = 10
     const totalPages = Math.ceil(projects.length / itemsPerPage)
@@ -16,34 +18,6 @@ function MainSection( {activeTab, setSelectedProject }) {
     const currentProjects = projects.slice(
         startIndex, startIndex + itemsPerPage
     )
-    
-    useEffect(() => {
-        const getProjects = async () => {
-            if(hasFetched.current) return;
-    
-            hasFetched.current = true;
-            try {
-                const res = await fetch("/mockProjects/projects.json")
-                    
-                if(!res.ok) {
-                    throw new Error("Failed to fetch data")
-                }
-    
-                const data = await res.json()
-                setProjects(data)
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setisLoading(false)
-            }
-        }
-        getProjects();
-    }, [projects])
-
-    // save to localStorage
-    localStorage.setItem('projects', JSON.stringify(projects));
-    
-    if(isLoading) return <p>Loading...</p>
 
     return (
         <div className='w-[80.55%] h-screen ml-[19.44%] relative'>
@@ -86,7 +60,8 @@ function MainSection( {activeTab, setSelectedProject }) {
                         totalPages={totalPages} 
                         setCurrentPage={setCurrentPage} 
                         itemsPerPage={itemsPerPage}
-                        setSelectedProject={setSelectedProject} 
+                        setSelectedProject={setSelectedProject}
+                        user={user} 
                     />
                 )}
             </section>

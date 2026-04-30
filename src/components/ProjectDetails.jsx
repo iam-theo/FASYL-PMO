@@ -46,13 +46,13 @@ function selectedProjectDetails( {selectedProject} ) {
             </div>
 
             <div className='flex flex-col gap-4'>
-                <h3 className='font-semibold text-[16px]/[20px] text-[#090909]'>Assigned selectedProject Manager</h3>
+                <h3 className='font-semibold text-[16px]/[20px] text-[#090909]'>Assigned Project Manager</h3>
                 <div className='w-full p-4 rounded-lg border border-[#0000000D] flex items-center gap-4'>
                     <div className='font-medium text-[16px]/[20px] text-[#090909] flex items-center gap-2'>
                         <i className="fa-solid fa-lg fa-user-secret text-[#1B3C4A]"></i>
-                        <p>{selectedProject.selectedProject_manager}</p>
+                        <p>{selectedProject.project_manager}</p>
                     </div>
-                    <p className='font-normal text-[16px]/[20px] text-[#636363]'>selectedProject Manager</p>
+                    <p className='font-normal text-[16px]/[20px] text-[#636363]'>Project Manager</p>
                         </div>
             </div>
 

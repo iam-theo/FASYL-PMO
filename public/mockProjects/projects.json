@@ -11,7 +11,7 @@
         "register_for": "Project, Support",
         "purchase_order_date": "5/5/2025",
         "commencement_date": "5/5/2025",
-        "project_manager": "John Doe",
+        "project_manager": "",
         "order_letter": "Order Letter.pdf",
         "cost_sheet": "Profit analysis.pdf",
         "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
@@ -23,50 +23,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             }
         ]
     },
@@ -82,7 +82,7 @@
         "register_for": "Project, Support",
         "purchase_order_date": "5/5/2025",
         "commencement_date": "5/5/2025",
-        "project_manager": "John Doe",
+        "project_manager": "",
         "order_letter": "Order Letter.pdf",
         "cost_sheet": "Profit analysis.pdf",
         "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
@@ -94,50 +94,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             }
         ]
     },
@@ -153,7 +153,7 @@
         "register_for": "Project, Support",
         "purchase_order_date": "5/5/2025",
         "commencement_date": "5/5/2025",
-        "project_manager": "John Doe",
+        "project_manager": "",
         "order_letter": "Order Letter.pdf",
         "cost_sheet": "Profit analysis.pdf",
         "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
@@ -165,50 +165,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             }
         ]
     },
@@ -224,7 +224,7 @@
         "register_for": "Project, Support",
         "purchase_order_date": "5/5/2025",
         "commencement_date": "5/5/2025",
-        "project_manager": "John Doe",
+        "project_manager": "",
         "order_letter": "Order Letter.pdf",
         "cost_sheet": "Profit analysis.pdf",
         "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
@@ -236,50 +236,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             }
         ]
     },
@@ -295,7 +295,7 @@
         "register_for": "Project, Support",
         "purchase_order_date": "5/5/2025",
         "commencement_date": "5/5/2025",
-        "project_manager": "John Doe",
+        "project_manager": "",
         "order_letter": "Order Letter.pdf",
         "cost_sheet": "Profit analysis.pdf",
         "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
@@ -307,50 +307,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             }
         ]
     },
@@ -366,7 +366,7 @@
         "register_for": "Project, Support",
         "purchase_order_date": "5/5/2025",
         "commencement_date": "5/5/2025",
-        "project_manager": "John Doe",
+        "project_manager": "",
         "order_letter": "Order Letter.pdf",
         "cost_sheet": "Profit analysis.pdf",
         "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
@@ -378,50 +378,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             }
         ]
     },
@@ -437,7 +437,7 @@
         "register_for": "Project, Support",
         "purchase_order_date": "5/5/2025",
         "commencement_date": "5/5/2025",
-        "project_manager": "John Doe",
+        "project_manager": "",
         "order_letter": "Order Letter.pdf",
         "cost_sheet": "Profit analysis.pdf",
         "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
@@ -449,50 +449,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             }
         ]
     },
@@ -508,7 +508,7 @@
         "register_for": "Project, Support",
         "purchase_order_date": "5/5/2025",
         "commencement_date": "5/5/2025",
-        "project_manager": "John Doe",
+        "project_manager": "",
         "order_letter": "Order Letter.pdf",
         "cost_sheet": "Profit analysis.pdf",
         "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
@@ -520,50 +520,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             }
         ]
     },
@@ -579,7 +579,7 @@
         "register_for": "Project, Support",
         "purchase_order_date": "5/5/2025",
         "commencement_date": "5/5/2025",
-        "project_manager": "John Doe",
+        "project_manager": "",
         "order_letter": "Order Letter.pdf",
         "cost_sheet": "Profit analysis.pdf",
         "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
@@ -591,50 +591,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             }
         ]
     },
@@ -650,7 +650,7 @@
         "register_for": "Project, Support",
         "purchase_order_date": "5/5/2025",
         "commencement_date": "5/5/2025",
-        "project_manager": "John Doe",
+        "project_manager": "",
         "order_letter": "Order Letter.pdf",
         "cost_sheet": "Profit analysis.pdf",
         "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
@@ -662,50 +662,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             }
         ]
     },
@@ -721,7 +721,7 @@
         "register_for": "Project, Support",
         "purchase_order_date": "5/5/2025",
         "commencement_date": "5/5/2025",
-        "project_manager": "John Doe",
+        "project_manager": "",
         "order_letter": "Order Letter.pdf",
         "cost_sheet": "Profit analysis.pdf",
         "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
@@ -733,50 +733,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             }
         ]
     },
@@ -792,7 +792,7 @@
         "register_for": "Project, Support",
         "purchase_order_date": "5/5/2025",
         "commencement_date": "5/5/2025",
-        "project_manager": "John Doe",
+        "project_manager": "",
         "order_letter": "Order Letter.pdf",
         "cost_sheet": "Profit analysis.pdf",
         "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
@@ -804,50 +804,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             }
         ]
     },
@@ -863,7 +863,7 @@
         "register_for": "Project, Support",
         "purchase_order_date": "5/5/2025",
         "commencement_date": "5/5/2025",
-        "project_manager": "John Doe",
+        "project_manager": "",
         "order_letter": "Order Letter.pdf",
         "cost_sheet": "Profit analysis.pdf",
         "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
@@ -875,50 +875,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             }
         ]
     },
@@ -934,7 +934,7 @@
         "register_for": "Project, Support",
         "purchase_order_date": "5/5/2025",
         "commencement_date": "5/5/2025",
-        "project_manager": "John Doe",
+        "project_manager": "",
         "order_letter": "Order Letter.pdf",
         "cost_sheet": "Profit analysis.pdf",
         "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
@@ -946,50 +946,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             }
         ]
     },
@@ -1005,7 +1005,7 @@
         "register_for": "Project, Support",
         "purchase_order_date": "5/5/2025",
         "commencement_date": "5/5/2025",
-        "project_manager": "John Doe",
+        "project_manager": "",
         "order_letter": "Order Letter.pdf",
         "cost_sheet": "Profit analysis.pdf",
         "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
@@ -1017,50 +1017,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             }
         ]
     },
@@ -1076,7 +1076,7 @@
         "register_for": "Project, Support",
         "purchase_order_date": "5/5/2025",
         "commencement_date": "5/5/2025",
-        "project_manager": "John Doe",
+        "project_manager": "",
         "order_letter": "Order Letter.pdf",
         "cost_sheet": "Profit analysis.pdf",
         "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
@@ -1088,50 +1088,50 @@
             {
                 "status": "Client ID",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Engagement",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Initiation",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Planning",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Execution",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "UAT",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Go-Live",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             },
             {
                 "status": "Closure",
                 "isCompleted": false,
-                "checklist": {},
-                "uploadedDocs": {}
+                "checklist": [],
+                "uploadedDocs": []
             }
         ]
     }

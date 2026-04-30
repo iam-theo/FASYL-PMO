@@ -4,53 +4,29 @@ import ProjectDetails from './ProjectDetails'
 import { useState, useEffect, useRef } from 'react'
 
 function ViewProjectsBody({ 
+    projects,
+    setProjects, 
+    stageTemplate,
+    setStageTemplate,
     selectedProject, 
     setSelectedProject,
     onClose, 
     activeDetails, 
     setActiveDetails,
+    toggleChecklist,
+    user
     }) {
 
-    const [stageTemplate, setStageTemplate] = useState([])
     const [projectStages, setProjectStages] = useState({})
     const [isLoading, setisLoading] = useState(true)
     const hasFetched = useRef(false)
+
+    const [currentStatus, setCurrentStatus] = useState(selectedProject.current_status)
 
     const tabs = [
         { name: "project_lifecycle", label: "Project Lifecycle"},
         { name: "project_details", label: "Project Details"}
     ]
-
-    // const initializeProjectStages = (projectId) => {
-    //     const initialState = {};
-
-    //     stageTemplate.map((stage) => {
-    //         initialState[stage.status] = {
-    //             checklist: Object.fromEntries(
-    //                 stage.checklist.map =>
-    //             )
-    //         }
-    //     })
-    // }
-    useEffect(() => {
-        const getStageTemplate = async () => {
-            try {
-                const res = await fetch("/mockProjects/stageTemplate.json")
-                console.log(res.ok)
-
-                if(!res.ok) throw new Error("failed to fetch data")
-
-                const data = await res.json()
-                console.log(data)
-                setStageTemplate(data)
-            } catch(err) {
-                console.log(err)
-            }
-        } 
-        getStageTemplate()
-    }, [])
-
-    // if(isLoading) return <p>Loading...</p>
 
     return (
         <div className='absolute z-2000 w-full h-full bg-[#00000080] flex flex-col items-end overflow-y-auto overscroll-contain'>
@@ -79,7 +55,8 @@ function ViewProjectsBody({
                 </div>
 
                 <section>
-                    {activeDetails === "project_lifecycle" && <ProjectLifeCycle stageTemplate={stageTemplate} selectedProject={selectedProject}/>}
+                    {activeDetails === "project_lifecycle" && <ProjectLifeCycle stageTemplate={stageTemplate} selectedProject={selectedProject} setSelectedProject={setSelectedProject} projects={projects} setProjects={setProjects} onClose={onClose} currentStatus={currentStatus} setCurrentStatus={setCurrentStatus} toggleChecklist={toggleChecklist} user={user}
+                    />}
 
                     {activeDetails === "project_details" && <ProjectDetails selectedProject={selectedProject}/>}
                 </section>

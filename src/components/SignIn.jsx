@@ -2,12 +2,55 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import bgSignIn from "../assets/bgSignIn.jpg"
 import bgSignInTwo from "../assets/bgSignInTwo.jpg"
+import { useState } from 'react'
+import MainBody from './MainBody'
 
 function SignIn() {
-    const navigate = useNavigate()
-    const handleLogin = () => {
-        navigate("/app")
+
+    const [email, setEmail] = useState(null)
+    const [password, setPassword] = useState(null)
+    const [user, setUser] = useState(null)
+    const [form, setForm] = useState({
+        email: "",
+        password: ""
+    })
+    
+    const logins = [
+        {role: "admin", email: "admin@gmail.com", password: "5656"},
+        {role: "user", email: "user@gmail.com", password: "7676"}
+    ]
+
+    const handleChange = (e) => {
+        const { name, value } = e.target
+
+        setForm(prev => ({
+            ...prev,
+            [name]: value
+        }));
     };
+
+    const navigate = useNavigate()
+    const handleLogin = (e) => {
+        e.preventDefault();
+
+        const user = logins.find(
+            login =>
+            form.email === login.email &&
+            form.password === login.password
+        );
+
+        if (!user) {
+            alert("Invalid credentials");
+            return;
+        }
+
+        setUser(user.role);
+
+        navigate("/app", {
+            state: { user: user.role }
+        });
+    };
+
 
     return (
         <div className='flex max-w-360 max-h-screen'>
@@ -28,14 +71,26 @@ function SignIn() {
                     <form action="">
                         <div className='flex flex-col mb-4'>
                             <label htmlFor="" className='font-medium text-[14px]/[20px] tracking[0%] text-[#090909] mb-1.5'>Email</label>
-                            <input type="email" placeholder='Enter your email' className='w-90 h-11 rounded-lg bg-[#FFFFFF] border border-[#D0D5DD] shadow-[#1018280D] shadow-[2px] py-2.5 px-3.5'/>
+                            <input 
+                            value={form.email}
+                            onChange={handleChange}
+                            type="email" 
+                            name='email' 
+                            placeholder='Enter your email' 
+                            className='w-90 h-11 rounded-lg bg-[#FFFFFF] border border-[#D0D5DD] shadow-[#1018280D] shadow-[2px] py-2.5 px-3.5'/>
                         </div>
                         <div className='flex flex-col mb-4'>
                             <label htmlFor="" className='font-medium text-[14px]/[20px] tracking[0%] text-[#090909] mb-1.5'>Password</label>
-                            <input type="password" placeholder='........' className='w-90 h-11 rounded-lg bg-[#FFFFFF] border border-[#D0D5DD] shadow-[#1018280D] shadow-[2px] py-2.5 px-3.5'/>
+                            <input 
+                            value={form.password}
+                            onChange={handleChange}
+                            type="password" 
+                            name='password' 
+                            placeholder='........' 
+                            className='w-90 h-11 rounded-lg bg-[#FFFFFF] border border-[#D0D5DD] shadow-[#1018280D] shadow-[2px] py-2.5 px-3.5'/>
                         </div>
                         <label htmlFor="" className='text-[14px]/[20px] tracking-[0%] text-[#1B3C4A] font-medium'>Forgot password?</label>
-                        <button onClick={handleLogin} type='submit' className='text-[16px]/[24px] tracking-[0%] text-[#FFFFFF] font-medium bg-[#1B3C4A] shadow-[#1018280D] shadow-[2px] w-90 h-11 rounded-lg py-2.5 px-4.5 mt-2' >Sign in</button>
+                        <button onClick={handleLogin} type='submit' className='text-[16px]/[24px] tracking-[0%] text-[#FFFFFF] font-medium bg-[#1B3C4A] shadow-[#1018280D] shadow-[2px] w-90 h-11 rounded-lg py-2.5 px-4.5 mt-2 cursor-pointer' >Sign in</button>
                     </form>
                 </div>
             </div>

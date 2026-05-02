@@ -1,41 +1,107 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
-import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 
-import { authMiddleWare } from "../backend/middleware/auth.middleware.js";
+/* =========================
+   MIDDLEWARE
+========================= */
+import { authMiddleWare } from "./middleware/auth.middleware.js";
 
-
+/* =========================
+   ROUTES
+========================= */
 import authRoutes from "./modules/auth/auth.routes.js";
-
-dotenv.config();
-
+import projectRoutes from "./modules/projects/project.routes.js";
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
+/* =========================
+   SECURITY + CORE MIDDLEWARE
+========================= */
 
-app.use(express.json());
+// Security headers
+app.use(helmet());
 
+// CORS
 app.use(
   cors({
-    origin: "http://localhost:5173",
-    credentials: true
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
   })
-)
+);
 
-app.use("/api/auth", authRoutes);
+// Body parsers
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true }));
 
+// Cookies
+app.use(cookieParser());
+
+/* =========================
+   HEALTH CHECK
+========================= */
 app.get("/", (req, res) => {
-  res.send("Fasyl PMO Backend Running");
-});
-//This is for testing the functionality of protected routing
-app.get("/api/protected", authMiddleWare, (req, res) => {
-  res.json({
-    message: "You are authenticated",
-    user: req.user
+  res.status(200).json({
+    success: true,
+    message: "Fasyl PMO Backend Running",
+    environment: process.env.NODE_ENV || "development",
+    timestamp: new Date().toISOString(),
   });
 });
+
+/* =========================
+   API ROUTES
+========================= */
+
+// Authentication
+app.use("/api/auth", authRoutes);
+
+// Projects
+app.use("/api/projects", projectRoutes);
+
+/* =========================
+   TEST PROTECTED ROUTE
+========================= */
+app.get("/api/protected", authMiddleWare, (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Authenticated access granted",
+    user: req.user,
+  });
+});
+
+/* =========================
+   404 HANDLER
+   (Express 5 compatible)
+========================= */
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "Route not found",
+    path: req.originalUrl,
+  });
+});
+
+/* =========================
+   GLOBAL ERROR HANDLER
+========================= */
+app.use((err, req, res, next) => {
+  console.error("SERVER ERROR:", err);
+
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+  });
+});
+
+/* =========================
+   START SERVER
+========================= */
 app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);
+  console.log(`🚀 Fasyl PMO Backend running on port ${PORT}`);
 });

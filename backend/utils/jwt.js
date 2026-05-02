@@ -1,30 +1,42 @@
 import jwt from "jsonwebtoken";
 
-//Generate access token after passing in user details
-export const generateAccessToken = (user) => {
-    return jwt.sign(
-    { id: user.id, role: user.role },
+/* =========================
+   ACCESS TOKEN (SHORT-LIVED)
+========================= */
+export const signAccessToken = (user) => {
+  if (!user) throw new Error("User is required to sign token");
+
+  return jwt.sign(
+    {
+      userId: user.id,
+      role: user.role,
+    },
     process.env.JWT_SECRET,
-    { expiresIn: '15m' }
+    {
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN || "15m",
+      issuer: "fasyl-pmo",
+      audience: "fasyl-users",
+    }
   );
 };
 
-//Generate refresh token after passing in user details
-export const generateRefreshToken = (user) => {
-    return jwt.sign(
-        {id: user.id},
-        process.env.JWT_REFRESH_SECRET,
-        {expiresIn: '7d'}
-    )
-}
+/* =========================
+   REFRESH TOKEN (LONG-LIVED)
+========================= */
+export const signRefreshToken = (user) => {
+  if (!user) throw new Error("User is required to sign token");
 
-
-//Verify access token by passing in generated token
-export const verifyAccessToken = (token) => {
-  return jwt.verify(token, process.env.JWT_SECRET);
-};
-
-//verify refresh token
-export const verifyRefreshToken = (token) => {
-  return jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+  return jwt.sign(
+    {
+      userId: user.id,
+      // optional but useful for security debugging
+      tokenVersion: user.tokenVersion || 1,
+    },
+    process.env.JWT_REFRESH_SECRET,
+    {
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || "7d",
+      issuer: "fasyl-pmo",
+      audience: "fasyl-refresh",
+    }
+  );
 };

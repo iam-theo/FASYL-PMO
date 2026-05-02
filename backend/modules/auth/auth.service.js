@@ -1,68 +1,87 @@
-import { PrismaClient } from '@prisma/client';
+import bcrypt from "bcryptjs";
+import { PrismaClient, Role } from "@prisma/client";
+import { signAccessToken, signRefreshToken } from "../../utils/jwt.js";
+
 const prisma = new PrismaClient();
 
-import { hashPassword, comparePassword } from '../../utils/password.js';
+/* =========================
+   REGISTER
+========================= */
+export const registerUser = async (data) => {
+  const hashedPassword = await bcrypt.hash(data.password, 10);
 
-import {
-    generateAccessToken,
-    generateRefreshToken,
-    verifyRefreshToken
-} from '../../utils/jwt.js';
+  const user = await prisma.user.create({
+    data: {
+      fullName: data.fullName,
+      email: data.email,
+      password: hashedPassword,
+      role: Role[data.role] || Role.STAFF,
+    },
+  });
 
-export const login = async({email, password}) => {
-    const user = await prisma.user.findUnique({where: {email}});
-    if(!user) throw new Error("Invalid credentials");
-
-    const validPassword = await comparePassword(password, user.password);
-    if(!validPassword) throw new Error("Invalid credentials");
-
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
-
-    await prisma.refreshToken.upsert({
-        where: {
-            userId: user.id
-        },
-        update: {
-            token: refreshToken,
-            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-        },
-        create: {
-            userId: user.id,
-            token: refreshToken,
-            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-        }
-});
-    
-    return {accessToken, refreshToken};
+  const { password, ...safeUser } = user;
+  return safeUser;
 };
 
-export const refresh = async(token) => {
-    if(!token) throw new Error("No token");
+/* =========================
+   LOGIN
+========================= */
+export const loginUser = async (email, password) => {
+  const user = await prisma.user.findUnique({ where: { email } });
 
-    const stored = await prisma.refreshToken.findUnique({
-        where: {token}
-    });
+  if (!user) throw new Error("User not found");
 
-    if(!stored) throw new Error("Invalid token");
+  const valid = await bcrypt.compare(password, user.password);
+  if (!valid) throw new Error("Invalid credentials");
 
-    const decoded = verifyRefreshToken(token);
+  const accessToken = signAccessToken(user);
+  const refreshToken = signRefreshToken(user);
 
-    const user = await prisma.user.findUnique({
-        where: {id: decoded.id}
-    })
+  await prisma.refreshToken.create({
+    data: {
+      token: refreshToken,
+      userId: user.id,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    },
+  });
 
-    if(!user) throw new Error("User not found");
+  const { password: _, ...safeUser } = user;
 
-    const newAccessToken = generateAccessToken(user);
-
-    return({accessToken: newAccessToken});
+  return {
+    user: safeUser,
+    accessToken,
+    refreshToken,
+  };
 };
 
-export const logout = async(token) => {
-    await prisma.refreshToken.deleteMany({
-        where: {token}
-    });
+/* =========================
+   REFRESH TOKEN
+========================= */
+export const refreshTokenService = async (token) => {
+  const stored = await prisma.refreshToken.findUnique({
+    where: { token },
+  });
 
-    return {message: "Logged Out"};
+  if (!stored) throw new Error("Invalid refresh token");
+
+  const user = await prisma.user.findUnique({
+    where: { id: stored.userId },
+  });
+
+  if (!user) throw new Error("User no longer exists");
+
+  const newAccessToken = signAccessToken(user);
+
+  return { accessToken: newAccessToken };
+};
+
+/* =========================
+   LOGOUT
+========================= */
+export const logoutUser = async (token) => {
+  if (!token) return;
+
+  await prisma.refreshToken.delete({
+    where: { token },
+  });
 };

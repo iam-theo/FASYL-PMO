@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('HEADOFOPERATIONS', 'PROJECTMANAGER');
+CREATE TYPE "Role" AS ENUM ('HEADOFOPS', 'PROJECTMANAGER', 'STAFF');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -7,10 +7,21 @@ CREATE TABLE "User" (
     "fullName" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "role" TEXT NOT NULL DEFAULT 'staff',
+    "role" "Role" NOT NULL DEFAULT 'STAFF',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "RefreshToken" (
+    "id" TEXT NOT NULL,
+    "token" TEXT NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "RefreshToken_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -22,7 +33,7 @@ CREATE TABLE "Project" (
     "productName" TEXT,
     "projectManager" TEXT,
     "salesId" TEXT,
-    "pmoId" TEXT,
+    "pmoId" INTEGER,
     "status" TEXT NOT NULL DEFAULT 'stage_1',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -37,25 +48,10 @@ CREATE TABLE "Stage2ClientEngagement" (
     "rfpReviewed" BOOLEAN NOT NULL DEFAULT false,
     "rfpDate" TIMESTAMP(3),
     "technicalAssessment" BOOLEAN NOT NULL DEFAULT false,
-    "technicalSignoff" TEXT,
-    "proposalPrepared" BOOLEAN NOT NULL DEFAULT false,
-    "pricingReview" TEXT,
     "proposalApproved" BOOLEAN NOT NULL DEFAULT false,
-    "approvalBy" TEXT,
     "proposalSubmitted" BOOLEAN NOT NULL DEFAULT false,
-    "submissionDate" TIMESTAMP(3),
-    "demosCompleted" BOOLEAN NOT NULL DEFAULT false,
-    "demoNotes" TEXT,
     "awardReceived" BOOLEAN NOT NULL DEFAULT false,
-    "awardFile" TEXT,
     "termsAgreed" BOOLEAN NOT NULL DEFAULT false,
-    "termsNotes" TEXT,
-    "businessDevLead" TEXT,
-    "financeSign" TEXT,
-    "ceoSign" TEXT,
-    "proposalTemplate" TEXT,
-    "awardLetter" TEXT,
-    "termsSheet" TEXT,
     "completed" BOOLEAN NOT NULL DEFAULT false,
     "completedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -69,25 +65,10 @@ CREATE TABLE "Stage3Initiation" (
     "id" SERIAL NOT NULL,
     "projectId" INTEGER NOT NULL,
     "awardLetterOnFile" BOOLEAN NOT NULL DEFAULT false,
-    "awardLetterFile" TEXT,
     "invoiceIssued" BOOLEAN NOT NULL DEFAULT false,
-    "invoiceRef" TEXT,
     "signedScopeDoc" BOOLEAN NOT NULL DEFAULT false,
-    "scopeDocFile" TEXT,
-    "advancePaymentReceived" BOOLEAN NOT NULL DEFAULT false,
-    "paymentFile" TEXT,
-    "waiverObtained" BOOLEAN NOT NULL DEFAULT false,
-    "waiverFile" TEXT,
-    "initiationFormSigned" BOOLEAN NOT NULL DEFAULT false,
-    "initiationFormFile" TEXT,
-    "projectCodeAssigned" BOOLEAN NOT NULL DEFAULT false,
+    "paymentReceived" BOOLEAN NOT NULL DEFAULT false,
     "projectCode" TEXT,
-    "resourcesDeployed" BOOLEAN NOT NULL DEFAULT false,
-    "resourceNotes" TEXT,
-    "projectHead" TEXT,
-    "legalCompliance" TEXT,
-    "financeSign" TEXT,
-    "marketing" TEXT,
     "completed" BOOLEAN NOT NULL DEFAULT false,
     "completedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -101,26 +82,9 @@ CREATE TABLE "Stage4Planning" (
     "id" SERIAL NOT NULL,
     "projectId" INTEGER NOT NULL,
     "charterSigned" BOOLEAN NOT NULL DEFAULT false,
-    "charterFile" TEXT,
-    "projectPlanShared" BOOLEAN NOT NULL DEFAULT false,
-    "projectPlanFile" TEXT,
-    "resourcePlanApproved" BOOLEAN NOT NULL DEFAULT false,
-    "resourceNotes" TEXT,
-    "riskRegisterInitiated" BOOLEAN NOT NULL DEFAULT false,
-    "riskNotes" TEXT,
-    "communicationPlan" BOOLEAN NOT NULL DEFAULT false,
-    "communicationNotes" TEXT,
-    "changeProcessDefined" BOOLEAN NOT NULL DEFAULT false,
-    "changeNotes" TEXT,
-    "environmentReady" BOOLEAN NOT NULL DEFAULT false,
-    "environmentNotes" TEXT,
-    "migrationPlanReviewed" BOOLEAN NOT NULL DEFAULT false,
-    "migrationNotes" TEXT,
+    "projectPlanReady" BOOLEAN NOT NULL DEFAULT false,
+    "riskDefined" BOOLEAN NOT NULL DEFAULT false,
     "kickoffHeld" BOOLEAN NOT NULL DEFAULT false,
-    "kickoffDate" TIMESTAMP(3),
-    "projectManager" TEXT,
-    "clientLead" TEXT,
-    "technicalLead" TEXT,
     "completed" BOOLEAN NOT NULL DEFAULT false,
     "completedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -134,23 +98,8 @@ CREATE TABLE "Stage5Execution" (
     "id" SERIAL NOT NULL,
     "projectId" INTEGER NOT NULL,
     "weeklyReports" BOOLEAN NOT NULL DEFAULT false,
-    "weeklyReportFile" TEXT,
-    "weeklyNotes" TEXT,
-    "milestone1" BOOLEAN NOT NULL DEFAULT false,
-    "milestone1File" TEXT,
-    "milestone2" BOOLEAN NOT NULL DEFAULT false,
-    "milestone2File" TEXT,
-    "changeRequests" BOOLEAN NOT NULL DEFAULT false,
-    "changeRequestNotes" TEXT,
-    "issueLog" BOOLEAN NOT NULL DEFAULT false,
-    "issueLogFile" TEXT,
-    "trainingExecuted" BOOLEAN NOT NULL DEFAULT false,
-    "trainingFile" TEXT,
-    "sitCompleted" BOOLEAN NOT NULL DEFAULT false,
-    "sitFile" TEXT,
-    "preUatReady" BOOLEAN NOT NULL DEFAULT false,
-    "projectManagerSign" TEXT,
-    "clientLeadSign" TEXT,
+    "milestonesMet" BOOLEAN NOT NULL DEFAULT false,
+    "issueLogActive" BOOLEAN NOT NULL DEFAULT false,
     "completed" BOOLEAN NOT NULL DEFAULT false,
     "completedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -164,13 +113,8 @@ CREATE TABLE "Stage6UAT" (
     "id" SERIAL NOT NULL,
     "projectId" INTEGER NOT NULL,
     "uatStarted" BOOLEAN NOT NULL DEFAULT false,
-    "testCasesExecuted" BOOLEAN NOT NULL DEFAULT false,
     "defectsResolved" BOOLEAN NOT NULL DEFAULT false,
-    "userTrainingDone" BOOLEAN NOT NULL DEFAULT false,
-    "clientSignoffReceived" BOOLEAN NOT NULL DEFAULT false,
-    "signoffFile" TEXT,
-    "projectManagerSign" TEXT,
-    "clientLeadSign" TEXT,
+    "clientSignoff" BOOLEAN NOT NULL DEFAULT false,
     "completed" BOOLEAN NOT NULL DEFAULT false,
     "completedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -185,16 +129,8 @@ CREATE TABLE "Stage7GoLive" (
     "projectId" INTEGER NOT NULL,
     "readinessComplete" BOOLEAN NOT NULL DEFAULT false,
     "cutoverApproved" BOOLEAN NOT NULL DEFAULT false,
-    "productionValidated" BOOLEAN NOT NULL DEFAULT false,
-    "clientAuthorized" BOOLEAN NOT NULL DEFAULT false,
-    "cutoverExecuted" BOOLEAN NOT NULL DEFAULT false,
+    "productionLive" BOOLEAN NOT NULL DEFAULT false,
     "smokeTestsPassed" BOOLEAN NOT NULL DEFAULT false,
-    "certificateIssued" BOOLEAN NOT NULL DEFAULT false,
-    "hypercareDefined" BOOLEAN NOT NULL DEFAULT false,
-    "projectManagerApproval" TEXT,
-    "clientCioApproval" TEXT,
-    "technicalLeadApproval" TEXT,
-    "financeApproval" TEXT,
     "progressPercent" INTEGER NOT NULL DEFAULT 0,
     "completed" BOOLEAN NOT NULL DEFAULT false,
     "completedAt" TIMESTAMP(3),
@@ -205,18 +141,31 @@ CREATE TABLE "Stage7GoLive" (
 );
 
 -- CreateTable
-CREATE TABLE "RefreshToken" (
-    "id" TEXT NOT NULL,
-    "token" TEXT NOT NULL,
-    "userId" INTEGER NOT NULL,
-    "expiresAt" TIMESTAMP(3) NOT NULL,
+CREATE TABLE "Stage8Closure" (
+    "id" SERIAL NOT NULL,
+    "projectId" INTEGER NOT NULL,
+    "finalReportReady" BOOLEAN NOT NULL DEFAULT false,
+    "clientHandoverDone" BOOLEAN NOT NULL DEFAULT false,
+    "documentationDone" BOOLEAN NOT NULL DEFAULT false,
+    "financialClosure" BOOLEAN NOT NULL DEFAULT false,
+    "resourceReleased" BOOLEAN NOT NULL DEFAULT false,
+    "lessonsLearned" TEXT,
+    "projectScore" INTEGER,
+    "closureApproved" BOOLEAN NOT NULL DEFAULT false,
+    "closedBy" TEXT,
+    "completed" BOOLEAN NOT NULL DEFAULT false,
+    "completedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "RefreshToken_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Stage8Closure_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "RefreshToken_token_key" ON "RefreshToken"("token");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Stage2ClientEngagement_projectId_key" ON "Stage2ClientEngagement"("projectId");
@@ -237,10 +186,13 @@ CREATE UNIQUE INDEX "Stage6UAT_projectId_key" ON "Stage6UAT"("projectId");
 CREATE UNIQUE INDEX "Stage7GoLive_projectId_key" ON "Stage7GoLive"("projectId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "RefreshToken_token_key" ON "RefreshToken"("token");
+CREATE UNIQUE INDEX "Stage8Closure_projectId_key" ON "Stage8Closure"("projectId");
 
--- CreateIndex
-CREATE UNIQUE INDEX "RefreshToken_userId_key" ON "RefreshToken"("userId");
+-- AddForeignKey
+ALTER TABLE "RefreshToken" ADD CONSTRAINT "RefreshToken_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Project" ADD CONSTRAINT "Project_pmoId_fkey" FOREIGN KEY ("pmoId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Stage2ClientEngagement" ADD CONSTRAINT "Stage2ClientEngagement_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -261,4 +213,4 @@ ALTER TABLE "Stage6UAT" ADD CONSTRAINT "Stage6UAT_projectId_fkey" FOREIGN KEY ("
 ALTER TABLE "Stage7GoLive" ADD CONSTRAINT "Stage7GoLive_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "RefreshToken" ADD CONSTRAINT "RefreshToken_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Stage8Closure" ADD CONSTRAINT "Stage8Closure_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;

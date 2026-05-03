@@ -7,7 +7,7 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 
 /* =========================
-   MIDDLEWARE
+   CORE MIDDLEWARE
 ========================= */
 import { authMiddleWare } from "./middleware/auth.middleware.js";
 
@@ -16,18 +16,24 @@ import { authMiddleWare } from "./middleware/auth.middleware.js";
 ========================= */
 import authRoutes from "./modules/auth/auth.routes.js";
 import projectRoutes from "./modules/projects/project.routes.js";
+import workflowRoutes from "./modules/workflow/workflow.routes.js";
+
+/* =========================
+   CRON JOBS (WORKFLOW ENGINE)
+========================= */
+import { startWorkflowEscalationCron } from "./modules/workflow/cron/workflowEscalation.cron.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 /* =========================
-   SECURITY + CORE MIDDLEWARE
+   SECURITY MIDDLEWARE
 ========================= */
 
 // Security headers
 app.use(helmet());
 
-// CORS
+// CORS config
 app.use(
   cors({
     origin: process.env.CLIENT_URL || "http://localhost:5173",
@@ -39,8 +45,16 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// Cookies
+// Cookie support (refresh tokens etc.)
 app.use(cookieParser());
+
+/* =========================
+   REQUEST LOGGER (DEV READY)
+========================= */
+app.use((req, res, next) => {
+  console.log(`[${req.method}] ${req.originalUrl}`);
+  next();
+});
 
 /* =========================
    HEALTH CHECK
@@ -48,7 +62,7 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "Fasyl PMO Backend Running",
+    message: "Fasyl PMO Workflow Engine Running",
     environment: process.env.NODE_ENV || "development",
     timestamp: new Date().toISOString(),
   });
@@ -58,14 +72,17 @@ app.get("/", (req, res) => {
    API ROUTES
 ========================= */
 
-// Authentication
+// Auth system
 app.use("/api/auth", authRoutes);
 
-// Projects
+// Project core CRUD + stage initialization
 app.use("/api/projects", projectRoutes);
 
+// Workflow engine (approvals, reject, escalate, stage control)
+app.use("/api/workflow", workflowRoutes);
+
 /* =========================
-   TEST PROTECTED ROUTE
+   PROTECTED TEST ROUTE
 ========================= */
 app.get("/api/protected", authMiddleWare, (req, res) => {
   res.status(200).json({
@@ -77,7 +94,6 @@ app.get("/api/protected", authMiddleWare, (req, res) => {
 
 /* =========================
    404 HANDLER
-   (Express 5 compatible)
 ========================= */
 app.use((req, res) => {
   res.status(404).json({
@@ -91,7 +107,7 @@ app.use((req, res) => {
    GLOBAL ERROR HANDLER
 ========================= */
 app.use((err, req, res, next) => {
-  console.error("SERVER ERROR:", err);
+  console.error("🔥 SERVER ERROR:", err);
 
   res.status(err.status || 500).json({
     success: false,
@@ -102,6 +118,12 @@ app.use((err, req, res, next) => {
 /* =========================
    START SERVER
 ========================= */
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🚀 Fasyl PMO Backend running on port ${PORT}`);
+
+  /* =========================
+     START WORKFLOW ENGINE CRON
+     (Escalations, time tracking, SLA checks)
+  ========================= */
+  startWorkflowEscalationCron();
 });

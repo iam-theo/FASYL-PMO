@@ -1,0 +1,266 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//
+// ======================
+// ENUMS
+// ======================
+//
+
+enum Role {
+  HEADOFOPS
+  PROJECTMANAGER
+  STAFF
+}
+
+//
+// ======================
+// USER + AUTH
+// ======================
+//
+
+model User {
+  id        Int      @id @default(autoincrement())
+  fullName  String
+  email     String   @unique
+  password  String
+  role      Role     @default(STAFF)
+  createdAt DateTime @default(now())
+
+  refreshTokens RefreshToken[]
+
+  // PMO relationship
+  projects Project[] @relation("PMOProjects")
+}
+
+//
+// ======================
+// REFRESH TOKENS
+// ======================
+//
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+//
+// ======================
+// PROJECT CORE
+// ======================
+//
+
+model Project {
+  id            Int     @id @default(autoincrement())
+  projectName   String
+  clientName    String
+  industry      String?
+  productName   String?
+
+  projectManager String?
+  salesId        String?
+
+  // PMO (USER RELATION)
+  pmoId Int?
+  pmo   User? @relation("PMOProjects", fields: [pmoId], references: [id])
+
+  status String @default("stage_1")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // STAGES
+  stage2 Stage2ClientEngagement?
+  stage3 Stage3Initiation?
+  stage4 Stage4Planning?
+  stage5 Stage5Execution?
+  stage6 Stage6UAT?
+  stage7 Stage7GoLive?
+  stage8 Stage8Closure?
+}
+
+//
+// ======================
+// STAGE 2
+// ======================
+//
+
+model Stage2ClientEngagement {
+  id        Int     @id @default(autoincrement())
+  projectId Int     @unique
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  rfpReviewed Boolean   @default(false)
+  rfpDate     DateTime?
+
+  technicalAssessment Boolean @default(false)
+  proposalApproved    Boolean @default(false)
+  proposalSubmitted   Boolean @default(false)
+
+  awardReceived Boolean @default(false)
+  termsAgreed   Boolean @default(false)
+
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//
+// ======================
+// STAGE 3
+// ======================
+//
+
+model Stage3Initiation {
+  id        Int     @id @default(autoincrement())
+  projectId Int     @unique
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  awardLetterOnFile Boolean @default(false)
+  invoiceIssued     Boolean @default(false)
+  signedScopeDoc    Boolean @default(false)
+  paymentReceived   Boolean @default(false)
+  projectCode       String?
+
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//
+// ======================
+// STAGE 4
+// ======================
+//
+
+model Stage4Planning {
+  id        Int     @id @default(autoincrement())
+  projectId Int     @unique
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  charterSigned    Boolean @default(false)
+  projectPlanReady Boolean @default(false)
+  riskDefined      Boolean @default(false)
+  kickoffHeld      Boolean @default(false)
+
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//
+// ======================
+// STAGE 5
+// ======================
+//
+
+model Stage5Execution {
+  id        Int     @id @default(autoincrement())
+  projectId Int     @unique
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  weeklyReports  Boolean @default(false)
+  milestonesMet  Boolean @default(false)
+  issueLogActive Boolean @default(false)
+
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//
+// ======================
+// STAGE 6
+// ======================
+//
+
+model Stage6UAT {
+  id        Int     @id @default(autoincrement())
+  projectId Int     @unique
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  uatStarted      Boolean @default(false)
+  defectsResolved Boolean @default(false)
+  clientSignoff   Boolean @default(false)
+
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//
+// ======================
+// STAGE 7
+// ======================
+//
+
+model Stage7GoLive {
+  id        Int     @id @default(autoincrement())
+  projectId Int     @unique
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  readinessComplete Boolean @default(false)
+  cutoverApproved   Boolean @default(false)
+  productionLive    Boolean @default(false)
+  smokeTestsPassed  Boolean @default(false)
+
+  progressPercent Int @default(0)
+
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//
+// ======================
+// STAGE 8 (CLOSURE)
+// ======================
+//
+
+model Stage8Closure {
+  id        Int     @id @default(autoincrement())
+  projectId Int     @unique
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  finalReportReady   Boolean @default(false)
+  clientHandoverDone Boolean @default(false)
+  documentationDone  Boolean @default(false)
+  financialClosure   Boolean @default(false)
+  resourceReleased   Boolean @default(false)
+
+  lessonsLearned String?
+  projectScore   Int?
+
+  closureApproved Boolean @default(false)
+  closedBy        String?
+
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

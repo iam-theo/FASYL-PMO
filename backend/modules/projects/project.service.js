@@ -1,10 +1,15 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, WorkflowStatus } from "@prisma/client";
+
 const prisma = new PrismaClient();
+
+const calcProgress = (stage) => (stage / 8) * 100;
 
 /* =========================
    CREATE PROJECT + INIT STAGES
 ========================= */
 export const createProjectService = async (data, user) => {
+  const startStage = 2;
+
   return await prisma.project.create({
     data: {
       projectName: data.projectName,
@@ -13,16 +18,19 @@ export const createProjectService = async (data, user) => {
       productName: data.productName,
       projectManager: data.projectManager,
       pmoId: user.userId,
-      status: "stage_1",
 
-      // 🧠 AUTO INIT STAGES
-      stage2: { create: {} },
-      stage3: { create: {} },
-      stage4: { create: {} },
-      stage5: { create: {} },
-      stage6: { create: {} },
-      stage7: { create: {} },
-      stage8: { create: {} },
+      currentStage: startStage,
+      status: `stage_${startStage}`,
+      workflowStatus: WorkflowStatus.OPEN,
+      progressPercent: calcProgress(startStage),
+
+      stage2: { create: { workflowStatus: WorkflowStatus.OPEN } },
+      stage3: { create: { workflowStatus: WorkflowStatus.LOCKED } },
+      stage4: { create: { workflowStatus: WorkflowStatus.LOCKED } },
+      stage5: { create: { workflowStatus: WorkflowStatus.LOCKED } },
+      stage6: { create: { workflowStatus: WorkflowStatus.LOCKED } },
+      stage7: { create: { workflowStatus: WorkflowStatus.LOCKED } },
+      stage8: { create: { workflowStatus: WorkflowStatus.LOCKED } },
     },
 
     include: {

@@ -5,9 +5,9 @@
         "title": "Client Identification",
         "desc":"Record and qualify the prospective client before any engagemnet begins",
         "requiredDocs": [
-            "NDA", 
-            "KYC Form", 
-            "Opportunity Register"
+            {"fileName": "NDA", "fileURL": ""}, 
+            {"fileName": "KYC Form", "fileURL": ""}, 
+            {"fileName": "Opportunity Register", "fileURL": ""}
         ],
         "checklist": [
             {
@@ -66,9 +66,9 @@
         "title": "Client Engagement",
         "desc":"Pre-sales and proposal activities. All items must be complete before initiation.",
         "requiredDocs": [
-            "Proposal", 
-            "Award Letter", 
-            "Commercial Terms Sheet"
+            {"fileName": "Proposal", "fileURL": ""}, 
+            {"fileName": "Award Letter", "fileURL": ""}, 
+            {"fileName": "Commercial Terms Sheet", "fileURL": ""}
         ],
         "checklist": [
             {
@@ -127,9 +127,9 @@
         "title": "Project Initiation",
         "desc":"Mandatory pre-project documents per policy. ",
         "requiredDocs": [
-            "Project Initiation Form", 
-            "KYC Form", 
-            "Award Letter"
+            {"fileName": "Project Initiation Form", "fileURL": ""}, 
+            {"fileName": "KYC Form", "fileURL": ""}, 
+            {"fileName": "Award Letter", "fileURL": ""}
         ],
         "checklist": [
             {
@@ -188,10 +188,10 @@
         "title": "Project Planning",
         "desc":"Mandatory pre-project documents per policy. ",
         "requiredDocs": [
-            "Project Charter", 
-            "Project Plan", 
-            "Risk Register",
-            "Comms Plan"
+            {"fileName": "Project Charter", "fileURL": ""}, 
+            {"fileName": "Project Plan", "fileURL": ""}, 
+            {"fileName": "Risk Register", "fileURL": ""},
+            {"fileName": "Comms Plan", "fileURL": ""}
         ],
         "checklist": [
             {
@@ -256,10 +256,10 @@
         "title": "Execution & Delivery",
         "desc":"Track milestones and mandatory sign-offs at each delivery gate. ",
         "requiredDocs": [
-            "Status Report", 
-            "CR Form", 
-            "Issue Log",
-            "SIT Report"
+            {"fileName": "Status Report", "fileURL": ""}, 
+            {"fileName": "CR Form", "fileURL": ""}, 
+            {"fileName": "Issue Log", "fileURL": ""},
+            {"fileName": "SIT Report", "fileURL": ""}
         ],
         "checklist": [
             {
@@ -324,9 +324,9 @@
         "title": "User Acceptance Testing",
         "desc":"Client-led testing. All critical issues must be resolved before go-live approval. ",
         "requiredDocs": [
-            "UAT Test Plan", 
-            "UAT Issues Log", 
-            "UAT Sign-Off Form"
+            {"fileName": "UAT Test Plan", "fileURL": ""}, 
+            {"fileName": "UAT Issues Log", "fileURL": ""}, 
+            {"fileName": "UAT Sign-Off Form", "fileURL": ""}
         ],
         "checklist": [
             {
@@ -379,9 +379,9 @@
         "title": "Go-Live & Cut-Over",
         "desc":"Final production deployment. Requires all prior stage gets cleared. ",
         "requiredDocs": [
-            "UAT Test Plan", 
-            "UAT Issues Log", 
-            "UAT Sign-Off Form"
+            {"fileName": "UAT Test Plan", "fileURL": ""}, 
+            {"fileName": "UAT Issues Log", "fileURL": ""}, 
+            {"fileName": "UAT Sign-Off Form", "fileURL": ""}
         ],
         "checklist": [
             {
@@ -445,9 +445,9 @@
         "title": "Go-Live & Cut-Over",
         "desc":"Final production deployment. Requires all prior stage gets cleared. ",
         "requiredDocs": [
-            "UAT Test Plan", 
-            "UAT Issues Log", 
-            "UAT Sign-Off Form"
+            {"fileName": "UAT Test Plan", "fileURL": ""}, 
+            {"fileName": "UAT Issues Log", "fileURL": ""}, 
+            {"fileName": "UAT Sign-Off Form", "fileURL": ""}
         ],
         "checklist": [
             {

@@ -88,9 +88,9 @@ function selectedProjectDetails( {selectedProject} ) {
             <div className='flex flex-col gap-4'>
                 <h3 className='font-semibold text-[16px]/[20px] text-[#090909]'>Fasyl Sales</h3>
                 {
-                    selectedProject.sales.map((s) => (
+                    selectedProject.sales.map((s, index) => (
                         <div 
-                        key={s.id}
+                        key={index}
                         className='w-full p-4 rounded-lg border border-[#0000000D] flex flex-col justify-between gap-2.5'>
                             <div className='font-semibold text-[16px]/[20px] text-[#090909] flex items-center gap-2'>
                                 <i className="fa-solid fa-lg fa-address-card text-[#1B3C4A]"></i>

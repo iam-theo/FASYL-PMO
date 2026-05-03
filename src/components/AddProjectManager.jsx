@@ -10,14 +10,15 @@ function AddProjectManager({
     assignedManager,
     setAssignedManager, 
     user,
-    onClose}) {
+    onClose
+    }) {
 
     const [open, setOpen] = useState(false)
     const project = selectedProject
 
 
     const handleAssign = (projectId, p) => {
-        if(user === "admin") {
+        if(user.role === "HEADOFOPS") {
             setProjects(prev => 
                 prev.map(project =>
                     project.id === projectId
@@ -105,12 +106,14 @@ function AddProjectManager({
                                     {
                                         projectManagers.map((p, index) => (
                                             <button
-                                            key={index}
-                                            onClick={() => {
-                                                setAssignedManager(p)
-                                                setOpen(!open)
-                                            }}
-                                            className='font-medium text-[16px]/[24px] text-[#090909] pt-2.5 pb-2.5 pl-3.5  border border-[#D0D5DD] bg-[#EFEFEF] w-full text-left cursor-pointer'>{p}</button>
+                                                key={index}
+                                                onClick={() => {
+                                                    setAssignedManager(p)
+                                                    setOpen(!open)
+                                                }}
+                                                className='font-medium text-[16px]/[24px] text-[#090909] pt-2.5 pb-2.5 pl-3.5  border border-[#D0D5DD] bg-[#EFEFEF] w-full text-left cursor-pointer'>
+                                                    {p}
+                                            </button>
                                         ))
                                     }
                                 </div>

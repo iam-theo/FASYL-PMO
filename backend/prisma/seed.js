@@ -1,21 +1,28 @@
-import pkg from '@prisma/client';
-import bcrypt from 'bcrypt';
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
 
-const { PrismaClient } = pkg;
 const prisma = new PrismaClient();
 
 async function main() {
-    const password = await bcrypt.hash("123456", 10);
+    const hashedAdminPassword = await bcrypt.hash("123456", 10);
+    const hashedPMPassword = await bcrypt.hash("654321", 10);
 
     await prisma.user.createMany({
         data: [
-        {
-            email: "admin@test.com",
-            password,
-            fullName: "Admin User",
-            role: "ADMIN"
-        }
-        ]
+            {
+                email: "admin@test.com",
+                password: hashedAdminPassword,
+                fullName: "Admin User",
+                role: "HEADOFOPS"
+            },
+            {
+                email: "user@test.com",
+                password: hashedPMPassword,
+                fullName: "PM User",
+                role: "PROJECTMANAGER"
+            }
+        ],
+        skipDuplicates: true
     });
 
     console.log("✅ Seeded successfully");
@@ -23,7 +30,7 @@ async function main() {
 
 main()
     .catch((e) => {
-        console.error(e);
+        console.error("Seed error:", e);
         process.exit(1);
     })
     .finally(async () => {

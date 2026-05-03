@@ -6,17 +6,29 @@ import ViewProjectsBody from './ViewProjectsBody'
 import ProjectLifeCycle from './ProjectLifeCycle'
 import AddProjectManager from './AddProjectManager'
 import { useLocation, useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
-function MainBody() {
-    const location = useLocation();
-    const user = location.state?.user
+function MainBody({ user, setUser}) {
 
     const navigate = useNavigate()
     
-    const handleLogout = (e) => {
-        e.preventDefault()
+    const handleLogout = async () => {
+        try {
+            await axios.post(
+                "http://localhost:5000/api/auth/logout",
+                {},
+                {withCredentials: true}
+            )
 
-        navigate("/")
+            // clear frontend storage
+            localStorage.removeItem("token")
+            localStorage.removeItem("user")
+
+            // redirect to login
+            navigate("/");
+        } catch(error) {
+            console.error("Logout failed:", error)
+        }
     }
 
     const [activeTab, setActiveTab] = useState("dashboard")
@@ -32,18 +44,19 @@ function MainBody() {
             return [];
         }
     });
+    
     const [stageTemplate, setStageTemplate] = useState([])
-
     const [projectManagers, setProjectManagers] =  useState([])
     const [assignedManager, setAssignedManager] = useState("Select A Project Manager")
-    
     const [isLoading, setisLoading] = useState(true)
     
-    // save to localStorage
+    // save projects to localStorage
     useEffect(() => {
         localStorage.setItem("projects", JSON.stringify(projects));
     }, [projects]);
 
+
+    // selected project
     useEffect(() => {
         if (!selectedProject?.id) return;
 
@@ -52,8 +65,10 @@ function MainBody() {
         if (!updated) return;
 
         setSelectedProject(updated);
-    }, [projects]); // ✅ ONLY projects
-        
+    }, [projects]); // ONLY projects
+
+
+    // initial loading of projects
     useEffect(() => {
         const loadProjects = async () => {
     
@@ -118,8 +133,10 @@ function MainBody() {
         
     if(isLoading) return <p>Loading...</p>
 
+
+    // checklist function for each project
     const toggleChecklist = (projectId, stageStatus, itemId) => {
-        if(user === "user") {
+        if(user.role === "PROJECTMANAGER") {
             setProjects(prev =>
                 prev.map(project => {
                     if (project.id !== projectId) return project;
@@ -149,11 +166,13 @@ function MainBody() {
                     };
                 })
             );
-        }
+        } else return
     };
+
 
     return (
         <div className='relative flex max-w-360 h-screen bg-[#FFFFFF]'>
+
             <SideBar 
             activeTab={activeTab} 
             setActiveTab={setActiveTab} 
@@ -185,17 +204,19 @@ function MainBody() {
                 />
             )}
 
-            {selectedProject && selectedProject?.project_manager === "" && user === "admin" && (<AddProjectManager 
-                projects={projects}
-                setProjects={setProjects} 
-                selectedProject={selectedProject}
-                setSelectedProject={setSelectedProject}
-                onClose={() => setSelectedProject(null)}
-                projectManagers={projectManagers}
-                assignedManager={assignedManager}
-                setAssignedManager={setAssignedManager}
-                user={user}
-            />)}
+            {selectedProject && selectedProject?.project_manager === "" && user.role === "HEADOFOPS" && (
+                <AddProjectManager 
+                    projects={projects}
+                    setProjects={setProjects} 
+                    selectedProject={selectedProject}
+                    setSelectedProject={setSelectedProject}
+                    onClose={() => setSelectedProject(null)}
+                    projectManagers={projectManagers}
+                    assignedManager={assignedManager}
+                    setAssignedManager={setAssignedManager}
+                    user={user}
+                />
+            )}
         </div>
     )
 }

@@ -8,7 +8,9 @@ function Projects({
     totalPages, 
     setCurrentPage, 
     itemsPerPage,
-    setSelectedProject, user }) {
+    setSelectedProject, 
+    user 
+    }) {
 
     return (
         <div className='px-4 pt-4 flex flex-col h-screen'>
@@ -38,6 +40,7 @@ function Projects({
                 </div> */}
             </div>
 
+            {/* projects table with details */}
             <section className='w-full h-176 overflow-y-auto overscroll-contain border-collapse rounded-lg border border-[#0000000D] relative'>
                 <table className='w-full'>
                     <thead className='sticky top-0 z-2000 h-11'>
@@ -47,9 +50,9 @@ function Projects({
                             <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909]'>Client</th>
                             <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909]'>Product</th>
                             {
-                                user === "admin" ? (
+                                user?.role === "HEADOFOPS" && (
                                     <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909]'>Project Manager</th>
-                                ) : null
+                                )
                             }
                             <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909]'>Status</th>
                             <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909]'></th>
@@ -65,9 +68,9 @@ function Projects({
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363]'>{project.client}</td>
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363]'>{project.product}</td>
                                     {
-                                        user === "admin" ? (
+                                        user?.role === "HEADOFOPS" && (
                                             <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363]'>{project.project_manager === "" ? "Not Assigned" : project.project_manager}</td>
-                                        ) : null
+                                        )
                                     }
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#FFFFFF] flex items-center justify-between relative'>
                                         <p className='rounded-2xl py-1 px-2 bg-[#228CEE]'>{project.current_status}</p>

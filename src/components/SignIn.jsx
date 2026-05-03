@@ -4,51 +4,45 @@ import bgSignIn from "../assets/bgSignIn.jpg"
 import bgSignInTwo from "../assets/bgSignInTwo.jpg"
 import { useState } from 'react'
 import MainBody from './MainBody'
+import axios from "axios"
 
-function SignIn() {
+function SignIn({ setUser }) {
 
     const [email, setEmail] = useState(null)
     const [password, setPassword] = useState(null)
-    const [user, setUser] = useState(null)
-    const [form, setForm] = useState({
-        email: "",
-        password: ""
-    })
-    
-    const logins = [
-        {role: "admin", email: "admin@gmail.com", password: "5656"},
-        {role: "user", email: "user@gmail.com", password: "7676"}
-    ]
-
-    const handleChange = (e) => {
-        const { name, value } = e.target
-
-        setForm(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
 
     const navigate = useNavigate()
-    const handleLogin = (e) => {
+
+    const handleLogin = async (e) => {
         e.preventDefault();
 
-        const user = logins.find(
-            login =>
-            form.email === login.email &&
-            form.password === login.password
-        );
+        try {
+            const { data } = await axios.post("http://localhost:5000/api/auth/login", {
+                email,
+                password
+            })
 
-        if (!user) {
-            alert("Invalid credentials");
-            return;
+            console.log(data)
+
+            // store token and user
+            localStorage.setItem("user", JSON.stringify(data.user));
+            localStorage.setItem("token", data.accessToken);
+            alert("Login successful")
+
+            setUser(data.user)
+
+            // role routing
+            const role = data.user.role
+
+            if (role === "HEADOFOPS") {
+                navigate("/app");
+            } else if (role === "PROJECTMANAGER") {
+                navigate("/app");
+            }
+        } catch(error) {
+            console.error(error)
+            alert("Invalid credentials")
         }
-
-        setUser(user.role);
-
-        navigate("/app", {
-            state: { user: user.role }
-        });
     };
 
 
@@ -68,12 +62,11 @@ function SignIn() {
                 <div className='px-16 flex flex-col items-start justify-center gap-4'>
                     <h3 className='text-[#101828] text-[24px]/[100%] tracking-[0%] font-semibold'>Log in</h3>
                     <p className='text-[#141414] text-[16px]/[24px] tracking-[0%] font-normal'>Welcome back! Please enter your details</p>
-                    <form action="">
+                    <form action="" onSubmit={handleLogin}>
                         <div className='flex flex-col mb-4'>
                             <label htmlFor="" className='font-medium text-[14px]/[20px] tracking[0%] text-[#090909] mb-1.5'>Email</label>
                             <input 
-                            value={form.email}
-                            onChange={handleChange}
+                            onChange={(e) => setEmail(e.target.value)}
                             type="email" 
                             name='email' 
                             placeholder='Enter your email' 
@@ -82,15 +75,14 @@ function SignIn() {
                         <div className='flex flex-col mb-4'>
                             <label htmlFor="" className='font-medium text-[14px]/[20px] tracking[0%] text-[#090909] mb-1.5'>Password</label>
                             <input 
-                            value={form.password}
-                            onChange={handleChange}
+                            onChange={(e) => setPassword(e.target.value)}
                             type="password" 
                             name='password' 
                             placeholder='........' 
                             className='w-90 h-11 rounded-lg bg-[#FFFFFF] border border-[#D0D5DD] shadow-[#1018280D] shadow-[2px] py-2.5 px-3.5'/>
                         </div>
                         <label htmlFor="" className='text-[14px]/[20px] tracking-[0%] text-[#1B3C4A] font-medium'>Forgot password?</label>
-                        <button onClick={handleLogin} type='submit' className='text-[16px]/[24px] tracking-[0%] text-[#FFFFFF] font-medium bg-[#1B3C4A] shadow-[#1018280D] shadow-[2px] w-90 h-11 rounded-lg py-2.5 px-4.5 mt-2 cursor-pointer' >Sign in</button>
+                        <button type='submit' className='text-[16px]/[24px] tracking-[0%] text-[#FFFFFF] font-medium bg-[#1B3C4A] shadow-[#1018280D] shadow-[2px] w-90 h-11 rounded-lg py-2.5 px-4.5 mt-2 cursor-pointer' >Sign in</button>
                     </form>
                 </div>
             </div>

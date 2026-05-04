@@ -19,6 +19,29 @@ enum Role {
   STAFF
 }
 
+enum WorkflowStatus {
+  LOCKED
+  OPEN
+  IN_PROGRESS
+  SUBMITTED
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum EscalationLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
 //
 // ======================
 // USER + AUTH
@@ -37,6 +60,12 @@ model User {
 
   // PMO relationship
   projects Project[] @relation("PMOProjects")
+
+  // workflow approvals
+  approvals ProjectApproval[]
+
+  // audit logs
+  auditLogs AuditLog[]
 }
 
 //
@@ -46,11 +75,11 @@ model User {
 //
 
 model RefreshToken {
-  id        String   @id @default(uuid())
-  token     String   @unique
+  id    String @id @default(uuid())
+  token String @unique
 
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   expiresAt DateTime
   createdAt DateTime @default(now())
@@ -63,20 +92,28 @@ model RefreshToken {
 //
 
 model Project {
-  id            Int     @id @default(autoincrement())
-  projectName   String
-  clientName    String
-  industry      String?
-  productName   String?
+  id          Int     @id @default(autoincrement())
+  projectName String
+  clientName  String
+  industry    String?
+  productName String?
 
   projectManager String?
   salesId        String?
 
-  // PMO (USER RELATION)
+  // PMO
   pmoId Int?
   pmo   User? @relation("PMOProjects", fields: [pmoId], references: [id])
 
-  status String @default("stage_1")
+  // stage tracking
+  currentStage    Int            @default(1)
+  progressPercent Float          @default(0)
+  status          String         @default("stage_1")
+  workflowStatus  WorkflowStatus @default(OPEN)
+
+  startDate   DateTime?
+  dueDate     DateTime?
+  completedAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -89,6 +126,112 @@ model Project {
   stage6 Stage6UAT?
   stage7 Stage7GoLive?
   stage8 Stage8Closure?
+
+  // workflow tables
+  approvals   ProjectApproval[]
+  timelines   ProjectTimeline[]
+  escalations Escalation[]
+  auditLogs   AuditLog[]
+}
+
+//
+// ======================
+// WORKFLOW APPROVALS
+// ======================
+//
+
+model ProjectApproval {
+  id Int @id @default(autoincrement())
+
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  stage Int
+
+  stageModel String   // "stage2", "stage3", etc.
+
+  status ApprovalStatus @default(PENDING)
+
+  approvedBy Int?
+  approver   User? @relation(fields: [approvedBy], references: [id])
+
+  comment String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId, stage])
+}
+
+//
+// ======================
+// TIMELINE / HISTORY
+// ======================
+//
+
+model ProjectTimeline {
+  id Int @id @default(autoincrement())
+
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  stage  Int
+  action String
+  note   String?
+
+  createdBy Int?
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
+}
+
+//
+// ======================
+// ESCALATIONS
+// ======================
+//
+
+model Escalation {
+  id Int @id @default(autoincrement())
+
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  stage Int
+
+  level    EscalationLevel @default(LOW)
+  reason   String
+  resolved Boolean         @default(false)
+
+  resolvedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([projectId, resolved])
+}
+
+//
+// ======================
+// AUDIT LOGS
+// ======================
+//
+
+model AuditLog {
+  id Int @id @default(autoincrement())
+
+  userId Int?
+  user   User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  projectId Int?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  module  String
+  action  String
+  details String?
+
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
 }
 
 //
@@ -101,6 +244,22 @@ model Stage2ClientEngagement {
   id        Int     @id @default(autoincrement())
   projectId Int     @unique
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  workflowStatus WorkflowStatus @default(OPEN)
+
+  submittedBy Int?
+  submittedAt DateTime?
+
+  approvedBy Int?
+  approvedAt DateTime?
+
+  rejectedBy Int?
+  rejectedAt DateTime?
+  rejectionReason String?
+
+  escalated Boolean @default(false)
+  escalatedBy Int?
+  escalatedAt DateTime?
 
   rfpReviewed Boolean   @default(false)
   rfpDate     DateTime?
@@ -130,6 +289,22 @@ model Stage3Initiation {
   projectId Int     @unique
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
+  workflowStatus WorkflowStatus @default(LOCKED)
+
+  submittedBy Int?
+  submittedAt DateTime?
+
+  approvedBy Int?
+  approvedAt DateTime?
+
+  rejectedBy Int?
+  rejectedAt DateTime?
+  rejectionReason String?
+
+  escalated Boolean @default(false)
+  escalatedBy Int?
+  escalatedAt DateTime?
+
   awardLetterOnFile Boolean @default(false)
   invoiceIssued     Boolean @default(false)
   signedScopeDoc    Boolean @default(false)
@@ -154,6 +329,22 @@ model Stage4Planning {
   projectId Int     @unique
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
+  workflowStatus WorkflowStatus @default(LOCKED)
+
+  submittedBy Int?
+  submittedAt DateTime?
+
+  approvedBy Int?
+  approvedAt DateTime?
+
+  rejectedBy Int?
+  rejectedAt DateTime?
+  rejectionReason String?
+
+  escalated Boolean @default(false)
+  escalatedBy Int?
+  escalatedAt DateTime?
+
   charterSigned    Boolean @default(false)
   projectPlanReady Boolean @default(false)
   riskDefined      Boolean @default(false)
@@ -177,6 +368,22 @@ model Stage5Execution {
   projectId Int     @unique
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
+  workflowStatus WorkflowStatus @default(LOCKED)
+
+  submittedBy Int?
+  submittedAt DateTime?
+
+  approvedBy Int?
+  approvedAt DateTime?
+
+  rejectedBy Int?
+  rejectedAt DateTime?
+  rejectionReason String?
+
+  escalated Boolean @default(false)
+  escalatedBy Int?
+  escalatedAt DateTime?
+
   weeklyReports  Boolean @default(false)
   milestonesMet  Boolean @default(false)
   issueLogActive Boolean @default(false)
@@ -198,6 +405,22 @@ model Stage6UAT {
   id        Int     @id @default(autoincrement())
   projectId Int     @unique
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  workflowStatus WorkflowStatus @default(LOCKED)
+
+  submittedBy Int?
+  submittedAt DateTime?
+
+  approvedBy Int?
+  approvedAt DateTime?
+
+  rejectedBy Int?
+  rejectedAt DateTime?
+  rejectionReason String?
+
+  escalated Boolean @default(false)
+  escalatedBy Int?
+  escalatedAt DateTime?
 
   uatStarted      Boolean @default(false)
   defectsResolved Boolean @default(false)
@@ -221,6 +444,22 @@ model Stage7GoLive {
   projectId Int     @unique
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
+  workflowStatus WorkflowStatus @default(LOCKED)
+
+  submittedBy Int?
+  submittedAt DateTime?
+
+  approvedBy Int?
+  approvedAt DateTime?
+
+  rejectedBy Int?
+  rejectedAt DateTime?
+  rejectionReason String?
+
+  escalated Boolean @default(false)
+  escalatedBy Int?
+  escalatedAt DateTime?
+
   readinessComplete Boolean @default(false)
   cutoverApproved   Boolean @default(false)
   productionLive    Boolean @default(false)
@@ -237,7 +476,7 @@ model Stage7GoLive {
 
 //
 // ======================
-// STAGE 8 (CLOSURE)
+// STAGE 8
 // ======================
 //
 
@@ -245,6 +484,22 @@ model Stage8Closure {
   id        Int     @id @default(autoincrement())
   projectId Int     @unique
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  workflowStatus WorkflowStatus @default(LOCKED)
+
+  submittedBy Int?
+  submittedAt DateTime?
+
+  approvedBy Int?
+  approvedAt DateTime?
+
+  rejectedBy Int?
+  rejectedAt DateTime?
+  rejectionReason String?
+
+  escalated Boolean @default(false)
+  escalatedBy Int?
+  escalatedAt DateTime?
 
   finalReportReady   Boolean @default(false)
   clientHandoverDone Boolean @default(false)

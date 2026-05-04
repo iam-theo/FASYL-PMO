@@ -37,23 +37,17 @@ function MainBody({ user, setUser}) {
     const [isOpen, setIsOpen] = useState(false)
     const [checkedList, setCheckedList] = useState([])
 
-    const [projects, setProjects] = useState(() => {
-        try {
-            return JSON.parse(localStorage.getItem("projects") || "[]");
-        } catch {
-            return [];
-        }
-    });
+    const [projects, setProjects] = useState([]);
     
     const [stageTemplate, setStageTemplate] = useState([])
     const [projectManagers, setProjectManagers] =  useState([])
     const [assignedManager, setAssignedManager] = useState("Select A Project Manager")
     const [isLoading, setisLoading] = useState(true)
     
-    // save projects to localStorage
-    useEffect(() => {
-        localStorage.setItem("projects", JSON.stringify(projects));
-    }, [projects]);
+    // // save projects to localStorage
+    // useEffect(() => {
+    //     localStorage.setItem("projects", JSON.stringify(projects));
+    // }, [projects]);
 
 
     // selected project
@@ -84,11 +78,14 @@ function MainBody({ user, setUser}) {
 
                 setStageTemplate(templateData)
 
-                const projectRes = await fetch("/mockProjects/projects.json")
-                const projectData = await projectRes.json()
+                const { data } = await axios.get("http://10.10.1.20.:9098/api/v1/integration/projects")
+                
+                const projectsData = await data.data
 
-                const initializedProjects = projectData.map(project => ({
+                const initializedProjects = projectsData.map(project => ({
                     ...project,
+                    current_status: "Client ID",
+                    project_manager: "",
                     project_stages: templateData.map(stage => ({
                         status: stage.status,
                         next_status: stage.next_status,
@@ -186,7 +183,7 @@ function MainBody({ user, setUser}) {
             user={user}
             />
 
-            {selectedProject && selectedProject?.project_manager !== "" && (
+            {/* {selectedProject && selectedProject?.project_manager !== "" && (
                 <ViewProjectsBody
                     projects={projects}
                     setProjects={setProjects}
@@ -202,7 +199,7 @@ function MainBody({ user, setUser}) {
                     toggleChecklist={toggleChecklist}
                     user={user}
                 />
-            )}
+            )} */}
 
             {selectedProject && selectedProject?.project_manager === "" && user.role === "HEADOFOPS" && (
                 <AddProjectManager 

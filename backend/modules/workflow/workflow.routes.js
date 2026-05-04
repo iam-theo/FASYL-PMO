@@ -12,40 +12,164 @@ import {
 const router = express.Router();
 
 /* =========================================
-   WORKFLOW ACTION ROUTES (STAGE-BASED)
+   WORKFLOW ROUTES (SWAGGER)
 ========================================= */
 
-// Submit stage for approval
+/**
+ * @swagger
+ * /workflow/submit/{projectId}/{stage}:
+ *   post:
+ *     summary: Submit a project stage for approval
+ *     tags: [Workflow]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Project ID
+ *       - in: path
+ *         name: stage
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Workflow stage name
+ *     responses:
+ *       200:
+ *         description: Stage submitted successfully
+ *       401:
+ *         description: Unauthorized
+ */
 router.post(
   "/submit/:projectId/:stage",
   authMiddleWare,
   submitStage
 );
 
-// Approve stage (HEAD OF OPS)
+/**
+ * @swagger
+ * /workflow/approve/{projectId}/{stage}:
+ *   post:
+ *     summary: Approve a workflow stage (HEAD OF OPS)
+ *     tags: [Workflow]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: stage
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Stage approved successfully
+ *       403:
+ *         description: Forbidden (insufficient role)
+ */
 router.post(
   "/approve/:projectId/:stage",
   authMiddleWare,
   approveStage
 );
 
-// Reject stage
+/**
+ * @swagger
+ * /workflow/reject/{projectId}/{stage}:
+ *   post:
+ *     summary: Reject workflow stage
+ *     tags: [Workflow]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *       - in: path
+ *         name: stage
+ *         required: true
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - reason
+ *             properties:
+ *               reason:
+ *                 type: string
+ *                 example: "Missing financial approval"
+ *     responses:
+ *       200:
+ *         description: Stage rejected successfully
+ *       400:
+ *         description: Validation error
+ */
 router.post(
   "/reject/:projectId/:stage",
   authMiddleWare,
   rejectStage
 );
 
-// Escalate stage
+/**
+ * @swagger
+ * /workflow/escalate/{projectId}/{stage}:
+ *   post:
+ *     summary: Escalate a workflow stage to higher authority
+ *     tags: [Workflow]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: stage
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Stage escalated successfully
+ *       401:
+ *         description: Unauthorized
+ */
 router.post(
   "/escalate/:projectId/:stage",
   authMiddleWare,
   escalateStage
 );
 
-/* =========================================
-   GET FULL WORKFLOW STATE
-========================================= */
+/**
+ * @swagger
+ * /workflow/{projectId}:
+ *   get:
+ *     summary: Get full workflow status for a project
+ *     tags: [Workflow]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Project ID
+ *     responses:
+ *       200:
+ *         description: Workflow status retrieved successfully
+ *       404:
+ *         description: Project not found
+ */
 router.get(
   "/:projectId",
   authMiddleWare,

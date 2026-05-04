@@ -1,4 +1,5 @@
-import {defineConfig} from '@prisma/client';
+import "dotenv/config";
+import {defineConfig} from '@prisma/config';
 
 export default defineConfig({
     datasources: {

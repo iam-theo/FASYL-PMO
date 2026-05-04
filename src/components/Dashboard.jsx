@@ -1,10 +1,11 @@
 import React from 'react'
 import bgSignInTwo from "../assets/bgSignInTwo.jpg"
+import { FaUserFriends, FaTag, FaExclamationCircle } from 'react-icons/fa'
 
 function Dashboard() {
     return (
-        <div className='h-[92%]'>
-            <div className='p-4 cursor-pointer'>
+        <div className=''>
+            <div className='cursor-pointer p-4'>
                 <span className='font-medium text-[14px]/[20px] text-[#949494]'>Home</span> <span className='text-[#949494]'>/</span> <span className='font-medium text-[14px]/[20px] text-[#1B3C4A]'>Dashboard</span>
             </div>
             <div className='flex flex-col gap-2 relative'>
@@ -19,7 +20,7 @@ function Dashboard() {
                                     <p className='font-semibold text-[16px]/[20px] text-[#090909] mb-2'>0</p>
                                     <p className='font-normal text-[14px]/[20px] text-[#636363]'>Projects - Active</p>
                                 </div>
-                                <div><i className="fa-solid fa-user-group fa-lg" style={{ "color": "#cb0acf" }}></i></div>
+                                <FaUserFriends className='text-[#CB0ACF] text-2xl rounded-full'/>
                             </div>
                             <div className='flex items-center justify-between'>
                                 <p className='font-medium text-[14px]/[20px] text-[#1B3C4A] cursor-pointer'>See Details</p>
@@ -33,7 +34,7 @@ function Dashboard() {
                                     <p className='font-semibold text-[16px]/[20px] text-[#090909] mb-2'>0</p>
                                     <p className='font-normal text-[14px]/[20px] text-[#636363]'>Projects - Within Schedule</p>
                                 </div>
-                                <div><i className="fa-solid fa-tags fa-lg" style={{ "color": "#08bd66" }}></i></div>
+                                <FaTag className='text-[#08BD66] text-2xl rounded-full'/>
                             </div>
                             <div className='flex items-center justify-between'>
                                 <p className='font-medium text-[14px]/[20px] text-[#1B3C4A] cursor-pointer'>See Details</p>
@@ -47,7 +48,7 @@ function Dashboard() {
                                     <p className='font-semibold text-[16px]/[20px] text-[#090909] mb-2'>0</p>
                                     <p className='font-normal text-[14px]/[20px] text-[#636363]'>Projects - Overdue</p>
                                 </div>
-                                <div><i className="fa-solid fa-circle-exclamation fa-lg" style={{ "color": "#d18a00" }}></i></div>
+                                <FaExclamationCircle className='text-[#D18A00] text-2xl rounded-full'/>
                             </div>
                             <div className='flex items-center justify-between'>
                                 <p className='font-medium text-[14px]/[20px] text-[#1B3C4A] cursor-pointer'>See Details</p>

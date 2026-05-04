@@ -5,6 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -237,8 +238,8 @@ model RefreshToken{
   id      String    @id @default(uuid())
   token   String    @unique
 
-  userId  String
-  userId  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  Int
+  user  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   expiresAt DateTime
   createdAt DateTime @default(now())

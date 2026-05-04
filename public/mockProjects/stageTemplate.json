@@ -1,0 +1,509 @@
+[
+    {
+        "status": "Client ID",
+        "next_status": "Engagement",
+        "title": "Client Identification",
+        "desc":"Record and qualify the prospective client before any engagemnet begins",
+        "requiredDocs": [
+            {"fileName": "NDA", "fileURL": ""}, 
+            {"fileName": "KYC Form", "fileURL": ""}, 
+            {"fileName": "Opportunity Register", "fileURL": ""}
+        ],
+        "checklist": [
+            {
+                "id": "c1",
+                "title": "Client Name And Legal Entity Confirmed",
+                "desc": "Full registered name required",
+                "isRequired": true
+            },
+            {
+                "id": "c2",
+                "title": "Industry & Regulatory Classification Noted",
+                "desc": "Banking / Fintech / MFB / Other",
+                "isRequired": true
+            },
+            {
+                "id": "c3",
+                "title": "Point of Contact (Sponsor) Identified",
+                "desc": "Executive sponsor name and role",
+                "isRequired": true
+            },
+            {
+                "id": "c4",
+                "title": "Initial Needs Assessment Documented",
+                "desc": "Brief on client pain points / requirements",
+                "isRequired": true
+            },
+            {
+                "id": "c5",
+                "title": "NDA / Confidentiality Agreement Signed",
+                "desc": "Required before sharing any proprietary material",
+                "isRequired": true
+            },
+            {
+                "id": "c6",
+                "title": "KYC / AML Screening Completed",
+                "desc": "Compliance clearance before engagement",
+                "isRequired": true
+            },
+            {
+                "id": "c7",
+                "title": "Conflict Of Interest Check Cleared",
+                "desc": "Internal Compliance sign-off",
+                "isRequired": true
+            },
+            {
+                "id": "c8",
+                "title": "Opportunity Logged In Pipeline Register",
+                "desc": "Assigned opportunity reference number",
+                "isRequired": false
+            }
+        ]
+    },
+    {
+        "status": "Engagement",
+        "next_status": "Initiation",
+        "title": "Client Engagement",
+        "desc":"Pre-sales and proposal activities. All items must be complete before initiation.",
+        "requiredDocs": [
+            {"fileName": "Proposal", "fileURL": ""}, 
+            {"fileName": "Award Letter", "fileURL": ""}, 
+            {"fileName": "Commercial Terms Sheet", "fileURL": ""}
+        ],
+        "checklist": [
+            {
+                "id": "c1",
+                "title": "RFP / Tender Document Received & Reviewed",
+                "desc": "Log receipt date",
+                "isRequired": true
+            },
+            {
+                "id": "c2",
+                "title": "Technical Pre-assessment Conducted",
+                "desc": "Solution architect sign-off",
+                "isRequired": true
+            },
+            {
+                "id": "c3",
+                "title": "Commercial Proposal / Bid Prepared",
+                "desc": "Pricing reviewed by Finance",
+                "isRequired": true
+            },
+            {
+                "id": "c4",
+                "title": "Proposal Reviewed And Approved Internally",
+                "desc": "MD / CEO approval before submission",
+                "isRequired": true
+            },
+            {
+                "id": "c5",
+                "title": "Proposal Submitted To Client",
+                "desc": "Record submission date and version",
+                "isRequired": true
+            },
+            {
+                "id": "c6",
+                "title": "Client Presentations / Demos Completed",
+                "desc": "Log dates and attendees",
+                "isRequired": false
+            },
+            {
+                "id": "c7",
+                "title": "Award / Intent Letter Received From Client",
+                "desc": "Triggers formal project initiation",
+                "isRequired": true
+            },
+            {
+                "id": "c8",
+                "title": "Commercial Terms Negotiated And Agreed",
+                "desc": "Payment milestones, SLA, penalties",
+                "isRequired": true
+            }
+        ]
+    },
+    {
+        "status": "Initiation",
+        "next_status": "Planning",
+        "title": "Project Initiation",
+        "desc":"Mandatory pre-project documents per policy. ",
+        "requiredDocs": [
+            {"fileName": "Project Initiation Form", "fileURL": ""}, 
+            {"fileName": "KYC Form", "fileURL": ""}, 
+            {"fileName": "Award Letter", "fileURL": ""}
+        ],
+        "checklist": [
+            {
+                "id": "c1",
+                "title": "Order / Award Letter On File",
+                "desc": "Original signed copy required",
+                "isRequired": true
+            },
+            {
+                "id": "c2",
+                "title": "Invoice Issued With Agreed Payment TermsR",
+                "desc": "Must match commercial terms sheet",
+                "isRequired": true
+            },
+            {
+                "id": "c3",
+                "title": "Signed RFP / Project Scope Document",
+                "desc": "Client-countersigned copy",
+                "isRequired": true
+            },
+            {
+                "id": "c4",
+                "title": "Evidence Of Advance Payment Received",
+                "desc": "60% advance per policy (or waiver from GCEO)",
+                "isRequired": true
+            },
+            {
+                "id": "c5",
+                "title": "GCEO Waiver / Deferral Obtained (If Applicable)",
+                "desc": "Required if items 1–4 deviate from policy",
+                "isRequired": false
+            },
+            {
+                "id": "c6",
+                "title": "Project Initiation Form Fully Signed",
+                "desc": "Project Head, Legal & Compliance, Finance, Marketing",
+                "isRequired": true
+            },
+            {
+                "id": "c7",
+                "title": "Project ID Assigned",
+                "desc": "Format: [CLIENT]/[STREAM]/[SEQ]",
+                "isRequired": true
+            },
+            {
+                "id": "c8",
+                "title": "Resources Deployed To Project",
+                "desc": "Team roster confirmed",
+                "isRequired": true
+            }
+        ]
+    },
+    {
+        "status": "Planning",
+        "next_status": "Execution",
+        "title": "Project Planning",
+        "desc":"Mandatory pre-project documents per policy. ",
+        "requiredDocs": [
+            {"fileName": "Project Charter", "fileURL": ""}, 
+            {"fileName": "Project Plan", "fileURL": ""}, 
+            {"fileName": "Risk Register", "fileURL": ""},
+            {"fileName": "Comms Plan", "fileURL": ""}
+        ],
+        "checklist": [
+            {
+                "id": "c1",
+                "title": "Project Charter signed By Client",
+                "desc": "Scope, objectives, assumptions, exclusions",
+                "isRequired": true
+            },
+            {
+                "id": "c2",
+                "title": "Project Plan (MS Project / Tracker) shared",
+                "desc": "Milestones, dependencies, critical path",
+                "isRequired": true
+            },
+            {
+                "id": "c3",
+                "title": "Resource Plan Approved",
+                "desc": "Onsite vs remote, third-party vendors",
+                "isRequired": true
+            },
+            {
+                "id": "c4",
+                "title": "Risk Register Initiated",
+                "desc": "Min. 5 risks identified with mitigations",
+                "isRequired": true
+            },
+            {
+                "id": "c5",
+                "title": "Communication Plan Agreed With Client",
+                "desc": "Meeting cadence, escalation matrix",
+                "isRequired": false
+            },
+            {
+                "id": "c6",
+                "title": "Change Management Process Defined",
+                "desc": "CR template, approval workflow",
+                "isRequired": true
+            },
+            {
+                "id": "c7",
+                "title": "Environment Setup Checklist Completed",
+                "desc": "DEV / UAT / PROD access confirmed",
+                "isRequired": true
+            },
+            {
+                "id": "c8",
+                "title": "Data Migration Plan Reviewed",
+                "desc": "Required for core banking projects",
+                "isRequired": false
+            },
+            {
+                "id": "c9",
+                "title": "Kick-off Meeting Held And Minuted",
+                "desc": "Client attendees captured",
+                "isRequired": true
+            }
+        ]
+    },
+    {
+        "status": "Execution",
+        "next_status": "UAT",
+        "title": "Execution & Delivery",
+        "desc":"Track milestones and mandatory sign-offs at each delivery gate. ",
+        "requiredDocs": [
+            {"fileName": "Status Report", "fileURL": ""}, 
+            {"fileName": "CR Form", "fileURL": ""}, 
+            {"fileName": "Issue Log", "fileURL": ""},
+            {"fileName": "SIT Report", "fileURL": ""}
+        ],
+        "checklist": [
+            {
+                "id": "c1",
+                "title": "Weekly Status Reports Issued",
+                "desc": "Format: RAG status, issues, next steps",
+                "isRequired": true
+            },
+            {
+                "id": "c2",
+                "title": "Milestone 1 Sign-Off Received",
+                "desc": "Client-signed delivery acceptance",
+                "isRequired": true
+            },
+            {
+                "id": "c3",
+                "title": "Milestone 2 Sign-Off Received",
+                "desc": "Client-signed delivery acceptance",
+                "isRequired": false
+            },
+            {
+                "id": "c4",
+                "title": "Change Requests Logged And Approved",
+                "desc": "No scope changes without signed CR",
+                "isRequired": true
+            },
+            {
+                "id": "c5",
+                "title": "Issue Log Maintained And Current",
+                "desc": "Open issues reviewed weekly",
+                "isRequired": false
+            },
+            {
+                "id": "c6",
+                "title": "Data Migration Completed (If Applicable)",
+                "desc": "Migration sign-off from client DBA",
+                "isRequired": false
+            },
+            {
+                "id": "c7",
+                "title": "Training Plan Executed",
+                "desc": "Attendance register captured",
+                "isRequired": true
+            },
+            {
+                "id": "c8",
+                "title": "SIT (System Integration Testing) Completed",
+                "desc": "Test results report signed off",
+                "isRequired": true
+            },
+            {
+                "id": "c9",
+                "title": "Pre-UAT Environment Handover Done",
+                "desc": "Access credentials issued to client team",
+                "isRequired": true
+            }
+        ]
+    },
+    {
+        "status": "UAT",
+        "next_status": "Go-Live",
+        "title": "User Acceptance Testing",
+        "desc":"Client-led testing. All critical issues must be resolved before go-live approval. ",
+        "requiredDocs": [
+            {"fileName": "UAT Test Plan", "fileURL": ""}, 
+            {"fileName": "UAT Issues Log", "fileURL": ""}, 
+            {"fileName": "UAT Sign-Off Form", "fileURL": ""}
+        ],
+        "checklist": [
+            {
+                "id": "c1",
+                "title": "UAT Test Plan Approved By Client",
+                "desc": "Scenarios, expected outcomes, acceptance criteria",
+                "isRequired": true
+            },
+            {
+                "id": "c2",
+                "title": "UAT Environment Certified And Stable",
+                "desc": "No open P1 environment issues",
+                "isRequired": true
+            },
+            {
+                "id": "c3",
+                "title": "UAT Issues Log Created And Shared",
+                "desc": "Using UAT Issues Log template",
+                "isRequired": false
+            },
+            {
+                "id": "c4",
+                "title": "All Critical (P1) Issues Resolved",
+                "desc": "Zero open P1 before go-live gate",
+                "isRequired": true
+            },
+            {
+                "id": "c5",
+                "title": "High-priority (P2) Issues Resolved Or Waived",
+                "desc": "Client written waiver required for any P2 carryover",
+                "isRequired": true
+            },
+            {
+                "id": "c6",
+                "title": "UAT Sign-off Document Received From Client",
+                "desc": "Named client signatories required",
+                "isRequired": true
+            },
+            {
+                "id": "c7",
+                "title": "Regression Test Completed Post-Fixes",
+                "desc": "Re-test evidence on file",
+                "isRequired": false
+            }
+        ]
+    },
+    {
+        "status": "Go-Live",
+        "next_status": "Closure",
+        "title": "Go-Live & Cut-Over",
+        "desc":"Final production deployment. Requires all prior stage gets cleared. ",
+        "requiredDocs": [
+            {"fileName": "UAT Test Plan", "fileURL": ""}, 
+            {"fileName": "UAT Issues Log", "fileURL": ""}, 
+            {"fileName": "UAT Sign-Off Form", "fileURL": ""}
+        ],
+        "checklist": [
+            {
+                "id": "c1",
+                "title": "Go-live Readiness Assessment Completed",
+                "desc": "All P1 UAT issues resolved",
+                "isRequired": true
+            },
+            {
+                "id": "c2",
+                "title": "Cut-over Plan Approved",
+                "desc": "Rollback procedure documented",
+                "isRequired": true
+            },
+            {
+                "id": "c3",
+                "title": "Production Environment Validated",
+                "desc": "Infra team sign-off",
+                "isRequired": true
+            },
+            {
+                "id": "c4",
+                "title": "Go-live Authorization From Client Obtained",
+                "desc": "Written approval — email or signed form",
+                "isRequired": true
+            },
+            {
+                "id": "c5",
+                "title": "Cut-over Executed Within Maintenance Window",
+                "desc": "Log start and end time",
+                "isRequired": true
+            },
+            {
+                "id": "c6",
+                "title": "Smoke Tests Passed Post-Cut-Over",
+                "desc": "Critical transactions verified",
+                "isRequired": true
+            },
+            {
+                "id": "c7",
+                "title": "Go-Live Certificate Issued To Client",
+                "desc": "Triggers post-live support SLA",
+                "isRequired": true
+            },
+            {
+                "id": "c8",
+                "title": "Hypercare / Post-Live Support Period Defined",
+                "desc": "Duration, team, escalation path",
+                "isRequired": true
+            },
+            {
+                "id": "c9",
+                "title": "Invoice Milestone Triggered",
+                "desc": "Based on commercial terms",
+                "isRequired": false
+            }
+        ]
+    },
+    {
+        "status": "Closure",
+        "title": "Go-Live & Cut-Over",
+        "desc":"Final production deployment. Requires all prior stage gets cleared. ",
+        "requiredDocs": [
+            {"fileName": "UAT Test Plan", "fileURL": ""}, 
+            {"fileName": "UAT Issues Log", "fileURL": ""}, 
+            {"fileName": "UAT Sign-Off Form", "fileURL": ""}
+        ],
+        "checklist": [
+            {
+                "id": "c1",
+                "title": "Go-live Readiness Assessment Completed",
+                "desc": "All P1 UAT issues resolved",
+                "isRequired": true
+            },
+            {
+                "id": "c2",
+                "title": "Cut-over Plan Approved",
+                "desc": "Rollback procedure documented",
+                "isRequired": true
+            },
+            {
+                "id": "c3",
+                "title": "Production Environment Validated",
+                "desc": "Infra team sign-off",
+                "isRequired": true
+            },
+            {
+                "id": "c4",
+                "title": "Go-live Authorization From Client Obtained",
+                "desc": "Written approval — email or signed form",
+                "isRequired": true
+            },
+            {
+                "id": "c5",
+                "title": "Cut-over Executed Within Maintenance Window",
+                "desc": "Log start and end time",
+                "isRequired": true
+            },
+            {
+                "id": "c6",
+                "title": "Smoke Tests Passed Post-Cut-Over",
+                "desc": "Critical transactions verified",
+                "isRequired": true
+            },
+            {
+                "id": "c7",
+                "title": "Go-Live Certificate Issued To Client",
+                "desc": "Triggers post-live support SLA",
+                "isRequired": true
+            },
+            {
+                "id": "c8",
+                "title": "Hypercare / Post-Live Support Period Defined",
+                "desc": "Duration, team, escalation path",
+                "isRequired": true
+            },
+            {
+                "id": "c9",
+                "title": "Invoice Milestone Triggered",
+                "desc": "Based on commercial terms",
+                "isRequired": false
+            }
+        ]
+    }
+]

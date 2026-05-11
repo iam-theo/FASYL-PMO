@@ -4,46 +4,49 @@ const prisma = new PrismaClient();
 
 const TOTAL_STAGES = 8;
 
-const calcProgress = (stage) => (stage / TOTAL_STAGES) * 100;
+/* =========================================
+   PROGRESS CALCULATION
+========================================= */
+const calcProgress = (stage) => {
+  return (stage / TOTAL_STAGES) * 100;
+};
 
 /* =========================================
-   CREATE PROJECT + INITIALIZE WORKFLOW
+   CREATE PROJECT + WORKFLOW INIT
 ========================================= */
 export const createProjectService = async (data, user) => {
   const startStage = 2;
 
-  // =========================
-  // DTO MAPPING LAYER (IMPORTANT)
-  // Swagger → Service → Prisma alignment
-  // =========================
-  const projectData = {
-    projectName: data.name, // 🔥 Swagger field
-    clientName: data.clientName,
-    industry: data.industry,
-    productName: data.productName,
-    projectManager: data.projectManager,
+  const project = await prisma.project.create({
+    data: {
+      projectName: data.name,
+      clientName: data.clientName,
+      industry: data.industry,
+      productName: data.productName,
+      description: data.description || null,
 
-    pmoId: user?.id, // from JWT
+      // 🔐 PM assignment via EMAIL (source of truth)
+      projectManagerEmail: data.projectManagerEmail || null,
 
-    currentStage: startStage,
-    status: `stage_${startStage}`,
-    workflowStatus: WorkflowStatus.OPEN,
-    progressPercent: calcProgress(startStage),
+      // PMO creator
+      pmoId: user.id,
 
-    // =========================
-    // INITIAL WORKFLOW STAGES
-    // =========================
-    stage2: { create: { workflowStatus: WorkflowStatus.OPEN } },
-    stage3: { create: { workflowStatus: WorkflowStatus.LOCKED } },
-    stage4: { create: { workflowStatus: WorkflowStatus.LOCKED } },
-    stage5: { create: { workflowStatus: WorkflowStatus.LOCKED } },
-    stage6: { create: { workflowStatus: WorkflowStatus.LOCKED } },
-    stage7: { create: { workflowStatus: WorkflowStatus.LOCKED } },
-    stage8: { create: { workflowStatus: WorkflowStatus.LOCKED } },
-  };
+      currentStage: startStage,
+      status: `stage_${startStage}`,
+      workflowStatus: WorkflowStatus.OPEN,
+      progressPercent: calcProgress(startStage),
 
-  return await prisma.project.create({
-    data: projectData,
+      /* =========================
+         WORKFLOW INITIALIZATION
+      ========================= */
+      stage2: { create: { workflowStatus: WorkflowStatus.OPEN } },
+      stage3: { create: { workflowStatus: WorkflowStatus.LOCKED } },
+      stage4: { create: { workflowStatus: WorkflowStatus.LOCKED } },
+      stage5: { create: { workflowStatus: WorkflowStatus.LOCKED } },
+      stage6: { create: { workflowStatus: WorkflowStatus.LOCKED } },
+      stage7: { create: { workflowStatus: WorkflowStatus.LOCKED } },
+      stage8: { create: { workflowStatus: WorkflowStatus.LOCKED } },
+    },
 
     include: {
       stage2: true,
@@ -55,13 +58,22 @@ export const createProjectService = async (data, user) => {
       stage8: true,
     },
   });
+
+  return project;
 };
 
 /* =========================================
-   GET ALL PROJECTS
+   GET ALL PROJECTS (ROLE-AWARE)
 ========================================= */
 export const getProjectsService = async (user) => {
+  const where = {};
+
+  if (user.role === "PROJECTMANAGER") {
+    where.projectManagerEmail = user.email;
+  }
+
   return await prisma.project.findMany({
+    where,
     include: {
       stage2: true,
       stage3: true,
@@ -73,13 +85,13 @@ export const getProjectsService = async (user) => {
     },
   });
 };
-
 /* =========================================
    GET PROJECT BY ID
 ========================================= */
 export const getProjectByIdService = async (id) => {
   return await prisma.project.findUnique({
     where: { id: Number(id) },
+
     include: {
       stage2: true,
       stage3: true,
@@ -100,12 +112,16 @@ export const updateProjectService = async (id, data) => {
     where: { id: Number(id) },
 
     data: {
-      // optional safe mapping
       ...(data.name && { projectName: data.name }),
       ...(data.clientName && { clientName: data.clientName }),
       ...(data.industry && { industry: data.industry }),
       ...(data.productName && { productName: data.productName }),
-      ...(data.projectManager && { projectManager: data.projectManager }),
+      ...(data.description && { description: data.description }),
+
+      // 🔐 allow reassignment by email
+      ...(data.projectManagerEmail !== undefined && {
+        projectManagerEmail: data.projectManagerEmail,
+      }),
     },
   });
 };

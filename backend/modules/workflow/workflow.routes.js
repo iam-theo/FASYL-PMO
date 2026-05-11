@@ -5,8 +5,7 @@ import {
   submitStage,
   approveStage,
   rejectStage,
-  escalateStage,
-  getWorkflowStatus,
+  getStageState
 } from "./workflow.controller.js";
 
 const router = express.Router();
@@ -17,7 +16,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /workflow/submit/{projectId}/{stage}:
+ * /workflow/submit/{projectId}/{stageId}:
  *   post:
  *     summary: Submit a project stage for approval
  *     tags: [Workflow]
@@ -31,11 +30,11 @@ const router = express.Router();
  *           type: string
  *         description: Project ID
  *       - in: path
- *         name: stage
+ *         name: stageId
  *         required: true
  *         schema:
  *           type: string
- *         description: Workflow stage name
+ *         description: Workflow stage ID
  *     responses:
  *       200:
  *         description: Stage submitted successfully
@@ -43,14 +42,14 @@ const router = express.Router();
  *         description: Unauthorized
  */
 router.post(
-  "/submit/:projectId/:stage",
+  "/submit/:projectId/:stageId",
   authMiddleWare,
   submitStage
 );
 
 /**
  * @swagger
- * /workflow/approve/{projectId}/{stage}:
+ * /workflow/approve/{projectId}/{stageId}:
  *   post:
  *     summary: Approve a workflow stage (HEAD OF OPS)
  *     tags: [Workflow]
@@ -63,7 +62,7 @@ router.post(
  *         schema:
  *           type: string
  *       - in: path
- *         name: stage
+ *         name: stageId
  *         required: true
  *         schema:
  *           type: string
@@ -74,14 +73,14 @@ router.post(
  *         description: Forbidden (insufficient role)
  */
 router.post(
-  "/approve/:projectId/:stage",
+  "/approve/:projectId/:stageId",
   authMiddleWare,
   approveStage
 );
 
 /**
  * @swagger
- * /workflow/reject/{projectId}/{stage}:
+ * /workflow/reject/{projectId}/{stageId}:
  *   post:
  *     summary: Reject workflow stage
  *     tags: [Workflow]
@@ -91,9 +90,13 @@ router.post(
  *       - in: path
  *         name: projectId
  *         required: true
+ *         schema:
+ *           type: string
  *       - in: path
- *         name: stage
+ *         name: stageId
  *         required: true
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -113,40 +116,9 @@ router.post(
  *         description: Validation error
  */
 router.post(
-  "/reject/:projectId/:stage",
+  "/reject/:projectId/:stageId",
   authMiddleWare,
   rejectStage
-);
-
-/**
- * @swagger
- * /workflow/escalate/{projectId}/{stage}:
- *   post:
- *     summary: Escalate a workflow stage to higher authority
- *     tags: [Workflow]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: projectId
- *         required: true
- *         schema:
- *           type: string
- *       - in: path
- *         name: stage
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Stage escalated successfully
- *       401:
- *         description: Unauthorized
- */
-router.post(
-  "/escalate/:projectId/:stage",
-  authMiddleWare,
-  escalateStage
 );
 
 /**
@@ -171,9 +143,8 @@ router.post(
  *         description: Project not found
  */
 router.get(
-  "/:projectId",
+  "/:projectId/:stageId",
   authMiddleWare,
-  getWorkflowStatus
+  getStageState
 );
-
 export default router;

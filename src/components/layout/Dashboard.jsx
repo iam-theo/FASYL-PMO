@@ -1,5 +1,5 @@
 import React from 'react'
-import bgSignInTwo from "../assets/bgSignInTwo.jpg"
+import bgSignInTwo from "../../assets/bgSignInTwo.jpg"
 import { FaUserFriends, FaTag, FaExclamationCircle } from 'react-icons/fa'
 
 function Dashboard() {
@@ -18,7 +18,7 @@ function Dashboard() {
                             <div className='flex justify-between'>
                                 <div>
                                     <p className='font-semibold text-[16px]/[20px] text-[#090909] mb-2'>0</p>
-                                    <p className='font-normal text-[14px]/[20px] text-[#636363]'>Projects - Active</p>
+                                    <p className='font-normal text-[14px]/[20px] text-[#636363]'>Projects - All</p>
                                 </div>
                                 <FaUserFriends className='text-[#CB0ACF] text-2xl rounded-full'/>
                             </div>

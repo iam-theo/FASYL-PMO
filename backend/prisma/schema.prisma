@@ -129,9 +129,40 @@ model AuditLog {
   @@index([projectId])
 }
 
+model Stage1ClientIdentification {
+  id                  Int            @id @default(autoincrement())
+  projectId           Int            @unique
+  stageName           String 
+  clientNameConfirmed Boolean         @default(false)
+  industryClass       Boolean         @default(false)
+  contactIdentified   Boolean         @default(false)
+  initialNeedsDocumented Boolean      @default(false)
+  confidentialitySigned Boolean       @default(false)
+  screeningCompleted  Boolean         @default(false)
+  KYCAMLScreeningCompleted Boolean    @default(false)
+  opportunityLogged   Boolean         @default(false)
+  completed         Boolean        @default(false)
+  completedAt       DateTime?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  workflowStatus    WorkflowStatus @default(LOCKED)
+  approvedAt        DateTime?
+  approvedBy        Int?
+  escalated         Boolean        @default(false)
+  escalatedAt       DateTime?
+  escalatedBy       Int?
+  rejectedAt        DateTime?
+  rejectedBy        Int?
+  rejectionReason   String?
+  submittedAt       DateTime?
+  submittedBy       Int?
+  project           Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+}
 model Stage2ClientEngagement {
   id                  Int            @id @default(autoincrement())
   projectId           Int            @unique
+  stageName           String         
   rfpReviewed         Boolean        @default(false)
   rfpDate             DateTime?
   technicalAssessment Boolean        @default(false)
@@ -160,6 +191,7 @@ model Stage2ClientEngagement {
 model Stage3Initiation {
   id                Int            @id @default(autoincrement())
   projectId         Int            @unique
+  stageName         String
   awardLetterOnFile Boolean        @default(false)
   invoiceIssued     Boolean        @default(false)
   signedScopeDoc    Boolean        @default(false)
@@ -186,6 +218,7 @@ model Stage3Initiation {
 model Stage4Planning {
   id               Int            @id @default(autoincrement())
   projectId        Int            @unique
+  stageName        String
   charterSigned    Boolean        @default(false)
   projectPlanReady Boolean        @default(false)
   riskDefined      Boolean        @default(false)
@@ -211,6 +244,7 @@ model Stage4Planning {
 model Stage5Execution {
   id              Int            @id @default(autoincrement())
   projectId       Int            @unique
+  stageName       String
   weeklyReports   Boolean        @default(false)
   milestonesMet   Boolean        @default(false)
   issueLogActive  Boolean        @default(false)
@@ -235,6 +269,7 @@ model Stage5Execution {
 model Stage6UAT {
   id              Int            @id @default(autoincrement())
   projectId       Int            @unique
+  stageName       String
   uatStarted      Boolean        @default(false)
   defectsResolved Boolean        @default(false)
   clientSignoff   Boolean        @default(false)
@@ -259,6 +294,7 @@ model Stage6UAT {
 model Stage7GoLive {
   id                Int            @id @default(autoincrement())
   projectId         Int            @unique
+  stageName         String
   readinessComplete Boolean        @default(false)
   cutoverApproved   Boolean        @default(false)
   productionLive    Boolean        @default(false)
@@ -285,6 +321,7 @@ model Stage7GoLive {
 model Stage8Closure {
   id                 Int            @id @default(autoincrement())
   projectId          Int            @unique
+  stageName          String
   finalReportReady   Boolean        @default(false)
   clientHandoverDone Boolean        @default(false)
   documentationDone  Boolean        @default(false)

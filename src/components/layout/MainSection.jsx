@@ -1,24 +1,40 @@
 import React from 'react'
 import { useEffect, useState, useRef } from 'react'
-import Dashboard from './Dashboard'
-import Projects from './Projects'
-import ViewProjectsBody from './ViewProjectsBody'
+import Dashboard from '../Dashboard'
+import Projects from '../projects/Projects'
+import ViewProjectsBody from '../projects/ViewProjectsBody'
 import { FaBell, FaUserTag } from 'react-icons/fa'
 
 function MainSection({
     activeTab, 
     setSelectedProject, 
     projects, 
-    user 
+    user,
+    isLoading 
     }) {
 
     const [currentPage, setCurrentPage] = useState(1)
 
+    const safeProjects = Array.isArray(projects) ? projects : []
+
+    const filteredProjects = safeProjects.filter((project) => {
+        if (user?.role === "HEADOFOPS") {
+            return true; // sees everything
+        }
+
+        if (user?.role === "PROJECTMANAGER") {
+            return project.projectManager === user.email; 
+            // only projects assigned
+        }
+
+        return false;
+    });
+
     
     const itemsPerPage = 10
-    const totalPages = Math.ceil(projects.length / itemsPerPage)
+    const totalPages = Math.ceil(filteredProjects.length / itemsPerPage)
     const startIndex = (currentPage -1) * itemsPerPage
-    const currentProjects = projects.slice(
+    const currentProjects = filteredProjects.slice(
         startIndex, startIndex + itemsPerPage
     )
 
@@ -64,6 +80,7 @@ function MainSection({
                         itemsPerPage={itemsPerPage}
                         setSelectedProject={setSelectedProject}
                         user={user} 
+                        isLoading={isLoading}
                     />
                 )}
             </section>

@@ -9,8 +9,13 @@ function Projects({
     setCurrentPage, 
     itemsPerPage,
     setSelectedProject, 
-    user 
+    user,
+    isLoading
     }) {
+
+        console.log(projects)
+
+    if(isLoading) return <div className={`w-18 h-18 rounded-full border-8 border-[#636363] border-t-[#1B3C4A] absolute top-50 animate-spin`}></div>
 
     return (
         <div className='px-4 pt-4 flex flex-col h-screen'>
@@ -51,10 +56,11 @@ function Projects({
                             <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Product</th>
                             {
                                 user?.role === "HEADOFOPS" && (
-                                    <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Project Manager</th>
+                                    <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>PM</th>
                                 )
                             }
                             <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Status</th>
+                            <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Stage</th>
                             <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'></th>
                         </tr>
                     </thead>
@@ -63,17 +69,20 @@ function Projects({
                         {
                             currentProjects.map((project, index) => (
                                 <tr key={index} className='border-y border-[#0000000D]'>
-                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.projectId}</td>
-                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.name}</td>
-                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.client.name}</td>
-                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.product.name}</td>
+                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.id}</td>
+                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.projectName}</td>
+                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.clientName}</td>
+                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.productName}</td>
                                     {
                                         user?.role === "HEADOFOPS" && (
-                                            <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.project_manager === "" ? "Not Assigned" : project.project_manager}</td>
+                                            <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.project_manager === "" ? "Not Assigned" : project.projectManager}</td>
                                         )
                                     }
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#FFFFFF] align-middle'>
-                                        <p className='rounded-2xl py-1 px-2 bg-[#228CEE] text-center'>{project.current_status}</p>
+                                        <p className='rounded-2xl py-1 px-2 bg-[#228CEE] text-center'>{project.workflowStatus}</p>
+                                    </td>
+                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#FFFFFF] align-middle'>
+                                        <p className='rounded-2xl py-1 px-2 bg-[#228CEE] text-center'>{project.currentStage}</p>
                                     </td>
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] relative justify-center align-middle'>
                                         <i onClick={() => setSelectedProject(project)} className="fa-solid fa-ellipsis-vertical fa-lg cursor-pointer text-[#98a2b3] hover:text-[#1B3C4A]"></i>

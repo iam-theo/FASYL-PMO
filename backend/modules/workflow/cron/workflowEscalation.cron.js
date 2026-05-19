@@ -1,96 +1,114 @@
 import cron from "node-cron";
-import { PrismaClient } from "@prisma/client";
+import dotenv from "dotenv";
+import path from "path";
+import { prisma } from "../../../prisma/prisma.client.js";
 
-const prisma = new PrismaClient();
+/* =========================
+   ENV SAFETY (CRITICAL)
+========================= */
+dotenv.config({
+  path: path.resolve(process.cwd(), "backend/.env"),
+});
 
 /* =========================
    CONFIGURATION
 ========================= */
 const ESCALATION_THRESHOLD_HOURS = 24;
+const CRON_SCHEDULE = "0 * * * *"; // every hour
 
 /* =========================
-   MAIN ESCALATION JOB
+   ESCALATION LOGIC
 ========================= */
 const runEscalationCheck = async () => {
   console.log("🔄 Running workflow escalation check...");
 
-  const cutoffDate = new Date();
-  cutoffDate.setHours(cutoffDate.getHours() - ESCALATION_THRESHOLD_HOURS);
+  try {
+    const cutoffDate = new Date();
+    cutoffDate.setHours(cutoffDate.getHours() - ESCALATION_THRESHOLD_HOURS);
 
-  /* =========================
-     FIND STALE APPROVALS
-  ========================= */
-  const pendingApprovals = await prisma.projectApproval.findMany({
-    where: {
-      status: "PENDING",
-      createdAt: {
-        lt: cutoffDate,
+    const pendingApprovals = await prisma.projectApproval.findMany({
+      where: {
+        status: "PENDING",
+        createdAt: { lt: cutoffDate },
       },
-    },
-    include: {
-      project: true,
-    },
-  });
-
-  if (pendingApprovals.length === 0) {
-    console.log("✅ No escalations required");
-    return;
-  }
-
-  console.log(`⚠️ Found ${pendingApprovals.length} stale approvals`);
-
-  for (const approval of pendingApprovals) {
-    const { projectId, stage } = approval;
-
-    /* =========================
-       ESCALATE ENTRY
-    ========================= */
-    await prisma.escalation.create({
-      data: {
-        projectId,
-        stage,
-        level: "HIGH",
-        reason: "Approval timeout exceeded 24 hours",
+      include: {
+        project: true,
       },
     });
 
-    /* =========================
-       UPDATE PROJECT STATUS
-    ========================= */
-    await prisma.project.update({
-      where: { id: projectId },
-      data: {
-        workflowStatus: "IN_PROGRESS",
-      },
-    });
+    if (!pendingApprovals.length) {
+      console.log("✅ No escalations required");
+      return;
+    }
 
-    /* =========================
-       AUDIT LOG
-    ========================= */
-    await prisma.auditLog.create({
-      data: {
-        projectId,
-        module: "WORKFLOW_ESCALATION",
-        action: "AUTO_ESCALATION",
-        details: `Stage ${stage} auto-escalated due to timeout`,
-      },
-    });
+    console.log(`⚠️ Found ${pendingApprovals.length} stale approvals`);
 
-    console.log(`🚨 Escalated Project ${projectId} - Stage ${stage}`);
+    for (const approval of pendingApprovals) {
+      const { projectId, stage, id: approvalId } = approval;
+
+      /* =========================
+         PREVENT DUPLICATE ESCALATION
+      ========================= */
+      const alreadyEscalated = await prisma.escalation.findFirst({
+        where: {
+          projectId,
+          stage,
+          reason: "Approval timeout exceeded 24 hours",
+        },
+      });
+
+      if (alreadyEscalated) {
+        console.log(`⏭ Skipping duplicate escalation for Project ${projectId}`);
+        continue;
+      }
+
+      /* =========================
+         CREATE ESCALATION
+      ========================= */
+      await prisma.escalation.create({
+        data: {
+          projectId,
+          stage,
+          level: "HIGH",
+          reason: "Approval timeout exceeded 24 hours",
+        },
+      });
+
+      /* =========================
+         UPDATE PROJECT STATUS
+      ========================= */
+      await prisma.project.update({
+        where: { id: projectId },
+        data: {
+          workflowStatus: "IN_PROGRESS",
+        },
+      });
+
+      /* =========================
+         AUDIT LOG
+      ========================= */
+      await prisma.auditLog.create({
+        data: {
+          projectId,
+          module: "WORKFLOW_ESCALATION",
+          action: "AUTO_ESCALATION",
+          details: `Stage ${stage} auto-escalated due to timeout`,
+        },
+      });
+
+      console.log(`🚨 Escalated Project ${projectId} - Stage ${stage}`);
+    }
+  } catch (err) {
+    console.error("❌ Escalation Job Failed:", err);
   }
 };
 
 /* =========================
-   SCHEDULER
+   START CRON
 ========================= */
 export const startWorkflowEscalationCron = () => {
-  // runs every hour
-  cron.schedule("0 * * * *", async () => {
-    try {
-      await runEscalationCheck();
-    } catch (err) {
-      console.error("❌ Escalation Cron Error:", err.message);
-    }
+  cron.schedule(CRON_SCHEDULE, async () => {
+    await runEscalationCheck();
   });
 
   console.log("⏰ Workflow escalation cron started (hourly)");

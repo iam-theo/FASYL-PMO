@@ -1,26 +1,29 @@
 export const allowRoles = (...allowedRoles) => {
   return (req, res, next) => {
     try {
-      const user = req.user;
+      const { role } = req.user || {};
 
-      if (!user || !user.role) {
+      if (!role) {
         return res.status(401).json({
-          message: "Unauthorized: no user role found",
+          message: "Unauthorized: missing role",
         });
       }
 
-      if (!allowedRoles.includes(user.role)) {
+      // ✅ optional: system admin override (future-proof)
+      const isAdmin = role === "ADMIN";
+
+      if (!allowedRoles.includes(role) && !isAdmin) {
         return res.status(403).json({
           message: "Forbidden: insufficient permissions",
+          userRole: role,
           requiredRoles: allowedRoles,
-          userRole: user.role,
         });
       }
 
       next();
     } catch (err) {
       return res.status(500).json({
-        message: "RBAC middleware error",
+        message: "RBAC middleware failure",
         error: err.message,
       });
     }

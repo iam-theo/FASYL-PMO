@@ -9,6 +9,7 @@ export const signAccessToken = (user) => {
   return jwt.sign(
     {
       userId: user.id,
+      email: user.email,   // 🔥 ADD THIS
       role: user.role,
     },
     process.env.JWT_SECRET,

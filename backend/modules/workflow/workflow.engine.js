@@ -1,254 +1,247 @@
-import { PrismaClient } from "@prisma/client";
-import { getWorkflowStatusFromStage } from "./workflow.utils.js";
-
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-/* =========================================
-   HELPERS
-========================================= */
+const { getStageModel } = require("./workflow.utils");
 
-const assertProjectExists = (project) => {
-  if (!project) throw new Error("Project not found");
+/**
+ * =====================================
+ * GET STAGE DATA (SOURCE OF TRUTH)
+ * =====================================
+ */
+exports.getStageData = async (projectId, stageId) => {
+  const model = getStageModel(stageId);
+
+  if (!model) throw new Error("Invalid stage mapping");
+
+  return prisma[model].findUnique({
+    where: { projectId }
+  });
 };
 
-const assertStageMatch = (project, stage) => {
-  if (project.currentStage !== stage) {
-    throw new Error(
-      `Invalid stage. Project is currently at stage ${project.currentStage}`
-    );
+/**
+ * =====================================
+ * UPDATE STAGE DATA (CHECKLIST + DOCS)
+ * =====================================
+ */
+exports.updateStageData = async (projectId, stageId, data) => {
+  const model = getStageModel(stageId);
+
+  if (!model) throw new Error("Invalid stage mapping");
+
+  return prisma[model].update({
+    where: { projectId },
+    data
+  });
+};
+
+/**
+ * =====================================
+ * VALIDATE STAGE BEFORE SUBMISSION
+ * =====================================
+ */
+const validateStage = (stageData) => {
+  if (!stageData) return false;
+
+  // Checklist validation (dynamic safety)
+  const checklistValid =
+    !stageData.checklistRequired ||
+    stageData.checklistRequired === true;
+
+  // Document validation (if present)
+  const docsValid =
+    !stageData.requiredDocs ||
+    stageData.requiredDocs.every(doc => doc.fileURL && doc.fileURL !== "");
+
+  return checklistValid && docsValid;
+};
+
+/**
+ * =====================================
+ * CALCULATE PROJECT PROGRESS
+ * =====================================
+ */
+const calculateProgress = (currentStage, totalStages = 8) => {
+  return Math.round((currentStage / totalStages) * 100);
+};
+
+/**
+ * =====================================
+ * SUBMIT STAGE (PM ACTION)
+ * =====================================
+ */
+exports.submitStage = async ({ projectId, stageId, userId }) => {
+  const stageData = await this.getStageData(projectId, stageId);
+
+  if (!validateStage(stageData)) {
+    throw new Error("Stage validation failed. Complete checklist & uploads.");
   }
-};
 
-const getNextStage = (stage) => (stage < 8 ? stage + 1 : 8);
-
-const logAudit = async ({ projectId, userId, action, details }) => {
-  return prisma.auditLog.create({
+  await prisma.projectApproval.create({
     data: {
       projectId,
-      userId: userId || null,
-      module: "WORKFLOW_ENGINE",
-      action,
-      details,
-    },
+      stage: stageId,
+      status: "PENDING",
+      stageModel: `stage_${stageId}`
+    }
   });
-};
 
-const updateProject = async ({
-  projectId,
-  stage,
-  workflowStatus,
-}) => {
-  return prisma.project.update({
+  await prisma.project.update({
     where: { id: projectId },
     data: {
-      currentStage: stage,
-      status: `stage_${stage}`,
-      workflowStatus,
-      progressPercent: (stage / 8) * 100,
-    },
+      workflowStatus: "SUBMITTED"
+    }
+  });
+
+  return prisma.project.findUnique({
+    where: { id: projectId }
   });
 };
 
-/* =========================================
-   SUBMIT STAGE
-   (PM submits for approval)
-========================================= */
+/**
+ * =====================================
+ * APPROVE STAGE (HEAD OF OPS)
+ * =====================================
+ */
+exports.approveStage = async ({ projectId, stageId, userId }) => {
+  const model = getStageModel(stageId);
 
-export const submitStageEngine = async (projectId, stage, userId) => {
-  const project = await prisma.project.findUnique({
-    where: { id: projectId },
-  });
-
-  assertProjectExists(project);
-  assertStageMatch(project, stage);
-
-  // prevent duplicate submission
-  const existing = await prisma.projectApproval.findFirst({
-    where: { projectId, stage },
-  });
-
-  if (existing && existing.status === "PENDING") {
-    throw new Error("Stage already submitted");
-  }
-
-  await prisma.projectApproval.upsert({
+  const approval = await prisma.projectApproval.findFirst({
     where: {
-      id: existing?.id || 0,
-    },
-    update: {
-      status: "PENDING",
-    },
-    create: {
       projectId,
-      stage,
-      status: "PENDING",
-    },
+      stage: stageId,
+      status: "PENDING"
+    }
   });
 
-  await logAudit({
-    projectId,
-    userId,
-    action: "STAGE_SUBMITTED",
-    details: `Stage ${stage} submitted`,
+  if (!approval) {
+    throw new Error("No pending approval found");
+  }
+
+  const nextStage = stageId + 1;
+
+  /**
+   * 1. Update Stage Table
+   */
+  await prisma[model].update({
+    where: { projectId },
+    data: {
+      approvedAt: new Date(),
+      approvedBy: userId,
+      workflowStatus: "APPROVED",
+      completed: true,
+      completedAt: new Date()
+    }
   });
 
-  return {
-    message: "Stage submitted successfully",
-  };
-};
-
-/* =========================================
-   APPROVE STAGE
-   (HEAD OF OPS ONLY)
-========================================= */
-
-export const approveStageEngine = async (projectId, stage, userId) => {
-  const project = await prisma.project.findUnique({
-    where: { id: projectId },
-  });
-
-  assertProjectExists(project);
-  assertStageMatch(project, stage);
-
-  const nextStage = getNextStage(stage);
-
-  // mark approval
-  await prisma.projectApproval.updateMany({
-    where: { projectId, stage },
+  /**
+   * 2. Update Approval Record
+   */
+  await prisma.projectApproval.update({
+    where: { id: approval.id },
     data: {
       status: "APPROVED",
       approvedBy: userId,
-    },
+      updatedAt: new Date()
+    }
   });
 
-  // move workflow forward
-  await updateProject({
-    projectId,
-    stage: nextStage,
-    workflowStatus: getWorkflowStatusFromStage(nextStage),
+  /**
+   * 3. Update Project Master Record
+   */
+  await prisma.project.update({
+    where: { id: projectId },
+    data: {
+      currentStage: nextStage,
+      workflowStatus: "APPROVED",
+      progressPercent: calculateProgress(nextStage)
+    }
   });
 
-  await logAudit({
-    projectId,
-    userId,
-    action: "STAGE_APPROVED",
-    details: `Stage ${stage} → Stage ${nextStage}`,
+  return prisma.project.findUnique({
+    where: { id: projectId }
   });
-
-  return {
-    message: "Stage approved",
-    currentStage: nextStage,
-  };
 };
 
-/* =========================================
-   REJECT STAGE
-========================================= */
+/**
+ * =====================================
+ * REJECT STAGE (HEAD OF OPS)
+ * =====================================
+ */
+exports.rejectStage = async ({ projectId, stageId, userId, reason }) => {
+  const model = getStageModel(stageId);
 
-export const rejectStageEngine = async (
-  projectId,
-  stage,
-  reason,
-  userId
-) => {
-  if (!reason) throw new Error("Rejection reason required");
-
-  const project = await prisma.project.findUnique({
-    where: { id: projectId },
+  const approval = await prisma.projectApproval.findFirst({
+    where: {
+      projectId,
+      stage: stageId,
+      status: "PENDING"
+    }
   });
 
-  assertProjectExists(project);
-  assertStageMatch(project, stage);
+  if (!approval) {
+    throw new Error("No pending approval found");
+  }
 
-  await prisma.projectApproval.updateMany({
-    where: { projectId, stage },
+  /**
+   * 1. Update Stage Table
+   */
+  await prisma[model].update({
+    where: { projectId },
+    data: {
+      rejectedAt: new Date(),
+      rejectedBy: userId,
+      rejectionReason: reason,
+      workflowStatus: "REJECTED"
+    }
+  });
+
+  /**
+   * 2. Update Approval Record
+   */
+  await prisma.projectApproval.update({
+    where: { id: approval.id },
     data: {
       status: "REJECTED",
+      approvedBy: userId,
       comment: reason,
-    },
+      updatedAt: new Date()
+    }
   });
 
-  // IMPORTANT: do NOT break workflow state
-  await updateProject({
-    projectId,
-    stage,
-    workflowStatus: "IN_PROGRESS",
-  });
-
-  await logAudit({
-    projectId,
-    userId,
-    action: "STAGE_REJECTED",
-    details: `Stage ${stage} rejected: ${reason}`,
-  });
-
-  return {
-    message: "Stage rejected",
-    currentStage: stage,
-  };
-};
-
-/* =========================================
-   ESCALATE STAGE
-========================================= */
-
-export const escalateStageEngine = async (
-  projectId,
-  stage,
-  userId,
-  reason
-) => {
-  const project = await prisma.project.findUnique({
+  /**
+   * 3. Update Project Master Record
+   */
+  await prisma.project.update({
     where: { id: projectId },
-  });
-
-  assertProjectExists(project);
-  assertStageMatch(project, stage);
-
-  await prisma.escalation.create({
     data: {
-      projectId,
-      stage,
-      reason,
-      level: "MEDIUM",
-    },
+      workflowStatus: "REJECTED"
+    }
   });
 
-  await logAudit({
-    projectId,
-    userId,
-    action: "STAGE_ESCALATED",
-    details: `Stage ${stage} escalated: ${reason}`,
+  return prisma.project.findUnique({
+    where: { id: projectId }
   });
-
-  return {
-    message: "Stage escalated successfully",
-  };
 };
 
-/* =========================================
-   WORKFLOW STATE FETCHER
-========================================= */
+/**
+ * =====================================
+ * GET FULL STAGE STATE (FRONTEND USE)
+ * =====================================
+ */
+exports.getFullStageState = async (projectId, stageId) => {
+  const model = getStageModel(stageId);
 
-export const getWorkflowStateEngine = async (projectId) => {
-  const project = await prisma.project.findUnique({
-    where: { id: projectId },
-    include: {
-      approvals: true,
-      escalations: true,
-      auditLogs: true,
-    },
-  });
-
-  assertProjectExists(project);
+  const [project, stageData, approval] = await Promise.all([
+    prisma.project.findUnique({ where: { id: projectId } }),
+    prisma[model].findUnique({ where: { projectId } }),
+    prisma.projectApproval.findFirst({
+      where: { projectId, stage: stageId }
+    })
+  ]);
 
   return {
-    projectId,
-    currentStage: project.currentStage,
-    status: project.status,
-    workflowStatus: project.workflowStatus,
-    progress: project.progressPercent,
-    approvals: project.approvals,
-    escalations: project.escalations,
+    project,
+    stageData,
+    approval
   };
 };

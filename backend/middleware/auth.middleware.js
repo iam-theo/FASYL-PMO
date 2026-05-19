@@ -2,35 +2,42 @@ import jwt from "jsonwebtoken";
 
 export const authMiddleWare = (req, res, next) => {
   try {
-    const header = req.headers.authorization;
+    const authHeader = req.headers.authorization;
 
-    if (!header || !header.startsWith("Bearer ")) {
+    if (!authHeader?.startsWith("Bearer ")) {
       return res.status(401).json({
-        message: "No token provided or invalid format",
+        message: "Authorization token missing or malformed",
       });
     }
 
-    const token = header.split(" ")[1];
-
-    if (!token) {
-      return res.status(401).json({
-        message: "Token missing",
-      });
-    }
+    const token = authHeader.split(" ")[1];
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    if (!decoded || !decoded.userId) {
+    if (!decoded) {
       return res.status(401).json({
-        message: "Invalid token payload",
+        message: "Invalid token",
       });
     }
 
-    req.user = decoded; // contains userId + role
+    // ✅ NORMALIZED USER OBJECT (VERY IMPORTANT)
+    req.user = {
+      id: decoded.userId || decoded.id || decoded.sub || null,
+      email: decoded.email || null,
+      role: decoded.role || null,
+    };
+
+    if (!req.user.id || !req.user.role) {
+      return res.status(401).json({
+        message: "Invalid token payload (missing user identity)",
+      });
+    }
+
     next();
   } catch (err) {
     return res.status(401).json({
-      message: "Unauthorized: invalid or expired token",
+      message: "Unauthorized: token expired or invalid",
+      error: err.message,
     });
   }
 };

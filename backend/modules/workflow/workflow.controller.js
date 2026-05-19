@@ -1,138 +1,116 @@
-import {
-  submitStageService,
-  approveStageService,
-  rejectStageService,
-  escalateStageService,
-  getWorkflowStatusService,
-} from "./workflow.service.js";
-
-/* =========================
-   GET FULL WORKFLOW STATUS
-========================= */
-export const getWorkflowStatus = async (req, res) => {
+import workflowService from "./workflow.service.js";
+import * as policy from "./workflow.policy.js";
+/**
+ * =========================
+ * GET STAGE STATE
+ * =========================
+ */
+export const getStageState = async (req, res) => {
   try {
-    const { projectId } = req.params;
+    const { projectId, stageId } = req.params;
 
-    const data = await getWorkflowStatusService(Number(projectId));
-
-    res.json({
-      success: true,
-      data,
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      error: err.message,
-    });
-  }
-};
-
-/* =========================
-   SUBMIT STAGE (PM ONLY)
-========================= */
-export const submitStage = async (req, res) => {
-  try {
-    const { projectId, stage } = req.params;
-
-    const result = await submitStageService(
+    const result = await workflowService.getStageState(
       Number(projectId),
-      Number(stage),
-      req.user
+      Number(stageId)
     );
 
-    res.json({
-      success: true,
-      ...result,
-    });
+    res.json({ success: true, data: result });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      error: err.message,
-    });
+    res.status(400).json({ success: false, message: err.message });
   }
 };
 
-/* =========================
-   APPROVE STAGE (HEAD OF OPS ONLY)
-========================= */
-export const approveStage = async (req, res) => {
+/**
+ * =========================
+ * SUBMIT STAGE
+ * =========================
+ */
+export const submitStage = async (req, res) => {
   try {
-    const { projectId, stage } = req.params;
+    const { projectId, stageId } = req.body;
+    const userId = req.user.id;
 
-    // RBAC guard
-    if (req.user.role !== "HEADOFOPS") {
+    if (!policy.canSubmitStage(stageId, {}, req.user.role)) {
       return res.status(403).json({
         success: false,
-        error: "Only HEAD OF OPS can approve stages",
+        message: "Not allowed to submit this stage",
       });
     }
 
-    const result = await approveStageService(
-      Number(projectId),
-      Number(stage),
-      req.user
-    );
+    const result = await workflowService.submitStage({
+      projectId,
+      stageId,
+      userId,
+    });
 
-    res.json({
-      success: true,
-      ...result,
-    });
+    res.json({ success: true, data: result });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      error: err.message,
-    });
+    res.status(400).json({ success: false, message: err.message });
   }
 };
 
-/* =========================
-   REJECT STAGE
-========================= */
+/**
+ * =========================
+ * APPROVE STAGE
+ * =========================
+ */
+export const approveStage = async (req, res) => {
+  try {
+    const { projectId, stageId } = req.body;
+    const userId = req.user.id;
+
+    if (!policy.canApproveStage(stageId, req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: "Not allowed to approve this stage",
+      });
+    }
+
+    const result = await workflowService.approveStage({
+      projectId,
+      stageId,
+      userId,
+    });
+
+    res.json({ success: true, data: result });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+/**
+ * =========================
+ * REJECT STAGE
+ * =========================
+ */
 export const rejectStage = async (req, res) => {
   try {
-    const { projectId, stage } = req.params;
-    const { reason } = req.body;
+    const { projectId, stageId, reason } = req.body;
+    const userId = req.user.id;
 
-    const result = await rejectStageService(
-      Number(projectId),
-      Number(stage),
+    if (!reason) {
+      return res.status(400).json({
+        success: false,
+        message: "Rejection reason is required",
+      });
+    }
+
+    if (!policy.canApproveStage(stageId, req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: "Not allowed to reject this stage",
+      });
+    }
+
+    const result = await workflowService.rejectStage({
+      projectId,
+      stageId,
+      userId,
       reason,
-      req.user
-    );
-
-    res.json({
-      success: true,
-      ...result,
     });
+
+    res.json({ success: true, data: result });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      error: err.message,
-    });
-  }
-};
-
-/* =========================
-   ESCALATE STAGE
-========================= */
-export const escalateStage = async (req, res) => {
-  try {
-    const { projectId, stage } = req.params;
-
-    const result = await escalateStageService(
-      Number(projectId),
-      Number(stage),
-      req.user
-    );
-
-    res.json({
-      success: true,
-      ...result,
-    });
-  } catch (err) {
-    res.status(400).json({
-      success: false,
-      error: err.message,
-    });
+    res.status(400).json({ success: false, message: err.message });
   }
 };

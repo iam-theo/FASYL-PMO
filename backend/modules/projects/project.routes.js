@@ -14,13 +14,13 @@ import {
 const router = Router();
 
 /* =========================================
-   CREATE PROJECT (PMO FULL WORKFLOW INPUT)
+   CREATE PROJECT
 ========================================= */
 /**
  * @swagger
  * /projects:
  *   post:
- *     summary: Create a new PMO project with full workflow initialization
+ *     summary: Create a new PMO project with workflow initialization
  *     tags: [Projects]
  *     security:
  *       - bearerAuth: []
@@ -35,45 +35,46 @@ const router = Router();
  *               - clientName
  *               - industry
  *               - productName
- *               - projectManager
  *             properties:
  *               name:
  *                 type: string
  *                 example: ERP System Upgrade
-
+ *
  *               clientName:
  *                 type: string
  *                 example: Fasyl Finance Ltd
-
+ *
  *               industry:
  *                 type: string
  *                 example: Financial Technology
-
+ *
  *               productName:
  *                 type: string
  *                 example: ERP Core Platform
-
- *               projectManager:
- *                 type: string
- *                 example: John Doe
-
+ *
  *               description:
  *                 type: string
  *                 example: Internal ERP modernization project
+ *
+ *               projectManagerEmail:
+ *                 type: string
+ *                 format: email
+ *                 example: pm1@fasyl.com
+ *                 description: Email of assigned project manager
  *     responses:
  *       201:
  *         description: Project created successfully
  *       400:
- *         description: Validation error (missing required fields)
+ *         description: Validation error
  *       401:
  *         description: Unauthorized
  *       403:
- *         description: Forbidden (RBAC)
+ *         description: Forbidden
  */
 router.post(
   "/",
   authMiddleWare,
-  allowRoles(ROLES.HEADOFOPS, ROLES.PROJECTMANAGER),
+  allowRoles(ROLES.HEADOFOPS),
   createProject
 );
 
@@ -84,87 +85,24 @@ router.post(
  * @swagger
  * /projects:
  *   get:
- *     summary: Get all projects in PMO system
+ *     summary: Get projects (role-based filtering applied)
  *     tags: [Projects]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Projects retrieved successfully
- *       401:
- *         description: Unauthorized
  */
 router.get("/", authMiddleWare, getProjects);
 
 /* =========================================
    GET SINGLE PROJECT
 ========================================= */
-/**
- * @swagger
- * /projects/{id}:
- *   get:
- *     summary: Get project by ID with full workflow stages
- *     tags: [Projects]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         example: 1
- *     responses:
- *       200:
- *         description: Project retrieved successfully
- *       404:
- *         description: Project not found
- */
 router.get("/:id", authMiddleWare, getProject);
 
 /* =========================================
-   UPDATE PROJECT (PARTIAL UPDATE SAFE)
+   UPDATE PROJECT
 ========================================= */
-/**
- * @swagger
- * /projects/{id}:
- *   put:
- *     summary: Update project details (partial update supported)
- *     tags: [Projects]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 example: Updated Project Name
- *               clientName:
- *                 type: string
- *               industry:
- *                 type: string
- *               productName:
- *                 type: string
- *               projectManager:
- *                 type: string
- *               description:
- *                 type: string
- *     responses:
- *       200:
- *         description: Project updated successfully
- *       404:
- *         description: Project not found
- */
 router.put(
   "/:id",
   authMiddleWare,
@@ -173,30 +111,8 @@ router.put(
 );
 
 /* =========================================
-   DELETE PROJECT (HARD DELETE CONTROLLED)
+   DELETE PROJECT
 ========================================= */
-/**
- * @swagger
- * /projects/{id}:
- *   delete:
- *     summary: Delete project (HEADOFOPS only)
- *     tags: [Projects]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Project deleted successfully
- *       403:
- *         description: Forbidden (only HEADOFOPS)
- *       404:
- *         description: Project not found
- */
 router.delete(
   "/:id",
   authMiddleWare,

@@ -7,151 +7,37 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
+import { PrismaClient } from "@prisma/client";
 
 /* =========================
-   PORT (MUST BE FIRST)
-========================= */
-const PORT = process.env.PORT || 5000;
-
-/* =========================
-   SWAGGER CONFIG
-========================= */
-const swaggerOptions = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "Fasyl PMO Enterprise API",
-      version: "1.0.0",
-      description:
-        "PMO Workflow & Project Governance System with Role-Based Approvals and Lifecycle Management",
-    },
-
-    servers: [
-      {
-        url: process.env.BASE_URL || `http://localhost:${PORT}/api`,
-      },
-    ],
-
-    tags: [
-      { name: "Authentication", description: "Auth, login, token management" },
-      { name: "Projects", description: "Project lifecycle CRUD" },
-      { name: "Workflow", description: "Stage approvals and governance engine" },
-    ],
-
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-        },
-      },
-
-      /* =========================
-         🧩 REUSABLE SCHEMAS (DRY)
-      ========================= */
-      schemas: {
-        ApiResponse: {
-          type: "object",
-          properties: {
-            success: { type: "boolean", example: true },
-            message: { type: "string", example: "Operation successful" },
-            data: { type: "object" },
-          },
-        },
-
-        ErrorResponse: {
-          type: "object",
-          properties: {
-            success: { type: "boolean", example: false },
-            message: { type: "string", example: "Error occurred" },
-            error: { type: "object" },
-          },
-        },
-
-        User: {
-          type: "object",
-          properties: {
-            id: { type: "string" },
-            name: { type: "string" },
-            email: { type: "string" },
-            role: { type: "string" },
-          },
-        },
-
-        Project: {
-          type: "object",
-          properties: {
-            id: { type: "string" },
-            name: { type: "string" },
-            description: { type: "string" },
-            status: {
-              type: "string",
-              enum: ["draft", "active", "completed", "archived"],
-            },
-          },
-        },
-
-        WorkflowState: {
-          type: "object",
-          properties: {
-            projectId: { type: "string" },
-            stage: { type: "string" },
-            status: {
-              type: "string",
-              enum: [
-                "pending",
-                "submitted",
-                "approved",
-                "rejected",
-                "escalated",
-              ],
-            },
-            updatedBy: { type: "string" },
-            timestamp: { type: "string", format: "date-time" },
-          },
-        },
-      },
-    },
-
-    security: [{ bearerAuth: [] }],
-  },
-
-  apis: ["./backend/modules/**/*.js"],
-};
-
-const swaggerSpec = swaggerJsdoc(swaggerOptions);
-
-/* =========================
-   CORE IMPORTS
-========================= */
-import { authMiddleWare } from "./middleware/auth.middleware.js";
-
-/* =========================
-   ROUTES
-========================= */
-import authRoutes from "./modules/auth/auth.routes.js";
-import projectRoutes from "./modules/projects/project.routes.js";
-import workflowRoutes from "./modules/workflow/workflow.routes.js";
-
-/* =========================
-   CRON JOBS
-========================= */
-import { startWorkflowEscalationCron } from "./modules/workflow/cron/workflowEscalation.cron.js";
-
-/* =========================
-   APP INIT
+   INIT
 ========================= */
 const app = express();
+const prisma = new PrismaClient();
 
 /* =========================
-   SECURITY MIDDLEWARE
+   ENV
+========================= */
+const PORT = process.env.PORT || 5000;
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
+const NODE_ENV = process.env.NODE_ENV || "development";
+
+const API_V1 = "/api/v1";
+const API_LEGACY = "/api";
+
+/* =========================
+   TRUST PROXY
+========================= */
+app.set("trust proxy", 1);
+
+/* =========================
+   CORE MIDDLEWARE
 ========================= */
 app.use(helmet());
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: CLIENT_URL,
     credentials: true,
   })
 );
@@ -159,11 +45,6 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
-/* =========================
-   SWAGGER UI ROUTE
-========================= */
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 /* =========================
    REQUEST LOGGER
@@ -174,43 +55,130 @@ app.use((req, res, next) => {
 });
 
 /* =========================
+   ROUTES IMPORTS
+========================= */
+import authRoutes from "./modules/auth/auth.routes.js";
+import projectRoutes from "./modules/projects/project.routes.js";
+import workflowRoutes from "./modules/workflow/workflow.routes.js";
+
+/* =========================
+   ROUTE MOUNTING (DUAL SUPPORT)
+========================= */
+
+/**
+ * AUTH
+ */
+app.use(`${API_V1}/auth`, authRoutes);
+app.use(`${API_LEGACY}/auth`, authRoutes);
+
+/**
+ * PROJECTS
+ */
+app.use(`${API_V1}/projects`, projectRoutes);
+app.use(`${API_LEGACY}/projects`, projectRoutes);
+
+/**
+ * WORKFLOW
+ */
+app.use(`${API_V1}/workflow`, workflowRoutes);
+app.use(`${API_LEGACY}/workflow`, workflowRoutes);
+
+/* =========================
+   SWAGGER CONFIG
+========================= */
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Fasyl PMO Workflow API",
+      version: "1.0.0",
+      description:
+        "Enterprise PMO system with workflow stages, approvals, and governance",
+    },
+
+    servers: [
+      {
+        url: process.env.BASE_URL || "http://localhost:5000/api/v1",
+      },
+    ],
+
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
+  },
+
+  apis: ["./modules/**/*.js"],
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+
+/* =========================
+   SWAGGER ROUTES
+========================= */
+app.get(`${API_V1}/docs-json`, (req, res) => {
+  res.json(swaggerSpec);
+});
+
+app.use(
+  "/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    explorer: true,
+    persistAuthorization: true,
+  })
+);
+
+/* =========================
    HEALTH CHECK
 ========================= */
-app.get("/", (req, res) => {
-  res.status(200).json({
+app.get(`${API_V1}/health`, (req, res) => {
+  res.json({
     success: true,
-    message: "Fasyl PMO Workflow Engine Running",
-    environment: process.env.NODE_ENV || "development",
+    message: "PMO Workflow API running",
+    env: NODE_ENV,
     timestamp: new Date().toISOString(),
   });
 });
 
 /* =========================
-   API ROUTES
+   PRISMA TEST ROUTE
 ========================= */
-app.use("/api/auth", authRoutes);
-app.use("/api/projects", projectRoutes);
-app.use("/api/workflow", workflowRoutes);
+app.get(`${API_V1}/test-db`, async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
 
-/* =========================
-   PROTECTED TEST ROUTE
-========================= */
-app.get("/api/protected", authMiddleWare, (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Authenticated access granted",
-    user: req.user,
-  });
+    res.json({
+      success: true,
+      count: users.length,
+      data: users,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
 });
 
 /* =========================
-   404 HANDLER
+   GLOBAL 404
 ========================= */
 app.use((req, res) => {
   res.status(404).json({
     success: false,
     message: "Route not found",
-    path: req.originalUrl,
   });
 });
 
@@ -229,9 +197,9 @@ app.use((err, req, res, next) => {
 /* =========================
    START SERVER
 ========================= */
-app.listen(PORT, async () => {
-  console.log(`🚀 Fasyl PMO Backend running on port ${PORT}`);
-  console.log(`📚 Swagger Docs available at http://localhost:${PORT}/docs`);
-
-  startWorkflowEscalationCron();
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🌍 API (v1): ${API_V1}`);
+  console.log(`📦 Legacy API: ${API_LEGACY}`);
+  console.log(`📚 Docs: http://localhost:${PORT}/docs`);
 });

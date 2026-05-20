@@ -139,7 +139,8 @@ model Stage1ClientIdentification {
   initialNeedsDocumented Boolean      @default(false)
   confidentialitySigned Boolean       @default(false)
   screeningCompleted  Boolean         @default(false)
-  KYCAMLScreeningCompleted Boolean    @default(false)
+  kycAmlScreeningCompleted Boolean    @default(false)
+  conflictOfInterestCleared Boolean   @default(false)
   opportunityLogged   Boolean         @default(false)
   completed         Boolean        @default(false)
   completedAt       DateTime?
@@ -166,9 +167,11 @@ model Stage2ClientEngagement {
   rfpReviewed         Boolean        @default(false)
   rfpDate             DateTime?
   technicalAssessment Boolean        @default(false)
+  commercialProposal  Boolean        @default(false)
   proposalApproved    Boolean        @default(false)
   proposalSubmitted   Boolean        @default(false)
-  awardReceived       Boolean        @default(false)
+  awardReceived       Boolean        @default(false) 
+  commercialTermsAgreed Boolean      @default(false)
   termsAgreed         Boolean        @default(false)
   completed           Boolean        @default(false)
   completedAt         DateTime?
@@ -196,6 +199,9 @@ model Stage3Initiation {
   invoiceIssued     Boolean        @default(false)
   signedScopeDoc    Boolean        @default(false)
   paymentReceived   Boolean        @default(false)
+  deferralObtained  Boolean        @default(false)
+  projectSigned     Boolean        @default(false)
+  deployedToProject Boolean       @default(false)
   projectCode       String?
   completed         Boolean        @default(false)
   completedAt       DateTime?
@@ -221,7 +227,12 @@ model Stage4Planning {
   stageName        String
   charterSigned    Boolean        @default(false)
   projectPlanReady Boolean        @default(false)
+  resourcePlanApproved Boolean    @default(false)
   riskDefined      Boolean        @default(false)
+  commPlanapproved Boolean        @default(false)
+  processDefined   Boolean        @default(false)
+  setupCompleted   Boolean        @default(false)
+  planReviewed     Boolean        @default(false)
   kickoffHeld      Boolean        @default(false)
   completed        Boolean        @default(false)
   completedAt      DateTime?
@@ -247,7 +258,12 @@ model Stage5Execution {
   stageName       String
   weeklyReports   Boolean        @default(false)
   milestonesMet   Boolean        @default(false)
+  changeRequestsApproved Boolean @default(false)
   issueLogActive  Boolean        @default(false)
+  migrationCompleted Boolean     @default(false)
+  planExecuted    Boolean        @default(false)
+  sitCompleted    Boolean        @default(false)
+  handoverDone    Boolean        @default(false)
   completed       Boolean        @default(false)
   completedAt     DateTime?
   createdAt       DateTime       @default(now())
@@ -271,8 +287,12 @@ model Stage6UAT {
   projectId       Int            @unique
   stageName       String
   uatStarted      Boolean        @default(false)
+  uatStable       Boolean        @default(false)
+  issuesLogCreated Boolean       @default(false)
+  issuesResolved  Boolean        @default(false)
   defectsResolved Boolean        @default(false)
   clientSignoff   Boolean        @default(false)
+  testCompleted   Boolean        @default(false)
   completed       Boolean        @default(false)
   completedAt     DateTime?
   createdAt       DateTime       @default(now())
@@ -297,8 +317,13 @@ model Stage7GoLive {
   stageName         String
   readinessComplete Boolean        @default(false)
   cutoverApproved   Boolean        @default(false)
+  productionValidated Boolean      @default(false)
   productionLive    Boolean        @default(false)
+  cutoverExecuted   Boolean        @default(false)
   smokeTestsPassed  Boolean        @default(false)
+  certIssuedToClient Boolean       @default(false)
+  periodDefined     Boolean        @default(false)
+  milestoneTriggered Boolean       @default(false)
   progressPercent   Int            @default(0)
   completed         Boolean        @default(false)
   completedAt       DateTime?

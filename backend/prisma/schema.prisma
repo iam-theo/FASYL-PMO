@@ -43,7 +43,7 @@ model Project {
   salesId         String?
   pmoId           Int?
 
-  status          String   @default("stage_1")
+  status          String   @default("stage1")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   completedAt     DateTime?
@@ -59,7 +59,7 @@ model Project {
   pmo             User? @relation("PMOProjects", fields: [pmoId], references: [id])
 
   timelines       ProjectTimeline[]
-
+  stage1          Stage1ClientIdentification?
   stage2          Stage2ClientEngagement?
   stage3          Stage3Initiation?
   stage4          Stage4Planning?

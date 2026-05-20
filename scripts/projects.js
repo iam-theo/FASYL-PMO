@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoidWR1YWtAZmFzeWxuZy5jb20iLCJyb2xlIjoiSEVBRE9GT1BTIiwiaWF0IjoxNzc5MjgyMjMyLCJleHAiOjE3NzkyODMxMzIsImF1ZCI6ImZhc3lsLXVzZXJzIiwiaXNzIjoiZmFzeWwtcG1vIn0.lIyZHjc6BToqQbYn7KCK_CPQ6Y5K9SOfKwNCBPjKk8o"
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoidWR1YWtAZmFzeWxuZy5jb20iLCJyb2xlIjoiSEVBRE9GT1BTIiwiaWF0IjoxNzc5Mjg2NjI4LCJleHAiOjE3NzkyODc1MjgsImF1ZCI6ImZhc3lsLXVzZXJzIiwiaXNzIjoiZmFzeWwtcG1vIn0.qsA_GcCvEyf9Vlk4DsKQNwf4WOhRON8rh_bQ7TRvS-Y"
 
 const projects = [
     {
@@ -8,14 +8,24 @@ const projects = [
         clientName: "Fasyl Finance Ltd",
         industry: "Financial Technology",
         productName: "ERP Core Platform",
-        projectManager: "sekemi@fasylng.com"
+        description:"Internal ERP modernization project",
+        projectManagerEmail: "sekemi@fasylng.com"
     },
     {
         name: "Cybersecurity Upgrade Initiative",
         clientName: "Fasyl Security",
         industry: "Cybersecurity",
         productName: "Security Suite",
-        projectManager: "desmond@fasylng.com"
+        description:"Internal ERP modernization project",
+        projectManagerEmail: "desmond@fasylng.com"
+    },
+    {
+        name: "Cybersecurity Initiative",
+        clientName: "Fasyl Security",
+        industry: "Cybersecurity",
+        productName: "Security Intel",
+        description:"Internal ERP modernization project",
+        projectManagerEmail: "joel@fasylng.com"
     }
 ]
 

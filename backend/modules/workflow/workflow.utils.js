@@ -1,4 +1,5 @@
 const stageModelMap = {
+  1: "stage1ClientIdentification",
   2: "stage2ClientEngagement",
   3: "stage3Initiation",
   4: "stage4Planning",

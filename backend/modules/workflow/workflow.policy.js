@@ -1,7 +1,17 @@
 const POLICY = {
   stage_1: {
-    name: "Client Intake",
-    checklist: [],
+    name: "Client Identification",
+    checklist: [
+      "clientNameConfirmed",
+      "industryClass",
+      "contactIdentified",
+      "initialNeedsDocumented",
+      "confidentialitySigned",
+      "screeningCompleted",
+      "kycAmlScreeningCompleted",
+      "conflictOfInterestCleared",
+      "opportunityLogged",
+    ],
     requiredDocs: [],
     rolesAllowedToSubmit: ["PROJECTMANAGER"],
     rolesAllowedToApprove: ["HEADOFOPS"]
@@ -12,9 +22,11 @@ const POLICY = {
     checklist: [
       "rfpReviewed",
       "technicalAssessment",
+      "commercialProposal",
       "proposalApproved",
       "proposalSubmitted",
       "awardReceived",
+      "commercialTermsAgreed",
       "termsAgreed"
     ],
     requiredDocs: ["client_id_doc"],
@@ -28,7 +40,10 @@ const POLICY = {
       "awardLetterOnFile",
       "invoiceIssued",
       "signedScopeDoc",
-      "paymentReceived"
+      "paymentReceived",
+      "deferralObtained",
+      "projectSigned",
+      "deployedToProject"
     ],
     requiredDocs: ["engagement_doc"],
     rolesAllowedToSubmit: ["PROJECTMANAGER"],
@@ -40,7 +55,12 @@ const POLICY = {
     checklist: [
       "charterSigned",
       "projectPlanReady",
+      "resourcePlanApproved",
       "riskDefined",
+      "commPlanApproved",
+      "processDefined",
+      "setupCompleted",
+      "planReviewed",
       "kickoffHeld"
     ],
     requiredDocs: [],
@@ -53,7 +73,12 @@ const POLICY = {
     checklist: [
       "weeklyReports",
       "milestonesMet",
-      "issueLogActive"
+      "changeRequestsApproved",
+      "issueLogActive",
+      "migrationCompleted",
+      "planExecuted",
+      "sitCompleted",
+      "handoverDone"
     ],
     requiredDocs: [],
     rolesAllowedToSubmit: ["PROJECTMANAGER"],
@@ -64,8 +89,12 @@ const POLICY = {
     name: "UAT",
     checklist: [
       "uatStarted",
+      "uatStable",
+      "issuesLogCreated",
+      "issuesResolved",
       "defectsResolved",
-      "clientSignoff"
+      "clientSignoff",
+      "testCompleted"
     ],
     requiredDocs: [],
     rolesAllowedToSubmit: ["PROJECTMANAGER"],
@@ -77,8 +106,13 @@ const POLICY = {
     checklist: [
       "readinessComplete",
       "cutoverApproved",
+      "productionValidated",
       "productionLive",
-      "smokeTestsPassed"
+      "cutoverExecuted",
+      "smokeTestsPassed",
+      "certIssuedToClient",
+      "periodDefined",
+      "milestoneTriggered"
     ],
     requiredDocs: [],
     rolesAllowedToSubmit: ["PROJECTMANAGER"],

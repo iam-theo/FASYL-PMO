@@ -15,9 +15,9 @@ const calcProgress = (stage) => {
    CREATE PROJECT + WORKFLOW INIT
 ========================================= */
 export const createProjectService = async (data, user) => {
-  const startStage = 2;
+  const startStage = 1;
 
-  const project = await prisma.project.create({
+  return await prisma.project.create({
     data: {
       projectName: data.name,
       clientName: data.clientName,
@@ -39,7 +39,8 @@ export const createProjectService = async (data, user) => {
       /* =========================
          WORKFLOW INITIALIZATION
       ========================= */
-      stage2: { create: { workflowStatus: WorkflowStatus.OPEN } },
+      stage1: { create: { workflowStatus: WorkflowStatus.OPEN } },
+      stage2: { create: { workflowStatus: WorkflowStatus.LOCKED } },
       stage3: { create: { workflowStatus: WorkflowStatus.LOCKED } },
       stage4: { create: { workflowStatus: WorkflowStatus.LOCKED } },
       stage5: { create: { workflowStatus: WorkflowStatus.LOCKED } },
@@ -49,6 +50,7 @@ export const createProjectService = async (data, user) => {
     },
 
     include: {
+      stage1: true,
       stage2: true,
       stage3: true,
       stage4: true,
@@ -59,7 +61,6 @@ export const createProjectService = async (data, user) => {
     },
   });
 
-  return project;
 };
 
 /* =========================================
@@ -75,6 +76,7 @@ export const getProjectsService = async (user) => {
   return await prisma.project.findMany({
     where,
     include: {
+      stage1: true,
       stage2: true,
       stage3: true,
       stage4: true,
@@ -93,6 +95,7 @@ export const getProjectByIdService = async (id) => {
     where: { id: Number(id) },
 
     include: {
+      stage1: true,
       stage2: true,
       stage3: true,
       stage4: true,

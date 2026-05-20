@@ -40,13 +40,13 @@ export const createProjectService = async (data, user) => {
          WORKFLOW INITIALIZATION
       ========================= */
       stage1: { create: { workflowStatus: WorkflowStatus.OPEN, stageName: getPolicy.stage1.stageName } },
-      stage2: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage1.stageName } },
-      stage3: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage1.stageName } },
-      stage4: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage1.stageName } },
-      stage5: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage1.stageName } },
-      stage6: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage1.stageName } },
-      stage7: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage1.stageName } },
-      stage8: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage1.stageName } },
+      stage2: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage2.stageName } },
+      stage3: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage3.stageName } },
+      stage4: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage4.stageName } },
+      stage5: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage5.stageName } },
+      stage6: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage6.stageName } },
+      stage7: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage7.stageName } },
+      stage8: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage8.stageName } },
     },
 
     include: {

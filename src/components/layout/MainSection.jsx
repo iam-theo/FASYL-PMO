@@ -1,6 +1,6 @@
 import React from 'react'
 import { useEffect, useState, useRef } from 'react'
-import Dashboard from '../Dashboard'
+import Dashboard from './Dashboard'
 import Projects from '../projects/Projects'
 import ViewProjectsBody from '../projects/ViewProjectsBody'
 import { FaBell, FaUserTag } from 'react-icons/fa'

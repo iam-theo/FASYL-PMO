@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import bgSignIn from "../assets/bgSignIn.jpg"
-import bgSignInTwo from "../assets/bgSignInTwo.jpg"
+import bgSignIn from "../../assets/bgSignIn.jpg"
+import bgSignInTwo from "../../assets/bgSignInTwo.jpg"
 import { useState } from 'react'
 import MainBody from '../layout/MainBody'
 import { api } from '../../api'

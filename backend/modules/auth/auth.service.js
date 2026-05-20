@@ -8,19 +8,27 @@ const prisma = new PrismaClient();
    REGISTER
 ========================= */
 export const registerUser = async (data) => {
-  const hashedPassword = await bcrypt.hash(data.password, 10);
+  try {
+    console.log("REGISTER DATA:", data)
 
-  const user = await prisma.user.create({
-    data: {
-      fullName: data.fullName,
-      email: data.email,
-      password: hashedPassword,
-      role: Role[data.role] || Role.STAFF,
-    },
-  });
+    const hashedPassword = await bcrypt.hash(data.password, 10);
 
-  const { password, ...safeUser } = user;
-  return safeUser;
+    const user = await prisma.user.create({
+      data: {
+        fullName: data.fullName,
+        email: data.email,
+        password: hashedPassword,
+        role: Role[data.role] || Role.STAFF,
+      },
+    });
+
+    console.log("CREATED USER:", user)
+
+    const { password, ...safeUser } = user;
+    return safeUser;
+  } catch (err) {
+    console.error("PRISMA CREATE ERROR:", err)
+  }
 };
 
 /* =========================

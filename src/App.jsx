@@ -1,6 +1,6 @@
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import SignIn from './components/SignIn'
+import SignIn from './components/auth/SignIn'
 import MainBody from './components/layout/MainBody'
 import { useEffect, useState } from 'react'
 import { useNotification } from './components/NotificationContext'

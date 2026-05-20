@@ -146,7 +146,7 @@ model Stage1ClientIdentification {
   completedAt       DateTime?
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
-  workflowStatus    WorkflowStatus @default(LOCKED)
+  workflowStatus    WorkflowStatus @default(OPEN)
   approvedAt        DateTime?
   approvedBy        Int?
   escalated         Boolean        @default(false)
@@ -177,7 +177,7 @@ model Stage2ClientEngagement {
   completedAt         DateTime?
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @updatedAt
-  workflowStatus      WorkflowStatus @default(OPEN)
+  workflowStatus      WorkflowStatus @default(LOCKED)
   approvedAt          DateTime?
   approvedBy          Int?
   escalated           Boolean        @default(false)
@@ -229,7 +229,7 @@ model Stage4Planning {
   projectPlanReady Boolean        @default(false)
   resourcePlanApproved Boolean    @default(false)
   riskDefined      Boolean        @default(false)
-  commPlanapproved Boolean        @default(false)
+  commPlanApproved Boolean        @default(false)
   processDefined   Boolean        @default(false)
   setupCompleted   Boolean        @default(false)
   planReviewed     Boolean        @default(false)

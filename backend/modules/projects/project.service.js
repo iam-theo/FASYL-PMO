@@ -1,5 +1,5 @@
 import { PrismaClient, WorkflowStatus } from "@prisma/client";
-
+import { getPolicy } from "../workflow/workflow.policy";
 const prisma = new PrismaClient();
 
 const TOTAL_STAGES = 8;
@@ -39,14 +39,14 @@ export const createProjectService = async (data, user) => {
       /* =========================
          WORKFLOW INITIALIZATION
       ========================= */
-      stage1: { create: { workflowStatus: WorkflowStatus.OPEN } },
-      stage2: { create: { workflowStatus: WorkflowStatus.LOCKED } },
-      stage3: { create: { workflowStatus: WorkflowStatus.LOCKED } },
-      stage4: { create: { workflowStatus: WorkflowStatus.LOCKED } },
-      stage5: { create: { workflowStatus: WorkflowStatus.LOCKED } },
-      stage6: { create: { workflowStatus: WorkflowStatus.LOCKED } },
-      stage7: { create: { workflowStatus: WorkflowStatus.LOCKED } },
-      stage8: { create: { workflowStatus: WorkflowStatus.LOCKED } },
+      stage1: { create: { workflowStatus: WorkflowStatus.OPEN, stageName: getPolicy.stage1.stageName } },
+      stage2: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage1.stageName } },
+      stage3: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage1.stageName } },
+      stage4: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage1.stageName } },
+      stage5: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage1.stageName } },
+      stage6: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage1.stageName } },
+      stage7: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage1.stageName } },
+      stage8: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage1.stageName } },
     },
 
     include: {

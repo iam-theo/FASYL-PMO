@@ -1,5 +1,6 @@
 import React from 'react'
 import { useState, useRef } from 'react'
+import { validateImageDimensions, processFile, handleFileChange, handleDragLeave, handleDragOver, handleDrop } from './utils/UploadFiles'
 
 function UploadBox({
     title,
@@ -13,8 +14,8 @@ function UploadBox({
     const inputRef = useRef(null)
     const [fileName, setFileName] = useState("")
     const [error, setError] = useState("")
-    const [isDragging, setIsDragging] = useState(false)
-    const [isUploaded, setIsUploaded] = useState(false)
+    // const [isDragging, setIsDragging] = useState(false)
+    // const [isUploaded, setIsUploaded] = useState(false)
 
     const allowedTypes = ["image/svg+xml", "image/jpeg", "image/gif"]
 
@@ -22,80 +23,6 @@ function UploadBox({
     const handleClick = () => {
         inputRef.current.click()
     }
-
-    const validateImageDimensions = (file) => {
-        return new Promise((resolve) => {
-            const img = new Image();
-            const url = URL.createObjectURL(file);
-
-            img.onload = () => {
-                if (img.width <= 800 && img.height <= 400) {
-                resolve(true);
-                } else {
-                resolve(false);
-                }
-            };
-
-            img.src = url;
-        });
-    };
-
-    // Validate and process file
-    const processFile = async (file) => {
-        if(!file) return
-
-        // ❌ Type validation
-        if (!allowedTypes.includes(file.type)) {
-            setError("Only SVG, JPG, or GIF allowed");
-            return;
-        }
-
-        // Size Validation
-        if(file.size > maxSizeMB * 1024 * 1024) {
-            setError(`Max file size is ${maxSizeMB}MB`)
-            return
-        }
-
-        // ❌ Dimension validation
-        const isValidSize = await validateImageDimensions(file);
-        
-        if (!isValidSize) {
-            setError("Image must be max 800x400px");
-            return;
-        }
-
-        setError("")
-        setFileName(file.name)
-        setPreview(URL.createObjectURL(file))
-
-        onFileSelect?.(URL.createObjectURL(file))
-    }
-
-    // Handle input change
-    const handleFileChange = (e) => {
-        const file = e.target.files[0]
-        console.log(file)
-        setIsUploaded(true)
-        processFile(file)
-    }
-
-    // Drag events
-    const handleDragOver = (e) => {
-        e.preventDefault();
-        setIsDragging(true);
-    };
-
-    const handleDragLeave = () => {
-        setIsDragging(false);
-    };
-
-    const handleDrop = (e) => {
-        e.preventDefault();
-        setIsDragging(false);
-
-        const file = e.dataTransfer.files[0];
-        processFile(file);
-    };
 
     const handlePreview = () => {
         window.open(preview, "_blank")
@@ -107,9 +34,9 @@ function UploadBox({
                 <h2 className='font-medium text-[14px]/[20px] text-[#090909] mb-1.5'>{title}</h2>
                 {/* Upload Box */}
                 <div
-                    onDragOver={handleDragOver}
+                    onDragOver={(e) => handleDragOver(e)}
                     onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
+                    onDrop={(e) => handleDrop(e)}
                     className='w-full h-27.5 rounded-lg border border-dashed bg-[#FFFFFF] border-[#E4E7EC] flex items-center justify-center cursor-pointer px-4'>
                     {/* Hidden Input */}
                     <input 
@@ -117,7 +44,7 @@ function UploadBox({
                         type="file"
                         className='hidden'
                         accept="image/svg+xml,image/jpeg,image/gif"
-                        onChange={handleFileChange} 
+                        onChange={(e) => handleFileChange(e)} 
                     />
                     {/* Content */}
                     <div className='w-full'>

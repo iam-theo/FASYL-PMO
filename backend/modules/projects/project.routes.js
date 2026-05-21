@@ -9,6 +9,7 @@ import {
   getProject,
   updateProject,
   deleteProject,
+  updateChecklistBulk
 } from "./project.controller.js";
 
 const router = Router();
@@ -93,12 +94,17 @@ router.post(
  *       200:
  *         description: Projects retrieved successfully
  */
-router.get("/", authMiddleWare, getProjects);
+router.get("/", authMiddleWare, allowRoles(ROLES.HEADOFOPS, ROLES.PROJECTMANAGER), getProjects);
 
 /* =========================================
    GET SINGLE PROJECT
 ========================================= */
-router.get("/:id", authMiddleWare, getProject);
+router.get(
+   "/:id",
+   authMiddleWare,
+   allowRoles(ROLES.HEADOFOPS, ROLES.PROJECTMANAGER),
+   getProject
+);
 
 /* =========================================
    UPDATE PROJECT
@@ -106,9 +112,24 @@ router.get("/:id", authMiddleWare, getProject);
 router.put(
   "/:id",
   authMiddleWare,
-  allowRoles(ROLES.HEADOFOPS, ROLES.PROJECTMANAGER),
+  allowRoles(ROLES.HEADOFOPS),
   updateProject
 );
+
+/* =========================================
+   UPDATE CHECKLIST
+========================================= */
+router.patch(
+  "/:projectId/stages/:stageId/checklist",
+  (req, res, next) => {
+      console.log("🔥 ROUTE MATCHED");
+      next();
+  },
+  authMiddleWare,
+  allowRoles(ROLES.PROJECTMANAGER),
+  updateChecklistBulk
+);
+
 
 /* =========================================
    DELETE PROJECT

@@ -1,91 +1,94 @@
-import React, { useState } from "react";
-import Dashboard from "./Dashboard";
-import Projects from "../projects/Projects";
-import { FaBell, FaUserTag } from "react-icons/fa";
+import React from 'react'
+import { useEffect, useState, useRef } from 'react'
+import Dashboard from './Dashboard'
+import Projects from '../projects/Projects'
+import ViewProjectsBody from '../projects/ViewProjectsBody'
+import { FaBell, FaUserTag } from 'react-icons/fa'
 
 function MainSection({
-  activeTab,
-  setSelectedProject,
-  projects = [],
-  user = {},
-}) {
-  const [currentPage, setCurrentPage] = useState(1);
+    activeTab, 
+    setSelectedProject, 
+    projects, 
+    user,
+    isLoading 
+    }) {
 
-  const itemsPerPage = 10;
+    // console.log(projects);
+    // console.log(user);
 
-  const totalPages = Math.ceil(projects.length / itemsPerPage) || 1;
+    const [currentPage, setCurrentPage] = useState(1)
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
+    const safeProjects = Array.isArray(projects) ? projects : []
 
-  const currentProjects = projects.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+    const filteredProjects = safeProjects.filter((project) => {
+        if (user?.role === "HEADOFOPS") {
+            return true; // sees everything
+        }
 
-  // ✅ safe initials
-  const initials =
-    user?.fullName
-      ?.split(" ")
-      ?.map((word) => word[0])
-      ?.join("") || "U";
+        if (user?.role === "PROJECTMANAGER") {
+            return project.projectManagerEmail === user.email; 
+            // only projects assigned
+        }
 
-  return (
-    <div className="w-full lg:w-[80%] lg:ml-[20%] h-screen relative">
+        return false;
+    });
 
-      {/* HEADER */}
-      <header className="border-b p-4 flex items-center justify-between bg-white fixed w-full lg:w-[80%] h-18 z-50">
+    
+    const itemsPerPage = 10
+    const totalPages = Math.ceil(filteredProjects.length / itemsPerPage)
+    const startIndex = (currentPage -1) * itemsPerPage
+    const currentProjects = filteredProjects.slice(
+        startIndex, startIndex + itemsPerPage
+    )
 
-        {/* LEFT */}
-        <ul className="flex gap-2">
-          <li className="flex items-center justify-between rounded-md px-3 py-2 bg-gray-100 w-40">
-            <div className="flex items-center">
-              <FaBell className="text-blue-400 text-xl" />
-              <p className="ml-2 text-sm text-gray-600">Notifications</p>
-            </div>
-            <p>0</p>
-          </li>
+    return (
+        <div className='w-[80.55%] h-screen ml-[19.44%] relative'>
 
-          <li className="flex items-center justify-between rounded-md px-3 py-2 bg-gray-100 w-40">
-            <div className="flex items-center">
-              <FaUserTag className="text-yellow-600 text-xl" />
-              <p className="ml-2 text-sm text-gray-600">Tickets</p>
-            </div>
-            <p>0</p>
-          </li>
-        </ul>
+            {/* header */}
+            <header className='border-b-[1.5px] border-[#0000000D] p-4 flex items-center justify-between bg-[#FFFFFF] fixed w-[80.55%] h-18 z-1000'>
+                <ul className='flex gap-2'>
+                    <li className='w-43.5 h-10 flex justify-between rounded-md px-3 py-2 bg-[#0000000D]'>
+                        <div className='flex items-center'>
+                            <FaBell className='text-[#7dbaf3] text-2xl rounded-full' />
+                            <p className='font-medium text-[14px]/[20px] text-[#636363] ml-2'>Notifications</p> 
+                        </div> 
+                        <p className='text-[#090909]'>0</p>
+                    </li>
+                    <li className='w-43.5 h-10 flex justify-between rounded-md px-3 py-2 bg-[#0000000D]'>
+                        <div className='flex items-center'>
+                            <FaUserTag className='text-[#D18A00] text-2xl rounded-full' />
+                            <p className='font-medium text-[14px]/[20px] text-[#636363] ml-2'>Tickets</p> 
+                        </div>   
+                        <p className='text-[#090909]'>0</p>
+                        </li>
+                </ul>
+                <div className='flex gap-3'>
+                    <div className='flex items-center justify-center w-10 h-10 rounded-full bg-[#0000000D] font-medium text-[16px]/[24px] text-[#000000]'>{(user.fullName || "").split(" ").map(word => word[0]).join("")}</div>
+                    <div>
+                        <p className='font-medium text-[14px]/[20px] text-[#090909]'>{user.fullName}</p>
+                        <p className='font-normal text-[14px]/[20px] text-[#636363]'>{user.email}</p>
+                    </div>
+                </div>
+            </header>
+            <section className='mt-18 h-full'>
+                {activeTab === "dashboard" && <Dashboard />}
 
-        {/* RIGHT */}
-        <div className="flex gap-3 items-center">
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 font-medium">
-            {initials}
-          </div>
-
-          <div>
-            <p className="text-sm font-medium">{user?.fullName || "User"}</p>
-            <p className="text-sm text-gray-500">{user?.email || ""}</p>
-          </div>
+                {activeTab === "projects" && (
+                    <Projects
+                        projects={projects} 
+                        currentProjects={currentProjects} 
+                        currentPage={currentPage} 
+                        totalPages={totalPages} 
+                        setCurrentPage={setCurrentPage} 
+                        itemsPerPage={itemsPerPage}
+                        setSelectedProject={setSelectedProject}
+                        user={user} 
+                        isLoading={isLoading}
+                    />
+                )}
+            </section>
         </div>
-      </header>
-
-      {/* BODY */}
-      <section className="mt-18 h-full px-4">
-        {activeTab === "dashboard" && <Dashboard />}
-
-        {activeTab === "projects" && (
-          <Projects
-            projects={projects}
-            currentProjects={currentProjects}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            setCurrentPage={setCurrentPage}
-            itemsPerPage={itemsPerPage}
-            setSelectedProject={setSelectedProject}
-            user={user}
-          />
-        )}
-      </section>
-    </div>
-  );
+    )
 }
 
-export default MainSection;
+export default MainSection

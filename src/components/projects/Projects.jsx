@@ -1,177 +1,136 @@
-import React, { useEffect, useState } from "react";
-import api from "../../api/axios";
+import React from 'react'
+import { useEffect, useState, useRef } from 'react'
 
-function Projects({ setSelectedProject, user }) {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
+function Projects({ 
+    projects, 
+    currentProjects, 
+    currentPage, 
+    totalPages, 
+    setCurrentPage, 
+    itemsPerPage,
+    setSelectedProject, 
+    user,
+    isLoading
+    }) {
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+    // console.log(projects)
+    // console.log(user);
 
-  /* =========================
-     FETCH PROJECTS
-  ========================== */
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const res = await api.get("/projects");
-
-        const data = res.data?.projects || res.data || [];
-        setProjects(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error("Failed to fetch projects:", error);
-      } finally {
-        setLoading(false);
-      }
+    const STAGES = {
+        1: "Client ID",
+        2: "Engagement",
+        3: "Initiation",
+        4: "Planning",
+        5: "Execution",
+        6: "UAT",
+        7: "Go-Live",
+        8: "Closure"
     };
 
-    fetchProjects();
-  }, []);
+    const setCurrentStage = (currentStage) => {
+        return STAGES[currentStage] || "Unknown Stage";
+    };
 
-  /* =========================
-     PAGINATION
-  ========================== */
-  const totalPages = Math.ceil(projects.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
+    if(isLoading) return <div className={`w-18 h-18 rounded-full border-8 border-[#636363] border-t-[#1B3C4A] absolute top-50 animate-spin`}></div>
 
-  const currentProjects = projects.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
-
-  if (loading) {
     return (
-      <div className="p-4 text-[#636363] font-medium">
-        Loading projects...
-      </div>
-    );
-  }
+        <div className='px-4 pt-4 flex flex-col h-screen'>
+            <div className='cursor-pointer'>
+                <span className='font-medium text-[14px]/[20px] text-[#949494]'>Dashboard</span> <span className='text-[#949494]'>/</span> <span className='font-medium text-[14px]/[20px] text-[#1B3C4A]'>Projects</span>
+            </div>
+            <div className='flex items-center justify-between gap-2 relative'>
+                <div className='py-4'>
+                    <h3 className='font-semibold text-[14px]/[20px] text-[#090909] mb-2'>Projects</h3>
+                    <p className='font-normal text-[14px]/[20px] text-[#636363] mb-3'>View all assigned projects</p>
+                </div>
 
-  return (
-    <div className="px-4 pt-4 flex flex-col h-screen">
+                <div className='w-94.5 h-10 flex items-center gap-3 relative'>
+                    <i className="fa-solid fa-magnifying-glass text-[#090909] absolute left-3"></i>
+                    <input type="text" placeholder='Search' className='w-72.25 border border-[#00000026] py-2.5 px-8.5 bg-[#FFFFFF] rounded-lg'/>
+                    <div className='w-19.25 rounded-lg flex gap-2 items-center border border-[#0000000D] bg-[#E8E8E8] hover:bg-[#1B3C4A] text-[#1B3C4A] hover:text-[#E8E8E8] py-2.5 px-4 cursor-pointer'>
+                        <i className="fa-solid fa-sliders fa-md text-[#636363]"></i>
+                        <p className='font-medium text-[14px]/[20px]'>All</p>
+                    </div>
+                </div>
 
-      {/* BREADCRUMB */}
-      <div>
-        <span className="text-[#949494] font-medium text-sm">
-          Dashboard
-        </span>
-        <span className="text-[#949494]"> / </span>
-        <span className="text-[#1B3C4A] font-medium text-sm">
-          Projects
-        </span>
-      </div>
+                {/* <div className='flex items-center justify-center w-lg h-104.5 absolute top-10 left-61 py-14'>
+                    <div className='text-center'>
+                        <p>No projects assigned</p>
+                        <p>You do not have any projects</p>
+                    </div>
+                </div> */}
+            </div>
 
-      {/* HEADER */}
-      <div className="flex justify-between items-center py-4">
-        <div>
-          <h3 className="font-semibold text-[#090909]">Projects</h3>
-          <p className="text-sm text-[#636363]">
-            View all assigned projects
-          </p>
+            {/* projects table with details */}
+            <section className='w-full h-176 overflow-y-auto overscroll-contain border-collapse rounded-lg border border-[#0000000D] relative'>
+                <table className='w-full'>
+                    <thead className='sticky top-0 z-2000 h-11'>
+                        <tr className='text-left'>
+                            <th className='w-47 py-3 px-6 bg-[#F9FAFB] font-semibold text-[12px]/[18px] text-[#090909] justify-center'>ID</th>
+                            <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Project Name</th>
+                            <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Client</th>
+                            <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Product</th>
+                            {
+                                user?.role === "HEADOFOPS" && (
+                                    <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>PM</th>
+                                )
+                            }
+                            <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Status</th>
+                            <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Stage</th>
+                            <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'></th>
+                        </tr>
+                    </thead>
+
+                    <tbody className=''>
+                        {
+                            currentProjects.map((project, index) => (
+                                <tr key={index} className='border-y border-[#0000000D]'>
+                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.id}</td>
+                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.projectName}</td>
+                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.clientName}</td>
+                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.productName}</td>
+                                    {
+                                        user?.role === "HEADOFOPS" && (
+                                            <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.projectManagerEmail === null ? "Not Assigned" : project.projectManagerEmail}</td>
+                                        )
+                                    }
+                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#FFFFFF] align-middle'>
+                                        <p className='rounded-2xl py-1 px-2 bg-[#228CEE] text-center'>{project.workflowStatus}</p>
+                                    </td>
+                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#FFFFFF] align-middle'>
+                                        <p className='rounded-2xl py-1 px-2 bg-[#228CEE] text-center'>{setCurrentStage(project.currentStage)}</p>
+                                    </td>
+                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] relative justify-center align-middle'>
+                                        <i onClick={() => setSelectedProject(project)} className="fa-solid fa-ellipsis-vertical fa-lg cursor-pointer text-[#98a2b3] hover:text-[#1B3C4A]"></i>
+
+                                        {/* <button 
+                                            onClick={() => setSelectedProject(project)}
+                                            className='absolute px-4 py-2.5 bg-[#FFFFFF] rounded-lg shadow-[0_12px_16px] shadow-[#10182808] text-[#000000] flex items-center gap-2 cursor-pointer'>
+                                                <i className="fa-regular fa-eye fa-sm"></i>
+                                                <p className='font-normal text-[12px]/[20px] text-[#090909]'>View project</p>
+                                        </button> */}
+                                    </td>
+                                </tr>
+                            ))
+                        }
+                    </tbody>
+                </table>
+            </section>
+
+            <div className='mt-auto flex items-center justify-between w-full py-6'>
+                <p className='font-medium text-[14px]/[20px] text-[#636363]'>Page {currentPage} of {totalPages}</p>
+                <div className='flex items-center gap-2'>
+                    <button onClick={() => setCurrentPage((p) => Math.max(p -1, 1))} className='rounded-md border border-[#0000000D] shadow-[2px] shadow-[#1018280D] py-2.25 px-4.25 bg-[#E8E8E8] hover:bg-[#1B3C4A] font-medium text-[14px]/[20px] text-[#1B3C4A] hover:text-[#FFFFFF] cursor-pointer'>Previous</button>
+                    <button onClick={() => 
+                        setCurrentPage((p) => 
+                            p < Math.ceil(projects.length / itemsPerPage)
+                            ? p + 1
+                            : p
+                    )} className='rounded-md border border-[#0000000D] shadow-[2px] shadow-[#1018280D] py-2.25 px-4.25 bg-[#E8E8E8] hover:bg-[#1B3C4A] font-medium text-[14px]/[20px] text-[#1B3C4A] hover:text-[#FFFFFF] cursor-pointer'>Next</button>
+                </div>
+            </div>
         </div>
-      </div>
-
-      {/* TABLE */}
-      <section className="w-full flex-1 overflow-auto border border-[#0000000D] rounded-lg">
-
-        <table className="w-full table-fixed border-collapse">
-
-          {/* HEADER */}
-          <thead className="sticky top-0 bg-[#F9FAFB] z-10">
-            <tr className="text-left text-xs text-[#090909]">
-
-              <th className="p-3 w-20">ID</th>
-              <th className="p-3">Project</th>
-              <th className="p-3">Client</th>
-              <th className="p-3">Product</th>
-
-              {user?.role === "HEADOFOPS" && (
-                <th className="p-3">PM</th>
-              )}
-
-              <th className="p-3">Status</th>
-              <th className="p-3 w-12"></th>
-
-            </tr>
-          </thead>
-
-          {/* BODY */}
-          <tbody>
-            {currentProjects.map((project) => (
-              <tr
-                key={project.id}
-                className="border-t border-[#0000000D]"
-              >
-
-                <td className="p-3 text-sm text-[#636363]">
-                  {project.id}
-                </td>
-
-                <td className="p-3 text-sm text-[#636363]">
-                  {project.projectName}
-                </td>
-
-                <td className="p-3 text-sm text-[#636363]">
-                  {project.clientName}
-                </td>
-
-                <td className="p-3 text-sm text-[#636363]">
-                  {project.productName}
-                </td>
-
-                {user?.role === "HEADOFOPS" && (
-                  <td className="p-3 text-sm text-[#636363]">
-                    {project.projectManager || "Not Assigned"}
-                  </td>
-                )}
-
-                <td className="p-3">
-                  <span className="inline-block px-2 py-1 rounded-full text-xs bg-blue-500 text-white">
-                    {project.workflowStatus}
-                  </span>
-                </td>
-
-                <td className="p-3 text-center">
-                  <i
-                    onClick={() => setSelectedProject(project)}
-                    className="fa-solid fa-ellipsis-vertical cursor-pointer text-[#98a2b3] hover:text-[#1B3C4A]"
-                  />
-                </td>
-
-              </tr>
-            ))}
-          </tbody>
-
-        </table>
-      </section>
-
-      {/* PAGINATION */}
-      <div className="flex justify-between items-center py-4">
-        <p className="text-sm text-[#636363]">
-          Page {currentPage} of {totalPages || 1}
-        </p>
-
-        <div className="flex gap-2">
-          <button
-            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            className="px-3 py-1 bg-gray-200 rounded"
-          >
-            Prev
-          </button>
-
-          <button
-            onClick={() =>
-              setCurrentPage((p) => (p < totalPages ? p + 1 : p))
-            }
-            className="px-3 py-1 bg-gray-200 rounded"
-          >
-            Next
-          </button>
-        </div>
-      </div>
-
-    </div>
-  );
+    )
 }
 
-export default Projects;
+export default Projects

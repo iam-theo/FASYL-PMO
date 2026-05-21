@@ -27,13 +27,13 @@ const router = express.Router();
  *         name: projectId
  *         required: true
  *         schema:
- *           type: string
+ *           type: integer
  *         description: Project ID
  *       - in: path
  *         name: stageId
  *         required: true
  *         schema:
- *           type: string
+ *           type: integer
  *         description: Workflow stage ID
  *     responses:
  *       200:
@@ -60,12 +60,12 @@ router.post(
  *         name: projectId
  *         required: true
  *         schema:
- *           type: string
+ *           type: integer
  *       - in: path
  *         name: stageId
  *         required: true
  *         schema:
- *           type: string
+ *           type: integer
  *     responses:
  *       200:
  *         description: Stage approved successfully
@@ -91,12 +91,12 @@ router.post(
  *         name: projectId
  *         required: true
  *         schema:
- *           type: string
+ *           type: integer
  *       - in: path
  *         name: stageId
  *         required: true
  *         schema:
- *           type: string
+ *           type: integer
  *     requestBody:
  *       required: true
  *       content:
@@ -134,7 +134,7 @@ router.post(
  *         name: projectId
  *         required: true
  *         schema:
- *           type: string
+ *           type: integer
  *         description: Project ID
  *     responses:
  *       200:
@@ -143,7 +143,7 @@ router.post(
  *         description: Project not found
  */
 router.get(
-  "/:projectId/:stageId",
+  "/:projectId/stage/:stageId",
   authMiddleWare,
   getStageState
 );

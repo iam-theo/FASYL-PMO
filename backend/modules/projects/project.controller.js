@@ -81,6 +81,9 @@ export const getProject = async (req, res) => {
 ========================================= */
 export const updateProject = async (req, res) => {
   try {
+    console.log("PARAMS:", req.params)
+    console.log("BODY:", req.body)
+    
     const project = await updateProjectService(
       req.params.id,
       req.body

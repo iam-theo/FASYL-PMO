@@ -124,7 +124,7 @@ const POLICY = {
   },
 
   stage_3: {
-    name: "Initiation",
+    name: "Project Initiation",
     checklist:
       [
         {
@@ -186,7 +186,7 @@ const POLICY = {
   },
 
   stage_4: {
-    name: "Planning",
+    name: "Project Planning",
     checklist:
       [
         {
@@ -255,7 +255,7 @@ const POLICY = {
   },
 
   stage_5: {
-    name: "Execution",
+    name: "Execution & Delivery",
     checklist:
       [
         {
@@ -324,7 +324,7 @@ const POLICY = {
   },
 
   stage_6: {
-    name: "UAT",
+    name: "User Acceptance Testing",
     checklist:
       [
         {
@@ -380,7 +380,7 @@ const POLICY = {
   },
 
   stage_7: {
-    name: "Go Live",
+    name: "Go-Live & Cut-Over",
     checklist:
       [
         {
@@ -448,7 +448,7 @@ const POLICY = {
   },
 
   stage_8: {
-    name: "Closure",
+    name: "Project Closure",
     checklist:
       [
         {

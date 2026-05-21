@@ -104,10 +104,16 @@ export const getProjectsService = async (user) => {
   return await prisma.project.findMany({
     where,
     include: {
-      stages:true
+      stages: true,
     },
+    orderBy: [
+      { projectManagerEmail: "asc" },
+      { updatedAt: "desc" },
+    ],
   });
 };
+
+
 /* =========================================
     GET PROJECT BY ID
 ========================================= */
@@ -127,15 +133,12 @@ export const getProjectByIdService = async (id) => {
 export const updateProjectService = async (id, data) => {
   return await prisma.project.update({
     where: { id: Number(id) },
-
     data: {
-      ...(data.name && { projectName: data.name }),
-      ...(data.clientName && { clientName: data.clientName }),
-      ...(data.industry && { industry: data.industry }),
-      ...(data.productName && { productName: data.productName }),
-      ...(data.description && { description: data.description }),
-
-      // 🔐 allow reassignment by email
+      ...(data.name !== undefined && { projectName: data.name }),
+      ...(data.clientName !== undefined && { clientName: data.clientName }),
+      ...(data.industry !== undefined && { industry: data.industry }),
+      ...(data.productName !== undefined && { productName: data.productName }),
+      ...(data.description !== undefined && { description: data.description }),
       ...(data.projectManagerEmail !== undefined && {
         projectManagerEmail: data.projectManagerEmail,
       }),

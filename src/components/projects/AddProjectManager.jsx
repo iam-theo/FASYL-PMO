@@ -1,5 +1,7 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { assignProjectManager } from '../../api'
+import { useNotification } from '../NotificationContext'
 
 function AddProjectManager({
     projects, 
@@ -14,24 +16,39 @@ function AddProjectManager({
     }) {
 
     const [open, setOpen] = useState(false)
+    const { setNotification } = useNotification()
     const project = selectedProject
-    console.log(project)
 
 
-    const handleAssign = (projectId, p) => {
-        if(user.role === "HEADOFOPS") {
+    const handleAssign = async (projectId, p) => {
+        if(user.role !== "HEADOFOPS") return;
+
+        try {
+            await assignProjectManager(projectId, p)
+
             setProjects(prev => 
                 prev.map(project =>
-                    project.projectId === projectId
-                        ? {...project, project_manager: p}
+                    project.id === projectId
+                        ? {...project, projectManagerEmail: p}
                         : project,
-                        setAssignedManager(p),
-                        onClose(),
-                        setAssignedManager(null)
                 )
-            )
-            alert('Your have successfully assigned a project manager')
+            );
+
+            setAssignedManager(p);
+            setAssignedManager(null)
+            onClose();
+
+            setNotification({
+                type: "success",
+                title: "Project Manager Assigned!",
+                message: `You have successfully assigned a project manager to Project - ${project.projectName}`
+            });
+
+        } catch (err) {
+            console.error(err)
+            alert("Failed to assign project manager")
         }
+
     };
 
     return (
@@ -52,7 +69,7 @@ function AddProjectManager({
                         <input 
                         type="text"
                         readOnly
-                        value={project.name}
+                        value={project.projectName}
                         className='font-normal text-[16px]/[24px] text-[#667085] rounded-lg border border-[#D0D5DD] bg-[#EFEFEF] pt-2.5 pb-2.5 pl-3.5' />
                     </div>
                     <div className='flex flex-col gap-1.5'>
@@ -60,7 +77,7 @@ function AddProjectManager({
                         <input 
                         readOnly
                         type="text"
-                        value={project.client.name}
+                        value={project.clientName}
                         className='font-normal text-[16px]/[24px] text-[#667085] rounded-lg border border-[#D0D5DD] bg-[#EFEFEF] pt-2.5 pb-2.5 pl-3.5' />
                     </div>
                     <div className='flex flex-col gap-1.5'>
@@ -68,14 +85,13 @@ function AddProjectManager({
                         <input 
                         readOnly
                         type="text"
-                        value={project.product.name}
+                        value={project.productName}
                         className='font-normal text-[16px]/[24px] text-[#667085] rounded-lg border border-[#D0D5DD] bg-[#EFEFEF] pt-2.5 pb-2.5 pl-3.5' />
                     </div>
                     <div className='flex flex-col gap-1.5'>
                         <label htmlFor="" className='font-medium text-[14px]/[20px] text-[#090909]'>Sales ID</label>
                         <input 
                         type="text"
-                        value={project.sales.saleId} 
                         readOnly
                         className='font-normal text-[16px]/[24px] text-[#667085] rounded-lg border border-[#D0D5DD] bg-[#EFEFEF] pt-2.5 pb-2.5 pl-3.5' />
                     </div>
@@ -83,7 +99,6 @@ function AddProjectManager({
                         <label htmlFor="" className='font-medium text-[14px]/[20px] text-[#090909]'>Client PMO Address</label>
                         <input 
                         type="text"
-                        value={project.pmoAddress}
                         readOnly
                         className='font-normal text-[16px]/[24px] text-[#667085] rounded-lg border border-[#D0D5DD] bg-[#EFEFEF] pt-2.5 pb-2.5 pl-3.5' />
                     </div>
@@ -91,6 +106,7 @@ function AddProjectManager({
                         <label htmlFor="" className='font-medium text-[14px]/[20px] text-[#090909]'>PMO ID</label>
                         <input 
                         type="text" 
+                        value={project.pmoId}
                         readOnly
                         className='font-normal text-[16px]/[24px] text-[#667085] rounded-lg border border-[#D0D5DD] bg-[#EFEFEF] pt-2.5 pb-2.5 pl-3.5' />
                     </div>
@@ -124,7 +140,7 @@ function AddProjectManager({
                         }
                     </div>
                     <button
-                        onClick={() => handleAssign(project.projectId, assignedManager)}
+                        onClick={() => handleAssign(project.id, assignedManager)}
                         className='w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#1B3C4A] flex items-center justify-center gap-2 cursor-pointer'>
                             <i className="fa-regular fa-circle-check text-[#FFFFFF]"></i>
                             <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>Assign Project Manager</p>

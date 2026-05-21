@@ -17,13 +17,28 @@ function ViewProjectsBody({
     setPreview
     }) {
 
-    console.log(selectedProject);
+    // console.log(selectedProject);
+
+    // const STAGES = {
+    //     1: "Client ID",
+    //     2: "Engagement",
+    //     3: "Initiation",
+    //     4: "Planning",
+    //     5: "Execution",
+    //     6: "UAT",
+    //     7: "Go-Live",
+    //     8: "Closure"
+    // };
+
+    // const setCurrentStage = (currentStage) => {
+    //     return STAGES[currentStage] || "Unknown Stage";
+    // };
     
     // const [projectStages, setProjectStages] = useState({})
     const [isLoading, setisLoading] = useState(true)
     const hasFetched = useRef(false)
 
-    const [currentStatus, setCurrentStatus] = useState(selectedProject.current_status)
+    // const [currentStatus, setCurrentStatus] = useState(setCurrentStage(selectedProject.currentStage))
     const [open, setOpen] = useState(true)
     const { setNotification } = useNotification()
 
@@ -31,7 +46,7 @@ function ViewProjectsBody({
         { name: "project_lifecycle", label: "Project Lifecycle"},
         { name: "project_details", label: "Project Details"}
     ]
-
+8
     return (
         <div className='absolute z-2000 w-full h-full bg-[#00000080] flex flex-col items-end overflow-y-auto overscroll-contain'>
 
@@ -66,10 +81,7 @@ function ViewProjectsBody({
                         setSelectedProject={setSelectedProject} 
                         projects={projects} 
                         setProjects={setProjects} 
-                        onClose={onClose} 
-                        currentStatus={currentStatus} 
-                        setCurrentStatus={setCurrentStatus} 
-                        toggleChecklist={toggleChecklist} 
+                        onClose={onClose}  
                         user={user}
                         setNotification={setNotification}
                         preview={preview}

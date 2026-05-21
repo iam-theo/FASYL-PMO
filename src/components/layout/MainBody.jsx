@@ -37,7 +37,7 @@ function MainBody({ user, setUser}) {
     const [checkedList, setCheckedList] = useState([])
 
     const [projects, setProjects] = useState([]);
-    const [projectManagers, setProjectManagers] =  useState([])
+    const [projectManagers, setProjectManagers] =  useState(["sekemi@fasylng.com", "desmond@fasylng.com"])
     const [assignedManager, setAssignedManager] = useState("Select A Project Manager")
     const [isLoading, setisLoading] = useState(true)
 
@@ -97,23 +97,10 @@ function MainBody({ user, setUser}) {
                 isLoading={isLoading}
             />
 
-            {selectedProject && (
-                <ViewProjectsBody
+            {selectedProject && user.role === "HEADOFOPS" && !selectedProject?.projectManagerEmail ? (
+                <AddProjectManager
                     projects={projects}
                     setProjects={setProjects}
-                    selectedProject={selectedProject}
-                    setSelectedProject={setSelectedProject} 
-                    onClose={() => setSelectedProject(null)}
-                    activeDetails={activeDetails}
-                    setActiveDetails={setActiveDetails}
-                    user={user}
-                />
-            )}
-
-            {/* {selectedProject && selectedProject?.project_manager === "" && user.role === "HEADOFOPS" && (
-                <AddProjectManager 
-                    projects={projects}
-                    setProjects={setProjects} 
                     selectedProject={selectedProject}
                     setSelectedProject={setSelectedProject}
                     onClose={() => setSelectedProject(null)}
@@ -122,7 +109,18 @@ function MainBody({ user, setUser}) {
                     setAssignedManager={setAssignedManager}
                     user={user}
                 />
-            )} */}
+            ) : selectedProject ? (
+                <ViewProjectsBody
+                    projects={projects}
+                    setProjects={setProjects}
+                    selectedProject={selectedProject}
+                    setSelectedProject={setSelectedProject}
+                    onClose={() => setSelectedProject(null)}
+                    activeDetails={activeDetails}
+                    setActiveDetails={setActiveDetails}
+                    user={user}
+                />
+            ) : null}
         </div>
     )
 }

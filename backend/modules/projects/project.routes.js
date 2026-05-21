@@ -9,6 +9,7 @@ import {
   getProject,
   updateProject,
   deleteProject,
+  updateChecklistBulk
 } from "./project.controller.js";
 
 const router = Router();
@@ -114,6 +115,21 @@ router.put(
   allowRoles(ROLES.HEADOFOPS),
   updateProject
 );
+
+/* =========================================
+   UPDATE CHECKLIST
+========================================= */
+router.patch(
+  "/:projectId/stages/:stageId/checklist",
+  (req, res, next) => {
+      console.log("🔥 ROUTE MATCHED");
+      next();
+  },
+  authMiddleWare,
+  allowRoles(ROLES.PROJECTMANAGER),
+  updateChecklistBulk
+);
+
 
 /* =========================================
    DELETE PROJECT

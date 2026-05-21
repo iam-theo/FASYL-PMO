@@ -127,6 +127,60 @@ export const getProjectByIdService = async (id) => {
   });
 };
 
+
+/* =========================================
+    UPDATE CHECKLIST
+========================================= */
+export const updateChecklistBulkService = async (
+  projectId,
+  stageId,
+  checklist
+) => {
+
+  console.log("⚙️ SERVICE HIT");
+  console.log("DATA RECEIVED:", checklist);
+
+  const stage = await prisma.projectStage.findFirst({
+    where: {
+      id: Number(stageId),
+      projectId: Number(projectId),
+    },
+  });
+
+  if (!stage) throw new Error("Stage not found");
+
+  // IMPORTANT: normalize incoming checklist
+  const updatedChecklist = stage.checklist.map(existingItem => {
+    const incomingItem = checklist.find(i => i.id === existingItem.id);
+
+    if (!incomingItem) return existingItem
+
+    return {
+      ...existingItem,
+      completed: incomingItem.completed,
+      completedAt: incomingItem.completed ? new Date() : null,
+    };
+  });
+
+  // console.log("SENDING CHECKLIST:", updatedChecklist)
+
+  const allChecked = updatedChecklist.every(i => i.completed);
+
+  console.log("💾 WRITING TO DB...");
+
+  const updatedStage = await prisma.projectStage.update({
+    where: { id: Number(stageId) },
+    data: {
+      checklist: updatedChecklist,
+      completed: allChecked,
+    },
+  });
+
+  console.log("✅ DB UPDATE RESULT:", updatedStage);
+
+  return updatedStage;
+};
+
 /* =========================================
     UPDATE PROJECT
 ========================================= */

@@ -4,8 +4,10 @@ import {
   getProjectByIdService,
   updateProjectService,
   deleteProjectService,
+  updateChecklistBulkService
 } from "./project.service.js";
 
+console.log("🔥 CHECKLIST ROUTE HIT");
 /* =========================================
     CREATE PROJECT
 ========================================= */
@@ -72,6 +74,45 @@ export const getProject = async (req, res) => {
       success: false,
       message: "Failed to fetch project",
       error: err.message,
+    });
+  }
+};
+
+/* =========================================
+    UPDATE CHECKLIST
+========================================= */
+
+export const updateChecklistBulk = async (req, res) => {
+
+  console.log("🔥 CHECKLIST ROUTE HIT");
+  console.log("PARAMS:", req.params);
+  console.log("BODY:", req.body);
+  
+  try {
+    console.log("🔥 CHECKLIST ROUTE HIT");
+    console.log("PARAMS:", req.params);
+    console.log("BODY:", req.body);
+
+    const { projectId, stageId } = req.params;
+    const { checklist } = req.body;
+
+    const result = await updateChecklistBulkService(
+      projectId,
+      stageId,
+      checklist
+    );
+
+    return res.json({
+      success: true,
+      data: result,
+    });
+
+  } catch (err) {
+    console.log(err);
+
+    return res.status(500).json({
+      success: false,
+      message: err.message,
     });
   }
 };

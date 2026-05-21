@@ -1,34 +1,47 @@
- // checklist function for each project
-export const toggleChecklist = (projectId, stageStatus, itemId) => {
-    if(user.role === "PROJECTMANAGER") {
-        setProjects(prev =>
-            prev.map(project => {
-                if (project.id !== projectId) return project;
+// import { handleChecklist } from "./handleChecklist";
+import { handleChecklist } from "../../../../api";
 
-                return {
-                    ...project,
-                    project_stages: project.project_stages.map(stage => {
-                        if (stage.status !== stageStatus) return stage;
+export const toggleChecklist = async (
+    setProjects,
+    projectId,
+    stageId,
+    itemId,
+    user
+    ) => {
+    if (user.role !== "PROJECTMANAGER") return;
 
-                        const updatedChecklist = stage.checklist.map(item =>
-                            item.id === itemId
-                            ? { ...item, checked: !item.checked }
-                            : item
-                        );
+    let updatedChecklist = null;
 
-                        // check if ALL are checked
-                        const allChecked = updatedChecklist.every(
-                            item => item.checked
-                        );
+    setProjects(prev =>
+        prev.map(project => {
+        if (project.id !== projectId) return project;
 
-                        return {
-                            ...stage,
-                            checklist: updatedChecklist,
-                            isCompleted: allChecked
-                        };
-                    })
-                };
-            })
-        );
-    } else return
+        return {
+            ...project,
+            stages: project.stages.map(stage => {
+            if (stage.id !== stageId) return stage;
+
+            const newChecklist = stage.checklist.map(item =>
+                item.id === itemId
+                ? { ...item, completed: !item.completed }
+                : item
+            );
+
+            updatedChecklist = newChecklist;
+
+            return {
+                ...stage,
+                checklist: newChecklist,
+                completed: newChecklist.every(i => i.completed),
+            };
+            }),
+        };
+        })
+    );
+
+    // ⛔ IMPORTANT: wait a tick so state updates settle
+    await new Promise(r => setTimeout(r, 0));
+
+    // 🚀 NOW send correct data
+    await handleChecklist(projectId, stageId, updatedChecklist);
 };

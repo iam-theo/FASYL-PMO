@@ -250,7 +250,7 @@ function ProjectLifeCycle({
             <div className=''>
                 <h3 className='font-semibold text-[16px]/[20px] text-[#090909] mb-3'>Upload Supporting Documents</h3>
                 {/* <ClientIDDoc /> */}
-                {projectStage.requiredDocs.map((doc, index) => (
+                {/* {projectStage.requiredDocs.map((doc, index) => (
                     <UploadBox 
                         key={index}
                         title={doc.key.title}
@@ -259,7 +259,7 @@ function ProjectLifeCycle({
                         preview={preview}
                         setPreview={setPreview}
                     />
-                ))}
+                ))} */}
                 <button
                 // onClick={() => handleNextStage(selectedProject.id)} 
                 className='w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#1B3C4A] flex items-center justify-center gap-2 cursor-pointer'>

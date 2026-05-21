@@ -1,18 +1,39 @@
 import { PrismaClient, WorkflowStatus } from "@prisma/client";
-import { getPolicy } from "../workflow/workflow.policy";
+import { getPolicy } from "../../modules/workflow/workflow.policy.js";
 const prisma = new PrismaClient();
 
 const TOTAL_STAGES = 8;
-
 /* =========================================
-   PROGRESS CALCULATION
+    PROGRESS CALCULATION
 ========================================= */
 const calcProgress = (stage) => {
   return (stage / TOTAL_STAGES) * 100;
 };
 
+const createChecklist = (items) => {
+  return items.map((item, index) => ({
+    id: item.id || `c${index + 1}`,
+    key: item.key,
+    title: item.title,
+    desc: item.desc,
+    isRequired: item.isRequired ?? false,
+    completed: false,
+    completedAt: null,
+  }));
+};
+
+const createRequiredDocs = (docs) => {
+  return docs.map((doc, index) => ({
+    id: `d${index + 1}`,
+    key: doc,
+    title: doc.title,
+    fileURL: null,
+    uploadedAt: null,
+  }));
+};
+
 /* =========================================
-   CREATE PROJECT + WORKFLOW INIT
+    CREATE PROJECT + WORKFLOW INIT
 ========================================= */
 export const createProjectService = async (data, user) => {
   const startStage = 1;
@@ -37,34 +58,41 @@ export const createProjectService = async (data, user) => {
       progressPercent: calcProgress(startStage),
 
       /* =========================
-         WORKFLOW INITIALIZATION
+          WORKFLOW INITIALIZATION
       ========================= */
-      stage1: { create: { workflowStatus: WorkflowStatus.OPEN, stageName: getPolicy.stage1.stageName } },
-      stage2: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage2.stageName } },
-      stage3: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage3.stageName } },
-      stage4: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage4.stageName } },
-      stage5: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage5.stageName } },
-      stage6: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage6.stageName } },
-      stage7: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage7.stageName } },
-      stage8: { create: { workflowStatus: WorkflowStatus.LOCKED, stageName: getPolicy.stage8.stageName } },
+      stages: {
+        create: Array.from({ length: TOTAL_STAGES }, (_, index) => {
+          const stageNumber = index + 1;
+          const stagePolicy = getPolicy(stageNumber);
+
+          return {
+            stageIndex: stageNumber,
+            stageName: stagePolicy.name,
+
+            workflowStatus:
+              stageNumber === 1
+                ? WorkflowStatus.OPEN
+                : WorkflowStatus.LOCKED,
+
+            checklist: createChecklist(stagePolicy.checklist),
+
+            requiredDocs: createRequiredDocs(
+              stagePolicy.requiredDocs || []
+            )
+          };
+        })
+      },
     },
 
     include: {
-      stage1: true,
-      stage2: true,
-      stage3: true,
-      stage4: true,
-      stage5: true,
-      stage6: true,
-      stage7: true,
-      stage8: true,
-    },
+      stages: true
+    }
   });
 
 };
 
 /* =========================================
-   GET ALL PROJECTS (ROLE-AWARE)
+    GET ALL PROJECTS (ROLE-AWARE)
 ========================================= */
 export const getProjectsService = async (user) => {
   const where = {};
@@ -76,39 +104,25 @@ export const getProjectsService = async (user) => {
   return await prisma.project.findMany({
     where,
     include: {
-      stage1: true,
-      stage2: true,
-      stage3: true,
-      stage4: true,
-      stage5: true,
-      stage6: true,
-      stage7: true,
-      stage8: true,
+      stages:true
     },
   });
 };
 /* =========================================
-   GET PROJECT BY ID
+    GET PROJECT BY ID
 ========================================= */
 export const getProjectByIdService = async (id) => {
   return await prisma.project.findUnique({
     where: { id: Number(id) },
 
     include: {
-      stage1: true,
-      stage2: true,
-      stage3: true,
-      stage4: true,
-      stage5: true,
-      stage6: true,
-      stage7: true,
-      stage8: true,
+      stages:true
     },
   });
 };
 
 /* =========================================
-   UPDATE PROJECT
+    UPDATE PROJECT
 ========================================= */
 export const updateProjectService = async (id, data) => {
   return await prisma.project.update({
@@ -130,7 +144,7 @@ export const updateProjectService = async (id, data) => {
 };
 
 /* =========================================
-   DELETE PROJECT
+    DELETE PROJECT
 ========================================= */
 export const deleteProjectService = async (id) => {
   return await prisma.project.delete({

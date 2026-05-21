@@ -7,18 +7,20 @@ import {
 } from "./project.service.js";
 
 /* =========================================
-   CREATE PROJECT
+    CREATE PROJECT
 ========================================= */
 export const createProject = async (req, res) => {
   try {
     const project = await createProjectService(req.body, req.user);
 
     return res.status(201).json({
+      success: true,
       message: "Project created successfully",
-      project,
+      data: project,
     });
   } catch (err) {
     return res.status(500).json({
+      success: false,
       message: "Failed to create project",
       error: err.message,
     });
@@ -26,18 +28,20 @@ export const createProject = async (req, res) => {
 };
 
 /* =========================================
-   GET ALL PROJECTS (ROLE-AWARE)
+    GET ALL PROJECTS (ROLE-AWARE)
 ========================================= */
 export const getProjects = async (req, res) => {
   try {
     const projects = await getProjectsService(req.user);
 
     return res.json({
+      success: true,
       message: "Projects retrieved successfully",
-      projects,
+      data: projects,
     });
   } catch (err) {
     return res.status(500).json({
+      success: false,
       message: "Failed to fetch projects",
       error: err.message,
     });
@@ -45,7 +49,7 @@ export const getProjects = async (req, res) => {
 };
 
 /* =========================================
-   GET SINGLE PROJECT
+    GET SINGLE PROJECT
 ========================================= */
 export const getProject = async (req, res) => {
   try {
@@ -53,16 +57,19 @@ export const getProject = async (req, res) => {
 
     if (!project) {
       return res.status(404).json({
+        success: false,
         message: "Project not found",
       });
     }
 
     return res.json({
+      success: true,
       message: "Project retrieved successfully",
-      project,
+      data: project,
     });
   } catch (err) {
     return res.status(500).json({
+      success: false,
       message: "Failed to fetch project",
       error: err.message,
     });
@@ -70,7 +77,7 @@ export const getProject = async (req, res) => {
 };
 
 /* =========================================
-   UPDATE PROJECT
+    UPDATE PROJECT
 ========================================= */
 export const updateProject = async (req, res) => {
   try {
@@ -79,12 +86,22 @@ export const updateProject = async (req, res) => {
       req.body
     );
 
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: "Project not found",
+      });
+    }
+
+
     return res.json({
+      success: true,
       message: "Project updated successfully",
-      project,
+      data: project,
     });
   } catch (err) {
     return res.status(500).json({
+      success: false,
       message: "Failed to update project",
       error: err.message,
     });
@@ -92,17 +109,26 @@ export const updateProject = async (req, res) => {
 };
 
 /* =========================================
-   DELETE PROJECT
+    DELETE PROJECT
 ========================================= */
 export const deleteProject = async (req, res) => {
   try {
-    await deleteProjectService(req.params.id);
+    const project = await deleteProjectService(req.params.id);
+
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: "Project not found",
+      });
+    }
 
     return res.json({
+      success: true,
       message: "Project deleted successfully",
     });
   } catch (err) {
     return res.status(500).json({
+      success: false,
       message: "Failed to delete project",
       error: err.message,
     });

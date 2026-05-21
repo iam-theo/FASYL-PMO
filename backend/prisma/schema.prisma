@@ -59,16 +59,45 @@ model Project {
   pmo             User? @relation("PMOProjects", fields: [pmoId], references: [id])
 
   timelines       ProjectTimeline[]
-  stage1          Stage1ClientIdentification?
-  stage2          Stage2ClientEngagement?
-  stage3          Stage3Initiation?
-  stage4          Stage4Planning?
-  stage5          Stage5Execution?
-  stage6          Stage6UAT?
-  stage7          Stage7GoLive?
-  stage8          Stage8Closure?
 
   approvals       ProjectApproval[]
+
+  stages          ProjectStage[]
+}
+
+model ProjectStage {
+  id              Int     @id @default(autoincrement())
+  projectId       Int
+  stageIndex      Int
+  stageName       String
+  workflowStatus  WorkflowStatus @default(LOCKED)
+
+  checklist       Json
+  requiredDocs       Json?
+
+  completed       Boolean  @default(false)
+  completedAt     DateTime?
+
+  submittedAt     DateTime?
+  submittedBy     Int?
+
+  approvedAt      DateTime?
+  approvedBy      Int?
+
+  escalated       Boolean  @default(false)
+  escalatedAt     DateTime?
+  escalatedBy     Int?
+
+  rejectedAt      DateTime?
+  rejectedBy      Int?
+  rejectionReason String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  project         Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, stageIndex])
 }
 
 model ProjectApproval {
@@ -76,7 +105,9 @@ model ProjectApproval {
   projectId  Int
   stage      Int
   status     ApprovalStatus @default(PENDING)
+  submittedBy Int?
   approvedBy Int?
+  rejectedBy Int?
   comment    String?
   createdAt  DateTime       @default(now())
   updatedAt  DateTime       @updatedAt
@@ -129,250 +160,6 @@ model AuditLog {
   @@index([projectId])
 }
 
-model Stage1ClientIdentification {
-  id                  Int            @id @default(autoincrement())
-  projectId           Int            @unique
-  stageName           String 
-  clientNameConfirmed Boolean         @default(false)
-  industryClass       Boolean         @default(false)
-  contactIdentified   Boolean         @default(false)
-  initialNeedsDocumented Boolean      @default(false)
-  confidentialitySigned Boolean       @default(false)
-  screeningCompleted  Boolean         @default(false)
-  kycAmlScreeningCompleted Boolean    @default(false)
-  conflictOfInterestCleared Boolean   @default(false)
-  opportunityLogged   Boolean         @default(false)
-  completed         Boolean        @default(false)
-  completedAt       DateTime?
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  workflowStatus    WorkflowStatus @default(OPEN)
-  approvedAt        DateTime?
-  approvedBy        Int?
-  escalated         Boolean        @default(false)
-  escalatedAt       DateTime?
-  escalatedBy       Int?
-  rejectedAt        DateTime?
-  rejectedBy        Int?
-  rejectionReason   String?
-  submittedAt       DateTime?
-  submittedBy       Int?
-  project           Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-}
-model Stage2ClientEngagement {
-  id                  Int            @id @default(autoincrement())
-  projectId           Int            @unique
-  stageName           String         
-  rfpReviewed         Boolean        @default(false)
-  rfpDate             DateTime?
-  technicalAssessment Boolean        @default(false)
-  commercialProposal  Boolean        @default(false)
-  proposalApproved    Boolean        @default(false)
-  proposalSubmitted   Boolean        @default(false)
-  awardReceived       Boolean        @default(false) 
-  commercialTermsAgreed Boolean      @default(false)
-  termsAgreed         Boolean        @default(false)
-  completed           Boolean        @default(false)
-  completedAt         DateTime?
-  createdAt           DateTime       @default(now())
-  updatedAt           DateTime       @updatedAt
-  workflowStatus      WorkflowStatus @default(LOCKED)
-  approvedAt          DateTime?
-  approvedBy          Int?
-  escalated           Boolean        @default(false)
-  escalatedAt         DateTime?
-  escalatedBy         Int?
-  rejectedAt          DateTime?
-  rejectedBy          Int?
-  rejectionReason     String?
-  submittedAt         DateTime?
-  submittedBy         Int?
-  project             Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
-}
-
-model Stage3Initiation {
-  id                Int            @id @default(autoincrement())
-  projectId         Int            @unique
-  stageName         String
-  awardLetterOnFile Boolean        @default(false)
-  invoiceIssued     Boolean        @default(false)
-  signedScopeDoc    Boolean        @default(false)
-  paymentReceived   Boolean        @default(false)
-  deferralObtained  Boolean        @default(false)
-  projectSigned     Boolean        @default(false)
-  deployedToProject Boolean       @default(false)
-  projectCode       String?
-  completed         Boolean        @default(false)
-  completedAt       DateTime?
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  workflowStatus    WorkflowStatus @default(LOCKED)
-  approvedAt        DateTime?
-  approvedBy        Int?
-  escalated         Boolean        @default(false)
-  escalatedAt       DateTime?
-  escalatedBy       Int?
-  rejectedAt        DateTime?
-  rejectedBy        Int?
-  rejectionReason   String?
-  submittedAt       DateTime?
-  submittedBy       Int?
-  project           Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
-}
-
-model Stage4Planning {
-  id               Int            @id @default(autoincrement())
-  projectId        Int            @unique
-  stageName        String
-  charterSigned    Boolean        @default(false)
-  projectPlanReady Boolean        @default(false)
-  resourcePlanApproved Boolean    @default(false)
-  riskDefined      Boolean        @default(false)
-  commPlanApproved Boolean        @default(false)
-  processDefined   Boolean        @default(false)
-  setupCompleted   Boolean        @default(false)
-  planReviewed     Boolean        @default(false)
-  kickoffHeld      Boolean        @default(false)
-  completed        Boolean        @default(false)
-  completedAt      DateTime?
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  workflowStatus   WorkflowStatus @default(LOCKED)
-  approvedAt       DateTime?
-  approvedBy       Int?
-  escalated        Boolean        @default(false)
-  escalatedAt      DateTime?
-  escalatedBy      Int?
-  rejectedAt       DateTime?
-  rejectedBy       Int?
-  rejectionReason  String?
-  submittedAt      DateTime?
-  submittedBy      Int?
-  project          Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
-}
-
-model Stage5Execution {
-  id              Int            @id @default(autoincrement())
-  projectId       Int            @unique
-  stageName       String
-  weeklyReports   Boolean        @default(false)
-  milestonesMet   Boolean        @default(false)
-  changeRequestsApproved Boolean @default(false)
-  issueLogActive  Boolean        @default(false)
-  migrationCompleted Boolean     @default(false)
-  planExecuted    Boolean        @default(false)
-  sitCompleted    Boolean        @default(false)
-  handoverDone    Boolean        @default(false)
-  completed       Boolean        @default(false)
-  completedAt     DateTime?
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-  workflowStatus  WorkflowStatus @default(LOCKED)
-  approvedAt      DateTime?
-  approvedBy      Int?
-  escalated       Boolean        @default(false)
-  escalatedAt     DateTime?
-  escalatedBy     Int?
-  rejectedAt      DateTime?
-  rejectedBy      Int?
-  rejectionReason String?
-  submittedAt     DateTime?
-  submittedBy     Int?
-  project         Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
-}
-
-model Stage6UAT {
-  id              Int            @id @default(autoincrement())
-  projectId       Int            @unique
-  stageName       String
-  uatStarted      Boolean        @default(false)
-  uatStable       Boolean        @default(false)
-  issuesLogCreated Boolean       @default(false)
-  issuesResolved  Boolean        @default(false)
-  defectsResolved Boolean        @default(false)
-  clientSignoff   Boolean        @default(false)
-  testCompleted   Boolean        @default(false)
-  completed       Boolean        @default(false)
-  completedAt     DateTime?
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-  workflowStatus  WorkflowStatus @default(LOCKED)
-  approvedAt      DateTime?
-  approvedBy      Int?
-  escalated       Boolean        @default(false)
-  escalatedAt     DateTime?
-  escalatedBy     Int?
-  rejectedAt      DateTime?
-  rejectedBy      Int?
-  rejectionReason String?
-  submittedAt     DateTime?
-  submittedBy     Int?
-  project         Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
-}
-
-model Stage7GoLive {
-  id                Int            @id @default(autoincrement())
-  projectId         Int            @unique
-  stageName         String
-  readinessComplete Boolean        @default(false)
-  cutoverApproved   Boolean        @default(false)
-  productionValidated Boolean      @default(false)
-  productionLive    Boolean        @default(false)
-  cutoverExecuted   Boolean        @default(false)
-  smokeTestsPassed  Boolean        @default(false)
-  certIssuedToClient Boolean       @default(false)
-  periodDefined     Boolean        @default(false)
-  milestoneTriggered Boolean       @default(false)
-  progressPercent   Int            @default(0)
-  completed         Boolean        @default(false)
-  completedAt       DateTime?
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  workflowStatus    WorkflowStatus @default(LOCKED)
-  approvedAt        DateTime?
-  approvedBy        Int?
-  escalated         Boolean        @default(false)
-  escalatedAt       DateTime?
-  escalatedBy       Int?
-  rejectedAt        DateTime?
-  rejectedBy        Int?
-  rejectionReason   String?
-  submittedAt       DateTime?
-  submittedBy       Int?
-  project           Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
-}
-
-model Stage8Closure {
-  id                 Int            @id @default(autoincrement())
-  projectId          Int            @unique
-  stageName          String
-  finalReportReady   Boolean        @default(false)
-  clientHandoverDone Boolean        @default(false)
-  documentationDone  Boolean        @default(false)
-  financialClosure   Boolean        @default(false)
-  resourceReleased   Boolean        @default(false)
-  lessonsLearned     String?
-  projectScore       Int?
-  closureApproved    Boolean        @default(false)
-  closedBy           String?
-  completed          Boolean        @default(false)
-  completedAt        DateTime?
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
-  workflowStatus     WorkflowStatus @default(LOCKED)
-  approvedAt         DateTime?
-  approvedBy         Int?
-  escalated          Boolean        @default(false)
-  escalatedAt        DateTime?
-  escalatedBy        Int?
-  rejectedAt         DateTime?
-  rejectedBy         Int?
-  rejectionReason    String?
-  submittedAt        DateTime?
-  submittedBy        Int?
-  project            Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
-}
 
 enum Role {
   HEADOFOPS

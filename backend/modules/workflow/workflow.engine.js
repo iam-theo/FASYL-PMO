@@ -2,6 +2,8 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const { getStageModel } = require("./workflow.utils");
+const { getPolicy } = require("../workflow/workflow.policy");
+const { WorkflowStatus } = require("@prisma/client");
 
 /**
  * =====================================
@@ -39,18 +41,30 @@ exports.updateStageData = async (projectId, stageId, data) => {
  * VALIDATE STAGE BEFORE SUBMISSION
  * =====================================
  */
-const validateStage = (stageData) => {
-  if (!stageData) return false;
+const validateStage = (stageId, stageData) => {
+  const policy = getPolicy(stageId);
 
-  // Checklist validation (dynamic safety)
-  const checklistValid =
-    !stageData.checklistRequired ||
-    stageData.checklistRequired === true;
+  if (!stageData?.checklist) return false;
 
-  // Document validation (if present)
+  const checklistValid = policy.checklist.every((policyItem) => {
+    const item = stageData.checklist.find(
+      (c) => c.key === policyItem.key
+    );
+
+    if (policyItem.isRequired) {
+      return item?.completed === true;
+    }
+
+    return true;
+  });
+
   const docsValid =
-    !stageData.requiredDocs ||
-    stageData.requiredDocs.every(doc => doc.fileURL && doc.fileURL !== "");
+    !policy.requiredDocs?.length ||
+    policy.requiredDocs.every((docKey) =>
+      (stageData.requiredDocs || []).some(
+        (d) => d.key === docKey && d.fileURL
+      )
+    );
 
   return checklistValid && docsValid;
 };
@@ -72,7 +86,7 @@ const calculateProgress = (currentStage, totalStages = 8) => {
 exports.submitStage = async ({ projectId, stageId, userId }) => {
   const stageData = await this.getStageData(projectId, stageId);
 
-  if (!validateStage(stageData)) {
+  if (!validateStage(stageId, stageData))  {
     throw new Error("Stage validation failed. Complete checklist & uploads.");
   }
 
@@ -88,7 +102,7 @@ exports.submitStage = async ({ projectId, stageId, userId }) => {
   await prisma.project.update({
     where: { id: projectId },
     data: {
-      workflowStatus: "SUBMITTED"
+      workflowStatus: WorkflowStatus.SUBMITTED
     }
   });
 
@@ -117,7 +131,8 @@ exports.approveStage = async ({ projectId, stageId, userId }) => {
     throw new Error("No pending approval found");
   }
 
-  const nextStage = stageId + 1;
+  const nextStage = stageId >= TOTAL_STAGES ? stageId : stageId + 1;
+
 
   /**
    * 1. Update Stage Table
@@ -127,7 +142,7 @@ exports.approveStage = async ({ projectId, stageId, userId }) => {
     data: {
       approvedAt: new Date(),
       approvedBy: userId,
-      workflowStatus: "APPROVED",
+      workflowStatus: WorkflowStatus.APPROVED,
       completed: true,
       completedAt: new Date()
     }
@@ -152,7 +167,7 @@ exports.approveStage = async ({ projectId, stageId, userId }) => {
     where: { id: projectId },
     data: {
       currentStage: nextStage,
-      workflowStatus: "APPROVED",
+      workflowStatus: WorkflowStatus.APPROVED,
       progressPercent: calculateProgress(nextStage)
     }
   });
@@ -191,7 +206,7 @@ exports.rejectStage = async ({ projectId, stageId, userId, reason }) => {
       rejectedAt: new Date(),
       rejectedBy: userId,
       rejectionReason: reason,
-      workflowStatus: "REJECTED"
+      workflowStatus: WorkflowStatus.REJECTED
     }
   });
 
@@ -214,7 +229,7 @@ exports.rejectStage = async ({ projectId, stageId, userId, reason }) => {
   await prisma.project.update({
     where: { id: projectId },
     data: {
-      workflowStatus: "REJECTED"
+      workflowStatus: WorkflowStatus.REJECTED
     }
   });
 

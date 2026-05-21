@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoidWR1YWtAZmFzeWxuZy5jb20iLCJyb2xlIjoiSEVBRE9GT1BTIiwiaWF0IjoxNzc5Mjg2NjI4LCJleHAiOjE3NzkyODc1MjgsImF1ZCI6ImZhc3lsLXVzZXJzIiwiaXNzIjoiZmFzeWwtcG1vIn0.qsA_GcCvEyf9Vlk4DsKQNwf4WOhRON8rh_bQ7TRvS-Y"
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoidWR1YWtAZmFzeWxuZy5jb20iLCJyb2xlIjoiSEVBRE9GT1BTIiwiaWF0IjoxNzc5MzQ1MjA0LCJleHAiOjE3NzkzNDYxMDQsImF1ZCI6ImZhc3lsLXVzZXJzIiwiaXNzIjoiZmFzeWwtcG1vIn0.zVz9QujkYcUjyQRmQdq9c8lE7R2Vl3XtKknSTU7IRnA"
 
 const projects = [
     {
@@ -8,37 +8,55 @@ const projects = [
         clientName: "Fasyl Finance Ltd",
         industry: "Financial Technology",
         productName: "ERP Core Platform",
-        description:"Internal ERP modernization project",
-        projectManagerEmail: "sekemi@fasylng.com"
+        description:"Internal ERP modernization project"
     },
     {
         name: "Cybersecurity Upgrade Initiative",
         clientName: "Fasyl Security",
         industry: "Cybersecurity",
         productName: "Security Suite",
-        description:"Internal ERP modernization project",
-        projectManagerEmail: "desmond@fasylng.com"
+        description:"Internal ERP modernization project"
     },
     {
         name: "Cybersecurity Initiative",
         clientName: "Fasyl Security",
         industry: "Cybersecurity",
         productName: "Security Intel",
-        description:"Internal ERP modernization project",
-        projectManagerEmail: "joel@fasylng.com"
+        description:"Internal ERP modernization project"
+    },
+    {
+        name: "Digital Banking Transformation",
+        clientName: "NovaTrust Bank",
+        industry: "Banking",
+        productName: "Digital Banking Platform",
+        description: "Migration of legacy banking services to a modern digital platform"
+    },
+    {
+        name: "Core Infrastructure Modernization",
+        clientName: "Apex Microfinance",
+        industry: "Microfinance",
+        productName: "Infrastructure Suite",
+        description: "Upgrade of on-prem infrastructure and deployment automation systems"
+    },
+    {
+        name: "Customer Experience Optimization",
+        clientName: "Velocity Telecom",
+        industry: "Telecommunications",
+        productName: "CX Analytics Platform",
+        description: "Implementation of customer analytics and engagement monitoring tools"
     }
 ]
 
 const createProject = async () => {
     try {
         for (const project of projects) {
-            const { data } = await axios.post("http://localhost:5000/api/projects", project, {
+            const { data: response } = await axios.post("http://localhost:5000/api/projects", project, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             })
             // console.log(data)
-            console.log("Created: ", data.project.projectName)
+            console.log("Created: ", response.data.projectName)
         }
 
         console.log("All projects created successfully");

@@ -13,7 +13,23 @@ function Projects({
     isLoading
     }) {
 
-        console.log(projects)
+    // console.log(projects)
+    // console.log(user);
+
+    const STAGES = {
+        1: "Client ID",
+        2: "Engagement",
+        3: "Initiation",
+        4: "Planning",
+        5: "Execution",
+        6: "UAT",
+        7: "Go-Live",
+        8: "Closure"
+    };
+
+    const setCurrentStage = (currentStage) => {
+        return STAGES[currentStage] || "Unknown Stage";
+    };
 
     if(isLoading) return <div className={`w-18 h-18 rounded-full border-8 border-[#636363] border-t-[#1B3C4A] absolute top-50 animate-spin`}></div>
 
@@ -75,14 +91,14 @@ function Projects({
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.productName}</td>
                                     {
                                         user?.role === "HEADOFOPS" && (
-                                            <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.project_manager === "" ? "Not Assigned" : project.projectManager}</td>
+                                            <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.projectManagerEmail === null ? "Not Assigned" : project.projectManagerEmail}</td>
                                         )
                                     }
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#FFFFFF] align-middle'>
                                         <p className='rounded-2xl py-1 px-2 bg-[#228CEE] text-center'>{project.workflowStatus}</p>
                                     </td>
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#FFFFFF] align-middle'>
-                                        <p className='rounded-2xl py-1 px-2 bg-[#228CEE] text-center'>{project.currentStage}</p>
+                                        <p className='rounded-2xl py-1 px-2 bg-[#228CEE] text-center'>{setCurrentStage(project.currentStage)}</p>
                                     </td>
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] relative justify-center align-middle'>
                                         <i onClick={() => setSelectedProject(project)} className="fa-solid fa-ellipsis-vertical fa-lg cursor-pointer text-[#98a2b3] hover:text-[#1B3C4A]"></i>

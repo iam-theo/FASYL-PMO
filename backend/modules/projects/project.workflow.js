@@ -1,15 +1,54 @@
+import { POLICY } from "../workflow/workflow.policy.js";
+
 /* =========================
-   STAGE INIT HELPER
+   CREATE SINGLE STAGE
 ========================= */
-export const initStages = () => {
+const createStage = (projectId, stageNumber) => {
+  const policy = POLICY[`stage_${stageNumber}`];
+
   return {
-    stage1: {},
-    stage2: {},
-    stage3: {},
-    stage4: {},
-    stage5: {},
-    stage6: {},
-    stage7: {},
-    stage8: {},
+    projectId,
+    stageIndex: stageNumber,
+    stageName: policy.name,
+
+    workflowStatus:
+      stageNumber === 1 ? "OPEN" : "LOCKED",
+
+    checklist: policy.checklist.map((item) => ({
+      key: item.key,
+      title: item.title,
+      desc: item.desc,
+      isRequired: item.isRequired,
+      completed: false,
+      completedAt: null,
+    })),
+
+    documents: [],
+
+    completed: false,
+    completedAt: null,
+
+    submittedAt: null,
+    submittedBy: null,
+
+    approvedAt: null,
+    approvedBy: null,
+
+    rejectedAt: null,
+    rejectedBy: null,
+    rejectionReason: null,
+
+    escalated: false,
+    escalatedAt: null,
+    escalatedBy: null,
   };
+};
+
+/* =========================
+   INIT ALL PROJECT STAGES
+========================= */
+export const initStages = (projectId) => {
+  return Array.from({ length: 8 }, (_, index) =>
+    createStage(projectId, index + 1)
+  );
 };

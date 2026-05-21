@@ -1,5 +1,5 @@
 import React from 'react'
-import ProjectLifeCycle from './ProjectLifeCycle'
+import ProjectLifeCycle from './lifecycle/ProjectLifeCycle'
 import ProjectDetails from './ProjectDetails'
 import { useState, useEffect, useRef } from 'react'
 import { useNotification } from '../NotificationContext'
@@ -7,22 +7,19 @@ import { useNotification } from '../NotificationContext'
 function ViewProjectsBody({ 
     projects,
     setProjects, 
-    stageTemplate,
-    setStageTemplate,
     selectedProject, 
     setSelectedProject,
     onClose, 
     activeDetails, 
     setActiveDetails,
-    toggleChecklist,
     user,
     preview,
     setPreview
     }) {
 
-    console.log(projects)
+    console.log(selectedProject);
     
-    const [projectStages, setProjectStages] = useState({})
+    // const [projectStages, setProjectStages] = useState({})
     const [isLoading, setisLoading] = useState(true)
     const hasFetched = useRef(false)
 
@@ -63,12 +60,12 @@ function ViewProjectsBody({
                 </div>
 
                 <section>
-                    {/* {activeDetails === "project_lifecycle" && 
+                    {activeDetails === "project_lifecycle" && 
                     <ProjectLifeCycle 
-                        stageTemplate={stageTemplate} 
                         selectedProject={selectedProject} 
                         setSelectedProject={setSelectedProject} 
-                        projects={projects} setProjects={setProjects} 
+                        projects={projects} 
+                        setProjects={setProjects} 
                         onClose={onClose} 
                         currentStatus={currentStatus} 
                         setCurrentStatus={setCurrentStatus} 
@@ -79,7 +76,7 @@ function ViewProjectsBody({
                         setPreview={setPreview}
                     />}
 
-                    {activeDetails === "project_details" && <ProjectDetails selectedProject={selectedProject}/>} */}
+                    {/* {activeDetails === "project_details" && <ProjectDetails selectedProject={selectedProject}/>} */}
                 </section>
             </div>
         </div>

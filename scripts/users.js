@@ -22,14 +22,14 @@ const users = [
     }
 ]
 
-const createProject = async () => {
+const createUsers = async () => {
     try {
         for (const user of users) {
             const { data } = await axios.post("http://localhost:5000/api/auth/register", user)
             // console.log(data)
         }
 
-        console.log("All projects created successfully");
+        console.log("All users created successfully");
 
     } catch (error) {
         console.error("FULL ERROR:", error);
@@ -39,4 +39,4 @@ const createProject = async () => {
     }
 };
 
-createProject();
+createUsers();

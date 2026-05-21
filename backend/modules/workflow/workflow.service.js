@@ -1,6 +1,70 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, WorkflowStatus } from "@prisma/client";
 
 const prisma = new PrismaClient();
+
+// ensure consistent types everywhere
+const normalizeIds = (projectId, stageId) => {
+  return {
+    projectId: Number(projectId),
+    stageId: Number(stageId),
+  };
+};
+
+/**
+ * =========================
+ * GET PROJECT (SAFE)
+ * =========================
+ */
+const getProjectOrThrow = async (projectId) => {
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+  });
+
+  if (!project) throw new Error("Project not found");
+  return project;
+};
+
+/**
+ * =========================
+ * GET STAGE STATE
+ * =========================
+ */
+export const getStageState = async (projectId, stageId) => {
+  const { projectId: pid, stageId: sid } = normalizeIds(projectId, stageId);
+
+  const [project, stage, approval] = await Promise.all([
+    prisma.project.findUnique({
+      where: { id: pid },
+    }),
+
+    prisma.projectStage.findUnique({
+      where: {
+        projectId_stageIndex: {
+          projectId: pid,
+          stageIndex: sid,
+        },
+      },
+    }),
+
+    prisma.projectApproval.findFirst({
+      where: {
+        projectId: pid,
+        stage: sid,
+      },
+    }),
+  ]);
+
+  if (!project) throw new Error("Project not found");
+
+  return {
+    project,
+    stageData: stage,
+    stageApproval: approval || null,
+    isActiveStage: project.currentStage === sid,
+    canSubmit: project.currentStage === sid,
+  };
+};
+
 
 /**
  * =========================
@@ -8,44 +72,49 @@ const prisma = new PrismaClient();
  * =========================
  */
 export const submitStage = async ({ projectId, stageId, userId }) => {
-  const project = await prisma.project.findUnique({
-    where: { id: projectId }
-  });
 
-  if (!project) throw new Error("Project not found");
+  const { projectId: pid, stageId: sid } = normalizeIds(projectId, stageId);
 
-  const existingApproval = await prisma.projectApproval.findFirst({
+  const project = await getProjectOrThrow(pid);
+
+  // enforce correct stage flow
+  if (project.currentStage !== sid) {
+    throw new Error("You can only submit the current active stage");
+  }
+
+  // check if already submitted
+  const existing = await prisma.projectApproval.findFirst({
     where: {
-      projectId,
-      stage: stageId,
-      status: "PENDING"
-    }
+      projectId: pid,
+      stage: sid,
+      status: "PENDING",
+    },
   });
 
-  if (existingApproval) {
+  if (existing) {
     throw new Error("Stage already submitted for approval");
   }
 
+  // create approval record
   await prisma.projectApproval.create({
     data: {
-      projectId,
-      stage: stageId,
+      projectId: pid,
+      stage: sid,
       status: "PENDING",
-      approvedBy: null,
-      stageModel: `stage_${stageId}`
-    }
+      submittedBy: userId,
+      stageModel: `stage_${sid}`,
+    },
   });
 
+  // update project state
   await prisma.project.update({
-    where: { id: projectId },
+    where: { id: pid },
     data: {
-      workflowStatus: "SUBMITTED"
-    }
+      workflowStatus: WorkflowStatus.SUBMITTED,
+    },
   });
 
-  return prisma.project.findUnique({
-    where: { id: projectId }
-  });
+  return getProjectOrThrow(pid);
 };
 
 /**
@@ -54,14 +123,19 @@ export const submitStage = async ({ projectId, stageId, userId }) => {
  * =========================
  */
 export const approveStage = async ({ projectId, stageId, userId }) => {
-  const nextStage = stageId + 1;
+
+  const { projectId: pid, stageId: sid } = normalizeIds(projectId, stageId);
+
+  const project = await getProjectOrThrow(pid);
+
+  const nextStage = sid + 1;
 
   const approval = await prisma.projectApproval.findFirst({
     where: {
-      projectId,
-      stage: stageId,
-      status: "PENDING"
-    }
+      projectId: pid,
+      stage: sid,
+      status: "PENDING",
+    },
   });
 
   if (!approval) {
@@ -78,16 +152,15 @@ export const approveStage = async ({ projectId, stageId, userId }) => {
   });
 
   await prisma.project.update({
-    where: { id: projectId },
+    where: { id: pid },
     data: {
       currentStage: nextStage,
-      workflowStatus: "APPROVED"
+      workflowStatus: WorkflowStatus.APPROVED,
+      progressPercent: Math.round((nextStage / 8) * 100)
     }
   });
 
-  return prisma.project.findUnique({
-    where: { id: projectId }
-  });
+  return getProjectOrThrow(pid);
 };
 
 /**
@@ -96,10 +169,13 @@ export const approveStage = async ({ projectId, stageId, userId }) => {
  * =========================
  */
 export const rejectStage = async ({ projectId, stageId, userId, reason }) => {
+
+  const { projectId: pid, stageId: sid } = normalizeIds(projectId, stageId);
+
   const approval = await prisma.projectApproval.findFirst({
     where: {
-      projectId,
-      stage: stageId,
+      projectId: pid,
+      stage: sid,
       status: "PENDING"
     }
   });
@@ -112,47 +188,20 @@ export const rejectStage = async ({ projectId, stageId, userId, reason }) => {
     where: { id: approval.id },
     data: {
       status: "REJECTED",
-      approvedBy: userId,
+      rejectedBy: userId,
       comment: reason,
       updatedAt: new Date()
     }
   });
 
   await prisma.project.update({
-    where: { id: projectId },
+    where: { id: pid },
     data: {
-      workflowStatus: "REJECTED"
+      workflowStatus: WorkflowStatus.REJECTED
     }
   });
 
-  return prisma.project.findUnique({
-    where: { id: projectId }
-  });
-};
-
-/**
- * =========================
- * GET STAGE STATE (UI SYNC)
- * =========================
- */
-export const getStageState = async (projectId, stageId) => {
-  const project = await prisma.project.findUnique({
-    where: { id: projectId },
-    include: {
-      approvals: true
-    }
-  });
-
-  if (!project) throw new Error("Project not found");
-
-  const stageApproval = project.approvals.find(
-    (a) => a.stage === stageId
-  );
-
-  return {
-    project,
-    stageApproval: stageApproval || null
-  };
+  return getProjectOrThrow(pid);
 };
 
 /**

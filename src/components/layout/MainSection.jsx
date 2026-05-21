@@ -13,6 +13,9 @@ function MainSection({
     isLoading 
     }) {
 
+    // console.log(projects);
+    // console.log(user);
+
     const [currentPage, setCurrentPage] = useState(1)
 
     const safeProjects = Array.isArray(projects) ? projects : []
@@ -23,7 +26,7 @@ function MainSection({
         }
 
         if (user?.role === "PROJECTMANAGER") {
-            return project.projectManager === user.email; 
+            return project.projectManagerEmail === user.email; 
             // only projects assigned
         }
 

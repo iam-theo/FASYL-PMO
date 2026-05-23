@@ -42,7 +42,7 @@ const router = express.Router();
  *         description: Unauthorized
  */
 router.post(
-  "/submit/:projectId/:stageId",
+  "/submit/:projectId/:stageOrder",
   authMiddleWare,
   submitStage
 );
@@ -73,7 +73,7 @@ router.post(
  *         description: Forbidden (insufficient role)
  */
 router.post(
-  "/approve/:projectId/:stageId",
+  "/approve/:projectId/:stageOrder",
   authMiddleWare,
   approveStage
 );

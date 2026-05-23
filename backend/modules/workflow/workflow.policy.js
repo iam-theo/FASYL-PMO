@@ -1,6 +1,8 @@
 const POLICY = {
-  stage_1: {
+  client_identification: {
     name: "Client Identification",
+    key: "client_identification",
+    order: 1,
     checklist:
       [
         {
@@ -61,8 +63,10 @@ const POLICY = {
     rolesAllowedToApprove: ["HEADOFOPS"]
   },
 
-  stage_2: {
+  client_engagement: {
     name: "Client Engagement",
+    key: "client_engagement",
+    order: 2,
     checklist:
       [
         {
@@ -116,15 +120,17 @@ const POLICY = {
       ],
     requiredDocs: [
       {key: "proposal_document", title: "Proposal"}, 
-      {key: "Award Letter", title: "Award Letter"}, 
-      {key: "Commercial Terms Sheet", title: "Commercial Terms Sheet"}
+      {key: "award_letter", title: "Award Letter"}, 
+      {key: "commercial_terms_sheet", title: "Commercial Terms Sheet"}
     ],
     rolesAllowedToSubmit: ["PROJECTMANAGER"],
     rolesAllowedToApprove: ["HEADOFOPS"]
   },
 
-  stage_3: {
+  project_initiation: {
     name: "Project Initiation",
+    key: "project_initiation",
+    order: 3,
     checklist:
       [
         {
@@ -185,8 +191,10 @@ const POLICY = {
     rolesAllowedToApprove: ["HEADOFOPS"]
   },
 
-  stage_4: {
+  project_planning: {
     name: "Project Planning",
+    key: "project_planning",
+    order: 4,
     checklist:
       [
         {
@@ -254,8 +262,10 @@ const POLICY = {
     rolesAllowedToApprove: ["HEADOFOPS"]
   },
 
-  stage_5: {
+  project_execution: {
     name: "Execution & Delivery",
+    key: "project_execution",
+    order: 5,
     checklist:
       [
         {
@@ -323,8 +333,10 @@ const POLICY = {
     rolesAllowedToApprove: ["HEADOFOPS"]
   },
 
-  stage_6: {
+  project_uat: {
     name: "User Acceptance Testing",
+    key: "project_uat",
+    order: 6,
     checklist:
       [
         {
@@ -379,8 +391,10 @@ const POLICY = {
     rolesAllowedToApprove: ["HEADOFOPS"]
   },
 
-  stage_7: {
+  go_live: {
     name: "Go-Live & Cut-Over",
+    key: "go_live",
+    order: 7,
     checklist:
       [
         {
@@ -447,8 +461,10 @@ const POLICY = {
     rolesAllowedToApprove: ["HEADOFOPS"]
   },
 
-  stage_8: {
-    name: "Project Closure",
+  project_closure: {
+    name: "Closure",
+    key: "project_closure",
+    order: 8,
     checklist:
       [
         {
@@ -497,8 +513,8 @@ const POLICY = {
  * GET STAGE POLICY
  * =========================
  */
-export const getPolicy = (stageId) => {
-  const key = `stage_${stageId}`;
+export const getPolicy = (stageKey) => {
+  const key = stageKey;
   const policy = POLICY[key];
 
   if (!policy) {
@@ -516,21 +532,39 @@ export const getPolicy = (stageId) => {
 export const validateChecklist = (stageId, stageData) => {
   const policy = getPolicy(stageId);
 
-  if (!stageData?.checklist) return false;
+  console.log("=== CHECKLIST DEBUG START ===");
+  console.log("Stage Data Checklist:", stageData?.checklist);
+  console.log("Policy Checklist:", policy?.checklist);
 
-  return policy.checklist.every((policyItem) => {
+  if (!stageData?.checklist) {
+    console.log("❌ Missing checklist in stageData");
+    return false;
+  }
+
+  const result = policy.checklist.every((policyItem) => {
     const item = stageData.checklist.find(
       (c) => c.key === policyItem.key
     );
 
-    // if required → must be completed
-    if (policyItem.isRequired) {
-      return item?.completed === true;
-    }
+    const ok = policyItem.isRequired
+      ? item?.completed === true
+      : true;
 
-    // optional items don't block submission
-    return true;
+    console.log(
+      `Checklist Item: ${policyItem.key}`,
+      "Found:", !!item,
+      "Completed:", item?.completed,
+      "Required:", policyItem.isRequired,
+      "PASS:", ok
+    );
+
+    return ok;
   });
+
+  console.log("Checklist Result:", result);
+  console.log("=== CHECKLIST DEBUG END ===");
+
+  return result;
 };
 
 /**
@@ -541,17 +575,36 @@ export const validateChecklist = (stageId, stageData) => {
 export const validateDocuments = (stageId, stageData) => {
   const policy = getPolicy(stageId);
 
-  if (!policy.requiredDocs?.length) return true;
+  console.log("=== DOCS DEBUG START ===");
+  console.log("Stage Docs:", stageData?.requiredDocs);
+  console.log("Policy Docs:", policy?.requiredDocs);
+
+  if (!policy?.requiredDocs?.length) {
+    console.log("No required docs in policy → auto PASS");
+    return true;
+  }
 
   const docs = stageData?.requiredDocs || [];
 
-  return policy.requiredDocs.every((requiredDoc) => {
-    return docs.some(
-      (d) =>
-        d.key === requiredDoc.key &&
-        d.fileURL
+  const result = policy.requiredDocs.every((requiredDoc) => {
+    const match = docs.find((d) => d.key === requiredDoc.key);
+
+    const ok = Boolean(match?.fileURL);
+
+    console.log(
+      `Doc: ${requiredDoc.key}`,
+      "Found:", !!match,
+      "fileURL:", match?.fileURL,
+      "PASS:", ok
     );
+
+    return ok;
   });
+
+  console.log("Docs Result:", result);
+  console.log("=== DOCS DEBUG END ===");
+
+  return result;
 };
 
 /**
@@ -559,24 +612,41 @@ export const validateDocuments = (stageId, stageData) => {
  * CAN SUBMIT STAGE
  * =========================
  */
-export const canSubmitStage = (stageId, stageData, role) => {
-  const policy = POLICY[`stage_${stageId}`];
-  if (!policy) return false;
+export const canSubmitStage = (stageKey, stageData, role) => {
+  const policy = POLICY[stageKey];
+
+  if(!policy) return false
+
+  console.log("=== CAN SUBMIT DEBUG START ===");
+  console.log("Stage Key:", stageKey);
+  console.log("User Role:", role);
+  console.log("Policy Exists:", !!policy);
+
+  if (!policy) {
+    console.log("No policy found for stage");
+    return false;
+  }
 
   const roleAllowed = policy.rolesAllowedToSubmit.includes(role);
-  const checklistOk = validateChecklist(stageId, stageData);
-  const docsOk = validateDocuments(stageId, stageData);
+  const checklistOk = validateChecklist(stageKey, stageData);
+  const docsOk = validateDocuments(stageKey, stageData);
+
+  console.log("Role Allowed:", roleAllowed);
+  console.log("Checklist OK:", checklistOk);
+  console.log("Docs OK:", docsOk);
+
+  console.log("Policy Roles:", policy.rolesAllowedToSubmit);
+  console.log("=== CAN SUBMIT DEBUG END ===");
 
   return roleAllowed && checklistOk && docsOk;
 };
-
 /**
  * =========================
  * CAN APPROVE STAGE
  * =========================
  */
-export const canApproveStage = (stageId, role) => {
-  const policy = POLICY[`stage_${stageId}`];
+export const canApproveStage = (stageKey, stageData, role) => {
+  const policy = POLICY[stageKey];
   if (!policy) return false;
 
   return policy.rolesAllowedToApprove.includes(role);

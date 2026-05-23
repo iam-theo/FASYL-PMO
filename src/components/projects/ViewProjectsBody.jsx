@@ -2,7 +2,6 @@ import React from 'react'
 import ProjectLifeCycle from './lifecycle/ProjectLifeCycle'
 import ProjectDetails from './ProjectDetails'
 import { useState, useEffect, useRef } from 'react'
-import { useNotification } from '../NotificationContext'
 
 function ViewProjectsBody({ 
     projects,
@@ -12,9 +11,7 @@ function ViewProjectsBody({
     onClose, 
     activeDetails, 
     setActiveDetails,
-    user,
-    preview,
-    setPreview
+    user
     }) {
 
     // console.log(selectedProject);
@@ -40,7 +37,6 @@ function ViewProjectsBody({
 
     // const [currentStatus, setCurrentStatus] = useState(setCurrentStage(selectedProject.currentStage))
     const [open, setOpen] = useState(true)
-    const { setNotification } = useNotification()
 
     const tabs = [
         { name: "project_lifecycle", label: "Project Lifecycle"},
@@ -48,9 +44,9 @@ function ViewProjectsBody({
     ]
 8
     return (
-        <div className='absolute z-2000 w-full h-full bg-[#00000080] flex flex-col items-end overflow-y-auto overscroll-contain'>
+        <div className='absolute z-2000 w-full h-screen bg-[#00000080] flex flex-col items-end overflow-y-auto overscroll-contain'>
 
-            <div className='flex flex-col w-135.5 h-430 overflow-y-auto overscroll-contain bg-[#F7F7F7] px-4 py-4'>
+            <div className='flex flex-col w-135.5 min-h-0 overflow-y-auto no-scrollbar bg-[#F7F7F7] px-4 py-4'>
                 <div className='flex items-center justify-between mb-6'>
                     <h2 className='font-semibold text-[16px]/[20px] text-[#090909]'>Project Details</h2>
                     <button onClick={onClose} className='px-4 py-2.5 rounded-lg border border-[#000000] bg-[#E8E8E8] flex items-center gap-2 cursor-pointer'>
@@ -83,9 +79,6 @@ function ViewProjectsBody({
                         setProjects={setProjects} 
                         onClose={onClose}  
                         user={user}
-                        setNotification={setNotification}
-                        preview={preview}
-                        setPreview={setPreview}
                     />}
 
                     {/* {activeDetails === "project_details" && <ProjectDetails selectedProject={selectedProject}/>} */}

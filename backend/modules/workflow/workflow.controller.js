@@ -1,3 +1,8 @@
+import { PrismaClient, WorkflowStatus } from "@prisma/client";
+import { canApproveStage } from "./workflow.policy.js";
+
+const prisma = new PrismaClient();
+
 import workflowService from "./workflow.service.js";
 import * as policy from "./workflow.policy.js";
 // import { getPolicy } from "./workflow.policy.js";
@@ -35,21 +40,40 @@ export const getStageState = async (req, res) => {
  */
 export const submitStage = async (req, res) => {
   try {
-    const { projectId, stageId } = req.params;
+    const { projectId, stageOrder } = req.params;
+
     const userId = req.user.id;
+
+    const stage = await prisma.projectStage.findFirst({
+      where: {
+        projectId: Number(projectId),
+        stageOrder: Number(stageOrder),
+      },
+    });
+
+    if (!stage) {
+      return res.status(404).json({
+        success: false,
+        message: "Stage not found",
+      });
+    }
+
+    const stageKey = stage.stageKey;
 
     const stageState = await workflowService.getStageState(
       Number(projectId),
-      Number(stageId)
+      Number(stageOrder)
     );
 
-    const stageData = stageState.stageData;
+    const stageData = stageState?.stageData || {};
 
-    if (!policy.canSubmitStage(
-      Number(stageId),
+    const allowed = policy.canSubmitStage(
+      stageKey,
       stageData,
       req.user.role
-    )) {
+    );
+
+    if (!allowed) {
       return res.status(403).json({
         success: false,
         message: "Not allowed to submit this stage",
@@ -58,17 +82,19 @@ export const submitStage = async (req, res) => {
 
     const result = await workflowService.submitStage({
       projectId: Number(projectId),
-      stageId: Number(stageId),
+      stageOrder: Number(stageOrder),
       userId,
     });
 
-    res.json({
+    return res.status(200).json({
       success: true,
-      data: result
+      data: result,
     });
 
   } catch (err) {
-    res.status(400).json({
+    console.error("Submit Stage Error:", err)
+
+    return res.status(400).json({
       success: false,
       message: err.message
     });
@@ -82,13 +108,33 @@ export const submitStage = async (req, res) => {
  */
 export const approveStage = async (req, res) => {
   try {
-    const { projectId, stageId } = req.params;
+    const { projectId, stageOrder } = req.params;
     const userId = req.user.id;
 
-    if (!policy.canApproveStage(
-      Number(stageId),
+    const pid = Number(projectId);
+    const order = Number(stageOrder);
+
+    const stage = await prisma.projectStage.findFirst({
+      where: {
+        projectId: pid,
+        stageOrder: order,
+      },
+    });
+
+    if (!stage) {
+      return res.status(404).json({
+        success: false,
+        message: "Stage not found",
+      });
+    }
+
+    const allowed = canApproveStage(
+      stage.stageKey,
+      stage,              // stageData (can be enriched later)
       req.user.role
-    )) {
+    );
+
+    if (!allowed) {
       return res.status(403).json({
         success: false,
         message: "Not allowed to approve this stage",
@@ -96,20 +142,22 @@ export const approveStage = async (req, res) => {
     }
 
     const result = await workflowService.approveStage({
-      projectId: Number(projectId),
-      stageId: Number(stageId),
+      projectId: pid,
+      stageOrder: order,
       userId,
     });
 
-    res.json({
+    return res.json({
       success: true,
       data: result
     });
 
   } catch (err) {
-    res.status(400).json({
+    console.log("🔥 FULL ERROR:", err);
+    return res.status(500).json({
       success: false,
-      message: err.message
+      message: err.message,
+      stack: err.stack,
     });
   }
 };

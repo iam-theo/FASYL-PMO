@@ -93,3 +93,31 @@ export const approveStage = async (projectId, stageOrder) => {
         );
     }
 };
+
+export const rejectStage = async (
+    projectId,
+    stageOrder,
+    reason
+    ) => {
+
+    try {
+
+        const { data } = await API.post(
+            `/workflow/reject/${projectId}/${stageOrder}`,
+        {
+            reason,
+        }
+        );
+
+        return data;
+
+    } catch (error) {
+
+        console.error(
+            "Reject Stage Error:",
+            error.response?.data
+        );
+
+        throw error.response?.data || error;
+    }
+};

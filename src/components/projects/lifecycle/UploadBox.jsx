@@ -75,22 +75,18 @@ function UploadBox({
             error: ""
             }
         }));
-
-        console.log(uploadState)
     };
 
     // DROP UPLOAD
     const onDrop = async (e, key) => {
 
-        e.preventDefault();
+        e.preventDefault()
 
         setIsDragging(false);
 
         const file = getFileFromDrop(e);
 
         if (!file) return;
-
-        const preview = URL.createObjectURL(file);
 
         // validate FIRST
         const result = await processFile(file, {
@@ -102,8 +98,8 @@ function UploadBox({
         if (!result.success) {
             setUploadState(prev => ({
             ...prev,
-            [docKey]: {
-                ...prev[docKey],
+            [key]: {
+                ...prev[key],
                 error: result.error
             }
             }));
@@ -111,12 +107,14 @@ function UploadBox({
             return;
         }
 
+        console.log("Success")
+
         setUploadState(prev => ({
             ...prev,
-            [docKey]: {
-            file,
+            [key]: {
+            file: result.file,
             fileName: result.fileName,
-            previewUrl: preview,
+            previewUrl: result.preview,
             isUploaded: true,
             isSaved: false,
             error: ""
@@ -178,7 +176,7 @@ function UploadBox({
                     key={docKey}
                     onDragOver={(e) => handleDragOver(e, setIsDragging)}
                     onDragLeave={() => handleDragLeave(setIsDragging)}
-                    onDrop={(e) => onDrop(e)}
+                    onDrop={(e) => onDrop(e, docKey)}
                     className={`w-full min-h-27.5 rounded-lg border border-dashed ${isDragging ? "bg-gray-100" : "bg-[#FFFFFF]"} border-[#E4E7EC] flex items-center justify-center cursor-pointer p-4`}>
                     {/* Hidden Input */}
                     <input 

@@ -116,7 +116,7 @@ router.post(
  *         description: Validation error
  */
 router.post(
-  "/reject/:projectId/:stageId",
+  "/reject/:projectId/:stageOrder",
   authMiddleWare,
   rejectStage
 );

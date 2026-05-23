@@ -169,15 +169,35 @@ export const approveStage = async (req, res) => {
  */
 export const rejectStage = async (req, res) => {
   try {
-    const { projectId, stageId } = req.params;
+    const { projectId, stageOrder } = req.params;
     const { reason } = req.body;
 
     const userId = req.user.id;
 
-    if (!policy.canApproveStage(
-      Number(stageId),
+    const pid = Number(projectId);
+    const order = Number(stageOrder);
+
+    const stage = await prisma.projectStage.findFirst({
+      where: {
+        projectId: pid,
+        stageOrder: order,
+      },
+    });
+
+    if (!stage) {
+      return res.status(404).json({
+        success: false,
+        message: "Stage not found",
+      });
+    }
+
+    const allowed = policy.canApproveStage(
+      stage.stageKey,
+      stage,
       req.user.role
-    )) {
+    );
+
+    if (!allowed) {
       return res.status(403).json({
         success: false,
         message: "Not allowed to reject this stage",
@@ -192,8 +212,8 @@ export const rejectStage = async (req, res) => {
     }
 
     const result = await workflowService.rejectStage({
-      projectId: Number(projectId),
-      stageId: Number(stageId),
+      projectId: pid,
+      stageOrder: order,
       userId,
       reason,
     });
@@ -204,9 +224,11 @@ export const rejectStage = async (req, res) => {
     });
 
   } catch (err) {
-    res.status(400).json({
+    console.error("Reject Stage Error:", err);
+
+    return res.status(400).json({
       success: false,
-      message: err.message
+      message: err.message,
     });
   }
 };

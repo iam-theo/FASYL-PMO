@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { toggleChecklist } from './utils/ToggleChecklist';
 import { submitStage, approveStage } from '../../../api';
 import { useNotification } from '../../NotificationContext';
+import { FaRegCircleXmark, FaRegCircleCheck } from 'react-icons/fa6'
 
 function ProjectLifeCycle({ 
     selectedProject, 
@@ -14,10 +15,7 @@ function ProjectLifeCycle({
     onClose,  
     user,
     }) {
-
-        // console.log(projects)
-        console.log(selectedProject)
-        // console.log(user)
+        // console.log(selectedProject)
 
         const { setNotification } = useNotification()
 
@@ -59,7 +57,7 @@ function ProjectLifeCycle({
     const length = selectedProject.stages.length
     const checklistLength = selectedProject.stages[stageIndex].checklist.length
     const required = projectStage.checklist.filter(item => item.isRequired).length
-    // const completed = projectStage.checklist.filter(item => item.checked).length
+    const completed = projectStage.checklist.filter(item => item.completed).length
 
     const STAGESDESC = {
         0: "Record and qualify the prospective client before any engagement begins.",
@@ -111,6 +109,8 @@ function ProjectLifeCycle({
                 message: `You have successfully signed off for - ${selectedProject.projectName} (${projectStage.stageName})`
             });
 
+            onClose()
+
             console.log(response);
 
         } catch (err) {
@@ -155,7 +155,7 @@ function ProjectLifeCycle({
                     </div>
 
                     <div className='w-62.75 h-22 rounded-lg border border-[#0000000D] p-4 flex flex-col justify-between gap-4 bg-[#F3F3F3]'>
-                        <p className='font-semibold text-[16px]/[20px] text-[#090909]'>{}/{checklistLength}</p>
+                        <p className='font-semibold text-[16px]/[20px] text-[#090909]'>{completed}/{checklistLength}</p>
                         <p className='font-normal text-[16px]/[20px] text-[#636363]'>Completed</p>
                     </div>
                 </div>
@@ -223,22 +223,23 @@ function ProjectLifeCycle({
                 {user.role === "PROJECTMANAGER" && ( <button
                 onClick={handleWorkflowAction} 
                 className='w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#1B3C4A] flex items-center justify-center gap-2 cursor-pointer'>
-                    <i className="fa-regular fa-circle-check text-[#FFFFFF]"></i>
+                    <FaRegCircleCheck className='text-[#FFFFFF]' />
                     <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>Request Signoff</p>
                 </button>)}
+
                 {user.role === "HEADOFOPS" && ( 
                     <div className='flex items-center justify-between gap-3'>
                         <button
                         onClick={handleWorkflowAction} 
                         className='w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#1B3C4A] flex items-center justify-center gap-2 cursor-pointer'>
-                            <i className="fa-regular fa-circle-check text-[#FFFFFF]"></i>
+                            <FaRegCircleCheck className='text-[#FFFFFF]' />
                             <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>Accept Signoff</p>
                         </button>
 
                         <button
                         // onClick={handleWorkflowAction} 
                         className='w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#D20019] flex items-center justify-center gap-2 cursor-pointer'>
-                            <i className="fa-regular fa-circle-check text-[#FFFFFF]"></i>
+                            <FaRegCircleXmark className='text-[#FFFFFF]' />
                             <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>Reject Signoff</p>
                         </button>
                     </div>

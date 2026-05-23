@@ -22,7 +22,7 @@ function App() {
       {notification && (
 
           <div 
-            className='bg-[#FFFFFF] shadow-[#1018280D] shadow-md rounded-lg p-4 flex items-start justify-between gap-4 fixed z-3000 top-0 mt-2  w-100 min-h-24.5 cursor-pointer right-0'>
+            className='bg-[#FFFFFF] shadow-[#1018280D] shadow-md rounded-lg p-4 flex items-start justify-between gap-4 fixed z-4000 top-0 mt-2  w-100 min-h-24.5 cursor-pointer right-0'>
 
             {
               notification.type === "success" 

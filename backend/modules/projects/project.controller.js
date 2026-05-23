@@ -4,8 +4,11 @@ import {
   getProjectByIdService,
   updateProjectService,
   deleteProjectService,
+  updateChecklistBulkService,
+  uploadStageDocumentService
 } from "./project.service.js";
 
+console.log("🔥 CHECKLIST ROUTE HIT");
 /* =========================================
     CREATE PROJECT
 ========================================= */
@@ -77,10 +80,97 @@ export const getProject = async (req, res) => {
 };
 
 /* =========================================
+    UPDATE CHECKLIST
+========================================= */
+
+export const updateChecklistBulk = async (req, res) => {
+
+  console.log("🔥 CHECKLIST ROUTE HIT");
+  console.log("PARAMS:", req.params);
+  console.log("BODY:", req.body);
+  
+  try {
+    console.log("🔥 CHECKLIST ROUTE HIT");
+    console.log("PARAMS:", req.params);
+    console.log("BODY:", req.body);
+
+    const { projectId, stageId } = req.params;
+    const { checklist } = req.body;
+
+    const result = await updateChecklistBulkService(
+      projectId,
+      stageId,
+      checklist
+    );
+
+    return res.json({
+      success: true,
+      data: result,
+    });
+
+  } catch (err) {
+    console.log(err);
+
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+/* =========================================
+    UPLOAD DOCS
+========================================= */
+
+export const uploadStageDocument = async (req, res) => {
+  try {
+    const { projectId, stageId, docKey } = req.params;
+
+    console.log("RESPONSE:", req.params)
+
+    const file = req.file
+
+    if (!file) {
+      return res.status(400).json({
+        success: false,
+        message: "No file uploaded",
+      });
+    }
+
+    const fileUrl = `http://localhost:5000/uploads/${file.filename}`;
+
+    const filename = `${file.filename}`
+
+    const updatedStage = await uploadStageDocumentService(
+      projectId,
+      stageId,
+      docKey,
+      fileUrl,
+      filename
+    );
+
+    return res.json({
+      success: true,
+      message: "Document uploaded successfully",
+      data: updatedStage,
+    });
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+/* =========================================
     UPDATE PROJECT
 ========================================= */
 export const updateProject = async (req, res) => {
   try {
+    console.log("PARAMS:", req.params)
+    console.log("BODY:", req.body)
+    
     const project = await updateProjectService(
       req.params.id,
       req.body

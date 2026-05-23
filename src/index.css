@@ -4,26 +4,13 @@
     font-family: "Inter", sans-serif;
 }
 
-@keyframes toast-bar {
-  from {
-    width: 100%;
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
   }
-  to {
-    width: 0%;
-  }
-}
 
-.animate-toast-bar {
-  animation-name: toast-bar;
-  animation-timing-function: linear;
-  animation-fill-mode: forwards;
-}
-
-@keyframes toastShrink {
-  from {
-    width: 100%;
-  }
-  to {
-    width: 0%;
+  .no-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
   }
 }

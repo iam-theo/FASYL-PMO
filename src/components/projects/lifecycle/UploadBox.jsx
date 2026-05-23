@@ -1,14 +1,20 @@
 import React from 'react'
 import { useState, useRef } from 'react'
+import { processFile, getFileFromInput, handleDragOver, handleDragLeave, handleDrop, getFileFromDrop } from './utils/UploadFiles'
+import { uploadStageDocument } from '../../../api'
 
 function UploadBox({
-    title,
-    formats = "SVG, JPG, GIF",
     maxSizeMB = 2,
-    projects,
+    formats = "SVG, JPG, GIF",
+    title,
+    docKey,
+    docStatus,
+    docName,
+    docURL,
+    projectStage,
     selectedProject,
-    preview, 
-    setPreview
+    projectId,
+    stageId,
 }) {
     const inputRef = useRef(null)
     const [fileName, setFileName] = useState("")
@@ -16,140 +22,228 @@ function UploadBox({
     const [isDragging, setIsDragging] = useState(false)
     const [isUploaded, setIsUploaded] = useState(false)
 
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState("");
+    const [isSaved, setIsSaved] = useState(false);
+
+    const [uploadState, setUploadState] = useState({})
+
     const allowedTypes = ["image/svg+xml", "image/jpeg", "image/gif"]
 
+    // console.log(docName)  
+    // console.log(doc)  
     // Open file picker
     const handleClick = () => {
         inputRef.current.click()
     }
 
-    const validateImageDimensions = (file) => {
-        return new Promise((resolve) => {
-            const img = new Image();
-            const url = URL.createObjectURL(file);
+    // INPUT UPLOAD
+    const handleFileChange = async (e, key) => {
 
-            img.onload = () => {
-                if (img.width <= 800 && img.height <= 400) {
-                resolve(true);
-                } else {
-                resolve(false);
-                }
-            };
+        const file = getFileFromInput(e);
 
-            img.src = url;
+        if (!file) return;
+
+        const result = await processFile(file, {
+            allowedTypes,
+            maxSizeMB
         });
-    };
 
-    // Validate and process file
-    const processFile = async (file) => {
-        if(!file) return
 
-        // ❌ Type validation
-        if (!allowedTypes.includes(file.type)) {
-            setError("Only SVG, JPG, or GIF allowed");
+        if (!result.success) {
+            setUploadState(prev => ({
+            ...prev,
+            [key]: {
+                ...prev[key],
+                error: result.error
+            }
+            }));
+
             return;
         }
 
-        // Size Validation
-        if(file.size > maxSizeMB * 1024 * 1024) {
-            setError(`Max file size is ${maxSizeMB}MB`)
-            return
-        }
+        console.log("Success")
 
-        // ❌ Dimension validation
-        const isValidSize = await validateImageDimensions(file);
-        
-        if (!isValidSize) {
-            setError("Image must be max 800x400px");
+        setUploadState(prev => ({
+            ...prev,
+            [key]: {
+            file: result.file,
+            fileName: result.fileName,
+            previewUrl: result.preview,
+            isUploaded: true,
+            isSaved: false,
+            error: ""
+            }
+        }));
+    };
+
+    // DROP UPLOAD
+    const onDrop = async (e, key) => {
+
+        e.preventDefault()
+
+        setIsDragging(false);
+
+        const file = getFileFromDrop(e);
+
+        if (!file) return;
+
+        // validate FIRST
+        const result = await processFile(file, {
+            allowedTypes,
+            maxSizeMB
+        });
+
+        // stop if invalid
+        if (!result.success) {
+            setUploadState(prev => ({
+            ...prev,
+            [key]: {
+                ...prev[key],
+                error: result.error
+            }
+            }));
+
             return;
         }
 
-        setError("")
-        setFileName(file.name)
-        setPreview(URL.createObjectURL(file))
+        console.log("Success")
 
-        onFileSelect?.(URL.createObjectURL(file))
-    }
-
-    // Handle input change
-    const handleFileChange = (e) => {
-        const file = e.target.files[0]
-        console.log(file)
-        setIsUploaded(true)
-        processFile(file)
-    }
-
-    // Drag events
-    const handleDragOver = (e) => {
-        e.preventDefault();
-        setIsDragging(true);
-    };
-
-    const handleDragLeave = () => {
-        setIsDragging(false);
-    };
-
-    const handleDrop = (e) => {
-        e.preventDefault();
-        setIsDragging(false);
-
-        const file = e.dataTransfer.files[0];
-        processFile(file);
+        setUploadState(prev => ({
+            ...prev,
+            [key]: {
+            file: result.file,
+            fileName: result.fileName,
+            previewUrl: result.preview,
+            isUploaded: true,
+            isSaved: false,
+            error: ""
+            }
+        }));
     };
 
     const handlePreview = () => {
-        window.open(preview, "_blank")
+        console.log(uploadState)
+        docStatus !== "PENDING"
+            ? window.open(docURL, "_blank")
+            : window.open(uploadState[docKey].previewUrl, "_blank")
     }
+
+    const handleSaveUpload = async (key) => {
+        if (!uploadState[key].file) return;
+
+        const docState = uploadState[key]
+
+        try {
+            const res = await uploadStageDocument(
+                projectId,
+                stageId,
+                key,
+                docState.file,
+                docState.fileName
+            );
+            console.log("UPLOAD SUCCESS", res.data);
+
+            setUploadState(prev => ({
+                ...prev,
+                [docKey]: {
+                    ...prev[docKey],
+                    isSaved: true
+                }
+            }));
+
+        } catch (err) {
+            console.error("UPLOAD FAILED", err);
+        }
+    };
+
+    const doc = uploadState[docKey];
+
+    const isDeletable =
+        doc?.isSaved === true ||
+        docStatus === "UPLOADED" ||
+        docStatus === "VERIFIED";
+
+    const isPending = docStatus === "PENDING";
 
     return (
         <div className='flex flex-col gap-2'>
+            
             <div className='mb-3'>
                 <h2 className='font-medium text-[14px]/[20px] text-[#090909] mb-1.5'>{title}</h2>
                 {/* Upload Box */}
                 <div
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    className='w-full h-27.5 rounded-lg border border-dashed bg-[#FFFFFF] border-[#E4E7EC] flex items-center justify-center cursor-pointer px-4'>
+                    key={docKey}
+                    onDragOver={(e) => handleDragOver(e, setIsDragging)}
+                    onDragLeave={() => handleDragLeave(setIsDragging)}
+                    onDrop={(e) => onDrop(e, docKey)}
+                    className={`w-full min-h-27.5 rounded-lg border border-dashed ${isDragging ? "bg-gray-100" : "bg-[#FFFFFF]"} border-[#E4E7EC] flex items-center justify-center cursor-pointer p-4`}>
                     {/* Hidden Input */}
                     <input 
                         ref={inputRef}
+                        key={docKey}
                         type="file"
                         className='hidden'
                         accept="image/svg+xml,image/jpeg,image/gif"
-                        onChange={handleFileChange} 
+                        onChange={(e) => handleFileChange(e, docKey)} 
                     />
                     {/* Content */}
                     <div className='w-full'>
                         {
-                            !isUploaded 
-                            ? <div className='text-center w-full'>
-                                    <i className="fa-solid fa-circle-arrow-up text-[#1B3C4A] mt-3"></i>
-                                    <p className='font-normal text-[14px]/[20px] text-[#636363]'><span onClick={handleClick} className='text-[#1B3C4A] font-medium'>Click to upload</span> or drag and drop</p>
-                                    <p className='font-normal text-[14px]/[20px] text-[#636363]'>{formats} (max. 800x400px)</p>
+                            uploadState[docKey]?.isUploaded === true || docStatus === "PENDING" &&  
+                            (<div className='text-center w-full'>
+                                <i className="fa-solid fa-circle-arrow-up text-[#1B3C4A] mt-3"></i>
+                                <p className='font-normal text-[14px]/[20px] text-[#636363]'><span onClick={handleClick} className='text-[#1B3C4A] font-medium'>Click to upload</span> or drag and drop</p>
+                                <p className='font-normal text-[14px]/[20px] text-[#636363]'>{formats} (max. 800x400px)</p>
 
-                                    {/* Error */}
-                                    {error && (
-                                        <p className='text-[14px]/[20px] text-[#D20019] font-medium'>{error}</p>
-                                    )}
-                                </div>
-                            : <div className='w-full flex-col'>
-                                {/* File Name */}
-                                {fileName && (
-                                    <p 
-                                        className='text-[16px]/[20px] text-[#636363] font-medium mb-4'>{fileName}
-                                    </p>
+                                {/* Error */}
+                                {error && (
+                                    <p className='text-[14px]/[20px] text-[#D20019] font-normal'>{error}</p>
                                 )}
-                                    <div className='flex items-center justify-between'>
-                                        <button 
-                                        onClick={handlePreview}
-                                        className='font-medium text-[14px]/[20px] text-[#1B3C4A] cursor-pointer'>View</button>
-                                        <button 
-                                        // onClick={handlePreview}
-                                        className='font-medium text-[14px]/[20px] text-[#D20019] cursor-pointer'>Delete</button>
-                                    </div>
-                                </div>
+                            </div>)
                         }
+
+                        <div className=''>
+                            {/* File Name */}
+                            {
+                                uploadState[docKey]?.isUploaded === true || docStatus !== "PENDING" 
+                                    ?
+                                    (
+                                        <div className='w-full flex-col'>
+                                            <p 
+                                                className='text-[14px]/[20px] text-[#636363] font-normal mb-4'>{
+                                                    docStatus === "UPLOADED"
+                                                        ? docName
+                                                        : uploadState[docKey]?.fileName
+                                                    
+                                                }
+                                            </p>
+
+                                            <div className='flex items-center justify-between'>
+                                                <button 
+                                                onClick={handlePreview}
+                                                className='font-medium text-[14px]/[20px] text-[#1B3C4A] cursor-pointer'>View</button>
+                                                {isDeletable ? (
+                                                    <button
+                                                        className="font-medium text-[14px]/[20px] text-[#D20019] cursor-pointer"
+                                                        // onClick={() => handleDelete(docKey)}
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                    ) : isPending ? (
+                                                    <button
+                                                        className="font-medium text-[14px]/[20px] text-[#1B3C4A] cursor-pointer"
+                                                        onClick={() => handleSaveUpload(docKey)}
+                                                    >
+                                                        Save
+                                                    </button>
+                                                    ) : null}
+                                            </div>
+                                        </div>
+                                    ) 
+                                    : null
+                            }
+                        </div>
                     </div>
                 </div>
             </div>

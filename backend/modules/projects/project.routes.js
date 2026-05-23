@@ -2,6 +2,7 @@ import { Router } from "express";
 import { authMiddleWare } from "../../middleware/auth.middleware.js";
 import { allowRoles } from "../../middleware/rbac.middleware.js";
 import { ROLES } from "../../constants/roles.js";
+import { upload } from "../../middleware/upload.middleware.js";
 
 import {
   createProject,
@@ -9,6 +10,8 @@ import {
   getProject,
   updateProject,
   deleteProject,
+  updateChecklistBulk,
+  uploadStageDocument,
 } from "./project.controller.js";
 
 const router = Router();
@@ -114,6 +117,32 @@ router.put(
   allowRoles(ROLES.HEADOFOPS),
   updateProject
 );
+
+/* =========================================
+   UPDATE CHECKLIST
+========================================= */
+router.patch(
+  "/:projectId/stages/:stageId/checklist",
+  (req, res, next) => {
+      console.log("🔥 ROUTE MATCHED");
+      next();
+  },
+  authMiddleWare,
+  allowRoles(ROLES.PROJECTMANAGER),
+  updateChecklistBulk
+);
+
+/* =========================================
+   UPLOAD DOCS
+========================================= */
+router.patch(
+  "/:projectId/stages/:stageId/docs/:docKey",
+  authMiddleWare,
+  allowRoles(ROLES.PROJECTMANAGER, ROLES.HEADOFOPS),
+  upload.single("file"),
+  uploadStageDocument
+);
+
 
 /* =========================================
    DELETE PROJECT

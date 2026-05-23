@@ -30,90 +30,75 @@ model RefreshToken {
 }
 
 model Project {
-  id              Int      @id @default(autoincrement())
-  projectName     String
-  clientName      String
-  industry        String?
-  productName     String?
-  description     String? 
-
-  projectManager        String?
-  projectManagerEmail   String?   // ✅ ADD THIS
-
-  salesId         String?
-  pmoId           Int?
-
-  status          String   @default("stage1")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  completedAt     DateTime?
-  currentStage    Int      @default(1)
-  dueDate         DateTime?
-  progressPercent Float    @default(0)
-  startDate       DateTime?
-  workflowStatus  WorkflowStatus @default(OPEN)
-
-  auditLogs       AuditLog[]
-  escalations     Escalation[]
-
-  pmo             User? @relation("PMOProjects", fields: [pmoId], references: [id])
-
-  timelines       ProjectTimeline[]
-
-  approvals       ProjectApproval[]
-
-  stages          ProjectStage[]
+  id                  Int               @id @default(autoincrement())
+  projectName         String
+  clientName          String
+  industry            String?
+  productName         String?
+  projectManager      String?
+  salesId             String?
+  pmoId               Int?
+  status              String            @default("stage1")
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  completedAt         DateTime?
+  currentStageOrder   Int               @default(1)
+  dueDate             DateTime?
+  progressPercent     Float             @default(0)
+  startDate           DateTime?
+  workflowStatus      WorkflowStatus    @default(OPEN)
+  projectManagerEmail String?
+  description         String?
+  auditLogs           AuditLog[]
+  escalations         Escalation[]
+  pmo                 User?             @relation("PMOProjects", fields: [pmoId], references: [id])
+  stages              ProjectStage[]
+  timelines           ProjectTimeline[]
+  approvals           ProjectApproval[]
 }
 
 model ProjectStage {
-  id              Int     @id @default(autoincrement())
+  id              Int            @id @default(autoincrement())
   projectId       Int
   stageIndex      Int
   stageName       String
+  stageOrder      Int
+  stageKey        String?
   workflowStatus  WorkflowStatus @default(LOCKED)
-
   checklist       Json
-  requiredDocs       Json?
-
-  completed       Boolean  @default(false)
+  requiredDocs    Json?
+  completed       Boolean        @default(false)
   completedAt     DateTime?
-
   submittedAt     DateTime?
-  submittedBy     Int?
-
+  submittedBy     String?
   approvedAt      DateTime?
   approvedBy      Int?
-
-  escalated       Boolean  @default(false)
+  escalated       Boolean        @default(false)
   escalatedAt     DateTime?
   escalatedBy     Int?
-
   rejectedAt      DateTime?
   rejectedBy      Int?
   rejectionReason String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  project         Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  project         Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  @@unique([projectId, stageIndex])
+  @@unique([projectId, stageOrder])
 }
 
 model ProjectApproval {
-  id         Int            @id(map: "ProjectApproval_pkey") @default(autoincrement())
-  projectId  Int
-  stage      Int
-  status     ApprovalStatus @default(PENDING)
-  submittedBy Int?
-  approvedBy Int?
-  rejectedBy Int?
-  comment    String?
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
-  stageModel String
-  approver   User?          @relation(fields: [approvedBy], references: [id], map: "ProjectApproval_approvedBy_fkey")
-  project    Project        @relation(fields: [projectId], references: [id], onDelete: Cascade, map: "ProjectApproval_projectId_fkey")
+  id          Int            @id(map: "ProjectApproval_pkey") @default(autoincrement())
+  projectId   Int
+  stage       Int
+  status      ApprovalStatus @default(PENDING)
+  approvedBy  Int?
+  comment     String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  rejectedBy  Int?
+  submittedBy String?
+  approver    User?          @relation(fields: [approvedBy], references: [id], map: "ProjectApproval_approvedBy_fkey")
+  project     Project        @relation(fields: [projectId], references: [id], onDelete: Cascade, map: "ProjectApproval_projectId_fkey")
 
   @@index([projectId, stage], map: "ProjectApproval_projectId_stage_idx")
   @@map("project_approvals")
@@ -159,7 +144,6 @@ model AuditLog {
 
   @@index([projectId])
 }
-
 
 enum Role {
   HEADOFOPS

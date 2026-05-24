@@ -16,7 +16,7 @@ import {
 const router = Router();
 
 /* =========================
-   AUTH ROUTES (SWAGGER)
+    AUTH ROUTES (SWAGGER)
 ========================= */
 
 /**

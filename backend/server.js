@@ -8,9 +8,9 @@ import express from "express";
 import path from "path"
 import cors from "cors";
 import helmet from "helmet";
-import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
-import swaggerJsdoc from "swagger-jsdoc";
+import swaggerSpec from "./config/swagger.js";
+import cookieParser from "cookie-parser";
 import { PrismaClient } from "@prisma/client";
 import {
   apiLimiter,
@@ -34,7 +34,7 @@ const API_LEGACY = "/api";
 
 app.use(apiLimiter);
 
-app.use("/uploads", express.static("backend/uploads"));
+app.use("/uploads", express.static("uploads"));
 
 /* =========================
    TRUST PROXY
@@ -66,14 +66,14 @@ app.use((req, res, next) => {
 });
 
 /* =========================
-   ROUTES IMPORTS
+    ROUTES IMPORTS
 ========================= */
 import authRoutes from "./modules/auth/auth.routes.js";
 import projectRoutes from "./modules/projects/project.routes.js";
 import workflowRoutes from "./modules/workflow/workflow.routes.js";
 
 /* =========================
-   ROUTE MOUNTING (DUAL SUPPORT)
+    ROUTE MOUNTING (DUAL SUPPORT)
 ========================= */
 
 /**
@@ -94,65 +94,14 @@ app.use(`${API_LEGACY}/projects`, projectRoutes);
 app.use(`${API_V1}/workflow`, workflowRoutes);
 app.use(`${API_LEGACY}/workflow`, workflowRoutes);
 
-/* =========================
-   SWAGGER CONFIG
-========================= */
-const swaggerOptions = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "Fasyl PMO Workflow API",
-      version: "1.0.0",
-      description:
-        "Enterprise PMO system with workflow stages, approvals, and governance",
-    },
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-    servers: [
-      {
-        url: process.env.BASE_URL || "http://localhost:5000/api/v1",
-      },
-    ],
-
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-        },
-      },
-    },
-
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
-  },
-
-  apis: ["./modules/**/*.js"],
-};
-
-const swaggerSpec = swaggerJsdoc(swaggerOptions);
-
-/* =========================
-   SWAGGER ROUTES
-========================= */
-app.get(`${API_V1}/docs-json`, (req, res) => {
-  res.json(swaggerSpec);
+app.listen(PORT, () => {
+  console.log(`Server running on ${PORT}`);
 });
 
-app.use(
-  "/docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, {
-    explorer: true,
-    persistAuthorization: true,
-  })
-);
-
 /* =========================
-   HEALTH CHECK
+    HEALTH CHECK
 ========================= */
 app.get(`${API_V1}/health`, (req, res) => {
   res.json({
@@ -164,7 +113,7 @@ app.get(`${API_V1}/health`, (req, res) => {
 });
 
 /* =========================
-   PRISMA TEST ROUTE
+    PRISMA TEST ROUTE
 ========================= */
 app.get(`${API_V1}/test-db`, async (req, res) => {
   try {

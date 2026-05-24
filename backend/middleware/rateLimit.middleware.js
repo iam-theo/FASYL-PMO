@@ -88,5 +88,5 @@ export const authSlowDown = slowDown({
 
     delayMs: () => 500,
 
-    axDelayMs: 5000,
+    maxDelayMs: 5000,
 });

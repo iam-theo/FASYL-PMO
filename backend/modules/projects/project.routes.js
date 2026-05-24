@@ -14,6 +14,8 @@ import {
    uploadStageDocument,
 } from "./project.controller.js";
 
+import { uploadLimiter, writeLimiter } from "../../middleware/rateLimit.middleware.js";
+
 const router = Router();
 
 /* =========================================
@@ -76,6 +78,7 @@ const router = Router();
  */
 router.post(
    "/",
+   writeLimiter,
    authMiddleWare,
    allowRoles(ROLES.HEADOFOPS),
    createProject
@@ -113,6 +116,7 @@ router.get(
 ========================================= */
 router.put(
    "/:id",
+   writeLimiter,
    authMiddleWare,
    allowRoles(ROLES.HEADOFOPS),
    updateProject
@@ -127,6 +131,7 @@ router.patch(
          console.log("🔥 ROUTE MATCHED");
          next();
    },
+   writeLimiter,
    authMiddleWare,
    allowRoles(ROLES.PROJECTMANAGER),
    updateChecklistBulk
@@ -137,6 +142,7 @@ router.patch(
 ========================================= */
 router.patch(
    "/:projectId/stages/:stageId/docs/:docKey",
+   uploadLimiter,
    authMiddleWare,
    allowRoles(ROLES.PROJECTMANAGER, ROLES.HEADOFOPS),
    upload.single("file"),
@@ -149,6 +155,7 @@ router.patch(
 ========================================= */
 router.delete(
    "/:id",
+   writeLimiter,
    authMiddleWare,
    allowRoles(ROLES.HEADOFOPS),
    deleteProject

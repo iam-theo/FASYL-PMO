@@ -9,12 +9,12 @@ export const signAccessToken = (user) => {
   return jwt.sign(
     {
       userId: user.id,
-      email: user.email,   // 🔥 ADD THIS
+      email: user.email,   // 
       role: user.role,
     },
     process.env.JWT_SECRET,
     {
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN || "15m",
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN || "30m",
       issuer: "fasyl-pmo",
       audience: "fasyl-users",
     }

@@ -91,7 +91,9 @@ function MainBody({ user, setUser}) {
 
             <MainSection
                 projects={projects}
+                setActiveTab={setActiveTab}
                 activeTab={activeTab} 
+                selectedProject={selectedProject}
                 setSelectedProject={setSelectedProject}
                 user={user}
                 isLoading={isLoading}

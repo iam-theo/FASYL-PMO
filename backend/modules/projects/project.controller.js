@@ -85,12 +85,12 @@ export const getProject = async (req, res) => {
 
 export const updateChecklistBulk = async (req, res) => {
 
-  console.log("🔥 CHECKLIST ROUTE HIT");
+  console.log("CHECKLIST ROUTE HIT");
   console.log("PARAMS:", req.params);
   console.log("BODY:", req.body);
   
   try {
-    console.log("🔥 CHECKLIST ROUTE HIT");
+    console.log("CHECKLIST ROUTE HIT");
     console.log("PARAMS:", req.params);
     console.log("BODY:", req.body);
 

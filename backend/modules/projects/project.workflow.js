@@ -1,14 +1,22 @@
 import { POLICY } from "../workflow/workflow.policy.js";
+import { getStageKey } from "./project.service.js";
 
 /* =========================
-   CREATE SINGLE STAGE
+    CREATE SINGLE STAGE
 ========================= */
 const createStage = (projectId, stageOrder) => {
-  const policy = POLICY[`stage_${stageOrder}`];
+  const stageKey = getStageKey(stageOrder);
+  const policy = POLICY[stageKey];
+
+  if (!policy) {
+    throw new Error(`No policy found for stageKey: ${stageKey}`);
+  }
 
   return {
     projectId,
     stageOrder,
+
+    stageKey,
     stageName: policy.name,
 
     workflowStatus:
@@ -52,7 +60,7 @@ const createStage = (projectId, stageOrder) => {
 };
 
 /* =========================
-   INIT ALL PROJECT STAGES
+    INIT ALL PROJECT STAGES
 ========================= */
 export const initStages = (projectId) => {
   return Array.from({ length: 8 }, (_, index) =>

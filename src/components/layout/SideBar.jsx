@@ -1,9 +1,10 @@
 import React from 'react'
+import { AiTwotoneDashboard, AiTwotoneFolderOpen } from "react-icons/ai";
 
 function SideBar({ activeTab, setActiveTab, handleLogout }) {
     const tabs = [
-        { name: "dashboard", label: "Dashboard", icon: "fa-gauge"},
-        { name: "projects", label: "Projects", icon: "fa-bars-progress"}
+        { name: "dashboard", label: "Dashboard"},
+        { name: "projects", label: "Projects"}
     ]
 
     return (
@@ -11,7 +12,7 @@ function SideBar({ activeTab, setActiveTab, handleLogout }) {
             <div className='flex items-center gap-3 border-b-[1.5px] border-[#0000000D] p-4 h-18'>
                 <div className='w-10 h-10 rounded-sm font-medium text-[16px]/[24px] text-[#FFFFFF] bg-[#1B3C4A] flex items-center justify-center'>F</div>
                 <div>
-                    <p className='font-medium text-[14px]/[20px] text-[#090909]'>Fasyl Help-Desk</p>
+                    <p className='font-medium text-[14px]/[20px] text-[#090909]'>Fasyl PMO Portal</p>
                     <p className='font-normal text-[14px]/[20px] text-[#636363]'>PMO</p>
                 </div>
             </div>
@@ -26,10 +27,19 @@ function SideBar({ activeTab, setActiveTab, handleLogout }) {
                                     activeTab === `${tab.name}`
                                     ? "bg-[#0000000D] text-[#1B3C4A]"
                                     : "text-[#000000] hover:text-[#1B3C4A]"
-                            }`}>
+                                }`}>
                                 <div 
                                 className='w-6 h-6 flex items-center justify-center rounded-full'>
-                                    <i className={`fa-solid ${tab.icon} fa-lg text-[#1B3C4A]`}></i>
+                                    {/* <i className={`fa-solid ${tab.icon} fa-lg text-[#1B3C4A]`}></i> */}
+                                    {
+                                        tab.name === "dashboard"
+                                            ? <AiTwotoneDashboard
+                                                className="text-5xl"
+                                            />
+                                            : <AiTwotoneFolderOpen
+                                                className="text-5xl"
+                                            />
+                                    }
                                 </div>
                                 <p className='font-medium text-[16px]/[24px]'>{tab.label}</p>
                             </button>

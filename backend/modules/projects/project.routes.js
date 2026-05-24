@@ -5,13 +5,13 @@ import { ROLES } from "../../constants/roles.js";
 import { upload } from "../../middleware/upload.middleware.js";
 
 import {
-  createProject,
-  getProjects,
-  getProject,
-  updateProject,
-  deleteProject,
-  updateChecklistBulk,
-  uploadStageDocument,
+   createProject,
+   getProjects,
+   getProject,
+   updateProject,
+   deleteProject,
+   updateChecklistBulk,
+   uploadStageDocument,
 } from "./project.controller.js";
 
 const router = Router();
@@ -75,10 +75,10 @@ const router = Router();
  *         description: Forbidden
  */
 router.post(
-  "/",
-  authMiddleWare,
-  allowRoles(ROLES.HEADOFOPS),
-  createProject
+   "/",
+   authMiddleWare,
+   allowRoles(ROLES.HEADOFOPS),
+   createProject
 );
 
 /* =========================================
@@ -112,35 +112,35 @@ router.get(
    UPDATE PROJECT
 ========================================= */
 router.put(
-  "/:id",
-  authMiddleWare,
-  allowRoles(ROLES.HEADOFOPS),
-  updateProject
+   "/:id",
+   authMiddleWare,
+   allowRoles(ROLES.HEADOFOPS),
+   updateProject
 );
 
 /* =========================================
    UPDATE CHECKLIST
 ========================================= */
 router.patch(
-  "/:projectId/stages/:stageId/checklist",
-  (req, res, next) => {
-      console.log("🔥 ROUTE MATCHED");
-      next();
-  },
-  authMiddleWare,
-  allowRoles(ROLES.PROJECTMANAGER),
-  updateChecklistBulk
+   "/:projectId/stages/:stageId/checklist",
+   (req, res, next) => {
+         console.log("🔥 ROUTE MATCHED");
+         next();
+   },
+   authMiddleWare,
+   allowRoles(ROLES.PROJECTMANAGER),
+   updateChecklistBulk
 );
 
 /* =========================================
    UPLOAD DOCS
 ========================================= */
 router.patch(
-  "/:projectId/stages/:stageId/docs/:docKey",
-  authMiddleWare,
-  allowRoles(ROLES.PROJECTMANAGER, ROLES.HEADOFOPS),
-  upload.single("file"),
-  uploadStageDocument
+   "/:projectId/stages/:stageId/docs/:docKey",
+   authMiddleWare,
+   allowRoles(ROLES.PROJECTMANAGER, ROLES.HEADOFOPS),
+   upload.single("file"),
+   uploadStageDocument
 );
 
 
@@ -148,10 +148,10 @@ router.patch(
    DELETE PROJECT
 ========================================= */
 router.delete(
-  "/:id",
-  authMiddleWare,
-  allowRoles(ROLES.HEADOFOPS),
-  deleteProject
+   "/:id",
+   authMiddleWare,
+   allowRoles(ROLES.HEADOFOPS),
+   deleteProject
 );
 
 export default router;

@@ -7,23 +7,36 @@ import { FaBell, FaUserTag } from 'react-icons/fa'
 
 function MainSection({
     activeTab, 
+    setActiveTab,
+    selectedProject,
     setSelectedProject, 
     projects, 
     user,
     isLoading 
     }) {
 
-    // console.log(projects);
-    // console.log(user);
-
     const [currentPage, setCurrentPage] = useState(1)
+    const [value, setValue] = useState("")
+    const [filter, setFilter] = useState("")
+    const [searching, setSearching] = useState(false)
+    const [filteringing, setFiltering] = useState(false)
+
+    useEffect(() => {
+        if (!value) return
+
+        setSearching(true)
+
+        const timer = setTimeout(() => {
+            setSearching(false)
+        }, 1000)
+
+        return () => clearTimeout(timer)
+    }, [value])
 
     const safeProjects = Array.isArray(projects) ? projects : []
 
-    const filteredProjects = safeProjects.filter((project) => {
-        if (user?.role === "HEADOFOPS") {
-            return true; // sees everything
-        }
+    let filteredProjects = safeProjects.filter((project) => {
+        if (user?.role === "HEADOFOPS") return true; // sees everything
 
         if (user?.role === "PROJECTMANAGER") {
             return project.projectManagerEmail === user.email; 
@@ -33,10 +46,20 @@ function MainSection({
         return false;
     });
 
+    if (value) {
+        filteredProjects = filteredProjects.filter((project) => project.projectName.toLowerCase().includes(value.toLowerCase()))
+    }
+
+    if (filter && filter !== "all") {
+        filteredProjects = filteredProjects.filter((project) => 
+            project.workflowStatus.toLowerCase() === filter.toLowerCase()
+        )
+    }
+
     
     const itemsPerPage = 10
     const totalPages = Math.ceil(filteredProjects.length / itemsPerPage)
-    const startIndex = (currentPage -1) * itemsPerPage
+    const startIndex = (currentPage - 1) * itemsPerPage
     const currentProjects = filteredProjects.slice(
         startIndex, startIndex + itemsPerPage
     )
@@ -71,12 +94,26 @@ function MainSection({
                 </div>
             </header>
             <section className='mt-18 h-full'>
-                {activeTab === "dashboard" && <Dashboard />}
+
+                {activeTab === "dashboard" && (
+                    <Dashboard
+                        projects={projects}
+                        user={user}
+                        activeTab={activeTab}
+                        setActiveTab={setActiveTab}
+                        selectedProject={selectedProject}
+                        setSelectedProject={setSelectedProject}
+                    />
+                )}
 
                 {activeTab === "projects" && (
                     <Projects
                         projects={projects} 
-                        currentProjects={currentProjects} 
+                        currentProjects={currentProjects}
+                        searchValue={value}
+                        setSearchValue={setValue} 
+                        filterValue={filter}
+                        setFilterValue={setFilter} 
                         currentPage={currentPage} 
                         totalPages={totalPages} 
                         setCurrentPage={setCurrentPage} 

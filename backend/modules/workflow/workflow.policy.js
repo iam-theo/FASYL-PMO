@@ -529,15 +529,15 @@ export const getPolicy = (stageKey) => {
  * VALIDATE CHECKLIST
  * =========================
  */
-export const validateChecklist = (stageId, stageData) => {
-  const policy = getPolicy(stageId);
+export const validateChecklist = (stageKey, stageData) => {
+  const policy = getPolicy(stageKey);
 
   console.log("=== CHECKLIST DEBUG START ===");
   console.log("Stage Data Checklist:", stageData?.checklist);
   console.log("Policy Checklist:", policy?.checklist);
 
   if (!stageData?.checklist) {
-    console.log("❌ Missing checklist in stageData");
+    console.log("Missing checklist in stageData");
     return false;
   }
 

@@ -4,9 +4,6 @@ console.log("ENV PATH TEST:", process.cwd());
 import dotenv from "dotenv";
 dotenv.config();
 
-import { connectCloudinary } from "./config/cloudinary.js";
-connectCloudinary();
-
 import express from "express";
 import path from "path"
 import cors from "cors";

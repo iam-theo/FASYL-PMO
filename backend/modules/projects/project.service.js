@@ -80,7 +80,7 @@ export const createProjectService = async (data, user) => {
       pmoId: dbUser.id,
 
       currentStageOrder: startOrder,
-      workflowStatus: WorkflowStatus.OPEN,
+      workflowStatus: "OPEN",
       progressPercent: calcProgress(startOrder),
     },
   });
@@ -101,7 +101,7 @@ export const createProjectService = async (data, user) => {
       stageName: stagePolicy.name,
 
       workflowStatus:
-        stageOrder === 1 ? WorkflowStatus.OPEN : WorkflowStatus.LOCKED,
+        stageOrder === 1 ? "OPEN" : "LOCKED",
 
       checklist: JSON.parse(JSON.stringify(
         createChecklist(stagePolicy.checklist, stageKey)
@@ -121,12 +121,37 @@ export const createProjectService = async (data, user) => {
   });
 
   // =========================
-  // STEP 4: RETURN FULL PROJECT
+// STEP 4: CREATE APPROVALS
+// =========================
+const approvalsData = stagesData.map((stage) => ({
+  projectId: project.id,
+  stage: stage.stageOrder,
+
+  // IMPORTANT
+  status: "PENDING", 
+
+  submittedBy: null,
+  approvedBy: null,
+  rejectedBy: null,
+  comment: null,
+}));
+
+await prisma.projectApproval.createMany({
+  data: approvalsData,
+});
+
+  // =========================
+  // STEP 5: RETURN FULL PROJECT
   // =========================
   return await prisma.project.findUnique({
     where: { id: project.id },
     include: {
-      stages: true, // checklist + docs already inside JSON
+      stages: {
+        orderBy: { stageOrder: "asc" },
+      },
+      approvals: {
+        orderBy: { stage: "asc" },
+      }, // checklist + docs already inside JSON
     },
   });
 };
@@ -177,7 +202,7 @@ export const updateChecklistBulkService = async (
   checklist
 ) => {
 
-  console.log("⚙️ SERVICE HIT");
+  console.log("SERVICE HIT");
   console.log("DATA RECEIVED:", checklist);
 
   const stage = await prisma.projectStage.findFirst({
@@ -189,7 +214,6 @@ export const updateChecklistBulkService = async (
 
   if (!stage) throw new Error("Stage not found");
 
-  // IMPORTANT: normalize incoming checklist
   const updatedChecklist = stage.checklist.map(existingItem => {
     const incomingItem = checklist.find(i => i.id === existingItem.id);
 
@@ -202,21 +226,22 @@ export const updateChecklistBulkService = async (
     };
   });
 
-  // console.log("SENDING CHECKLIST:", updatedChecklist)
+  console.log("SENDING CHECKLIST:", updatedChecklist)
 
   const allChecked = updatedChecklist.every(i => i.completed);
 
-  console.log("💾 WRITING TO DB...");
+  console.log("WRITING TO DB...");
 
   const updatedStage = await prisma.projectStage.update({
     where: { id: Number(stageId) },
     data: {
       checklist: updatedChecklist,
       completed: allChecked,
+      completedAt: new Date(),
     },
   });
 
-  console.log("✅ DB UPDATE RESULT:", updatedStage);
+  console.log("DB UPDATE RESULT:", updatedStage);
 
   return updatedStage;
 };
@@ -263,12 +288,6 @@ export const uploadStageDocumentService = async (
     },
   });
 };
-
-// await prisma.projectStage.updateMany({
-//   data: {
-//     requiredDocs: []
-//   }
-// });
 
 /* =========================================
     UPDATE PROJECT

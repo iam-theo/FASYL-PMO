@@ -11,34 +11,29 @@ function UploadBox({
     docStatus,
     docName,
     docURL,
-    projectStage,
-    selectedProject,
     projectId,
     stageId,
+    user
 }) {
     const inputRef = useRef(null)
-    const [fileName, setFileName] = useState("")
-    const [error, setError] = useState("")
     const [isDragging, setIsDragging] = useState(false)
-    const [isUploaded, setIsUploaded] = useState(false)
 
     const [selectedFile, setSelectedFile] = useState(null);
-    const [previewUrl, setPreviewUrl] = useState("");
-    const [isSaved, setIsSaved] = useState(false);
 
     const [uploadState, setUploadState] = useState({})
 
     const allowedTypes = ["image/svg+xml", "image/jpeg", "image/gif"]
-
-    // console.log(docName)  
-    // console.log(doc)  
+    
     // Open file picker
     const handleClick = () => {
+        if(user.role === "HEADOFOPS") return
         inputRef.current.click()
     }
 
     // INPUT UPLOAD
     const handleFileChange = async (e, key) => {
+
+        if(user.role === "HEADOFOPS") return
 
         const file = getFileFromInput(e);
 
@@ -79,6 +74,8 @@ function UploadBox({
 
     // DROP UPLOAD
     const onDrop = async (e, key) => {
+
+        if(user.role === "HEADOFOPS") return
 
         e.preventDefault()
 
@@ -188,17 +185,25 @@ function UploadBox({
                         onChange={(e) => handleFileChange(e, docKey)} 
                     />
                     {/* Content */}
-                    <div className='w-full'>
+                    <div 
+                        className='w-full'>
                         {
                             uploadState[docKey]?.isUploaded === true || docStatus === "PENDING" &&  
                             (<div className='text-center w-full'>
                                 <i className="fa-solid fa-circle-arrow-up text-[#1B3C4A] mt-3"></i>
-                                <p className='font-normal text-[14px]/[20px] text-[#636363]'><span onClick={handleClick} className='text-[#1B3C4A] font-medium'>Click to upload</span> or drag and drop</p>
+                                <p className='font-normal text-[14px]/[20px] text-[#636363]'>
+                                    <span 
+                                        onClick={handleClick} 
+                                        className='text-[#1B3C4A] font-medium'>
+                                            Click to upload 
+                                    </span> 
+                                    or drag and drop
+                                </p>
                                 <p className='font-normal text-[14px]/[20px] text-[#636363]'>{formats} (max. 800x400px)</p>
 
                                 {/* Error */}
-                                {error && (
-                                    <p className='text-[14px]/[20px] text-[#D20019] font-normal'>{error}</p>
+                                {uploadState[docKey]?.error && (
+                                    <p className='text-[14px]/[20px] text-[#D20019] font-normal'>{uploadState[docKey]?.error}</p>
                                 )}
                             </div>)
                         }

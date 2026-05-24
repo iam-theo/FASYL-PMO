@@ -102,7 +102,7 @@ export const rejectStage = async (
 
     try {
 
-        const { data } = await API.post(
+        const { data } = await api.post(
             `/workflow/reject/${projectId}/${stageOrder}`,
         {
             reason,

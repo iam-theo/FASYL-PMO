@@ -11,7 +11,7 @@ function SignIn({ setUser }) {
 
     const [email, setEmail] = useState(null)
     const [password, setPassword] = useState(null)
-    const { setNotification } = useNotification()
+    const { showNotification } = useNotification()
 
     const navigate = useNavigate()
 
@@ -29,9 +29,8 @@ function SignIn({ setUser }) {
             // store token and user
             localStorage.setItem("user", JSON.stringify(data.user));
             localStorage.setItem("token", data.accessToken);
-            // alert("Login successful")
 
-            setNotification(
+            showNotification(
                 {
                     type: "success",
                     title: `${data.message}`,
@@ -48,9 +47,7 @@ function SignIn({ setUser }) {
 
             const message = error.response?.data?.error || "Something went wrong";
 
-            // alert(message)
-
-            setNotification(
+            showNotification(
                 {
                     type: "error",
                     title: `${message}`,
@@ -74,19 +71,20 @@ function SignIn({ setUser }) {
                 <img 
                     src={bgSignIn} 
                     alt="" 
-                    className='w-full h-full object-cover absolute'/>
+                    className='w-full h-full object-cover absolute'
+                />
 
                 <div 
-                    className='bg-linear-to-bl from-[#1B3C4A] to-[#1A5C78] w-full h-full top-0 opacity-80 text-[#FFFFFF] flex flex-col items-start justify-center px-25'>
+                    className='bg-linear-to-bl from-[#1B3C4A] to-[#1A5C78] w-full h-full top-0 opacity-80 text-[#FFFFFF] flex flex-col items-start justify-center px-20'>
 
                     <h1 
                         className='text-[48px]/[100%] font-semibold tracking-[-2%] mb-3.5'>
-                            Welcome to Fasyl help-desk
+                            Welcome to Fasyl PMO Portal
                     </h1>
 
                     <p 
                         className='font-normal text-[20px]/[30px] tracking[0%]'>
-                            Login to the help-desk to manage your dashboard
+                            Login to the portal to manage your projects
                     </p>
                     
                 </div>

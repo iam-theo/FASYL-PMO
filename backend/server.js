@@ -15,6 +15,9 @@ import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
 import { PrismaClient } from "@prisma/client";
+import {
+  apiLimiter,
+} from "./middleware/rateLimit.middleware.js"
 
 /* =========================
    INIT
@@ -31,6 +34,8 @@ const NODE_ENV = process.env.NODE_ENV || "development";
 
 const API_V1 = "/api/v1";
 const API_LEGACY = "/api";
+
+app.use(apiLimiter);
 
 app.use("/uploads", express.static("backend/uploads"));
 

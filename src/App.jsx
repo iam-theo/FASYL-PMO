@@ -5,6 +5,7 @@ import MainBody from './components/layout/MainBody'
 import { useEffect, useState } from 'react'
 import { useNotification } from './components/NotificationContext'
 import { FaCheckCircle, FaTimes, FaExclamationCircle } from "react-icons/fa"
+import { ProtectedRoute } from './components/auth/ProtectedRoute'
 
 function App() {
 
@@ -55,9 +56,9 @@ function App() {
         <Route 
           path="/app" 
           element={
-            user 
-              ? <MainBody user={user} setUser={setUser} /> 
-              : <Navigate to="/" />
+            <ProtectedRoute user={user}>
+              <MainBody user={user} setUser={setUser} />
+            </ProtectedRoute>
           } 
         />
 

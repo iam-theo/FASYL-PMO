@@ -34,7 +34,7 @@ const API_LEGACY = "/api";
 
 app.use(apiLimiter);
 
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static("backend/uploads"));
 
 /* =========================
    TRUST PROXY

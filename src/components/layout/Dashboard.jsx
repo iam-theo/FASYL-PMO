@@ -3,7 +3,13 @@ import bgSignInTwo from "../../assets/bgSignInTwo.jpg"
 import { FaUserFriends, FaTag, FaExclamationCircle, FaEllipsisV } from 'react-icons/fa'
 
 
-function Dashboard({ projects, user, activeTab, setActiveTab, selectedProject, setSelectedProject }) {
+function Dashboard({ 
+    projects, 
+    user, 
+    activeTab, 
+    setActiveTab, 
+    selectedProject, 
+    setSelectedProject }) {
 
     const safeProjects = Array.isArray(projects) ? projects : []
 
@@ -21,8 +27,8 @@ function Dashboard({ projects, user, activeTab, setActiveTab, selectedProject, s
     });
 
     const items = 10
-    const currentProjects = filteredProjects.filter((project) =>
-        project.workflowStatus === "SUBMITTED"
+    const activeProjects = filteredProjects.filter((project) =>
+        !["COMPLETED", "OPEN"].includes(project.workflowStatus)
     ).slice(0, 10)
 
     const STAGES = {
@@ -125,7 +131,7 @@ function Dashboard({ projects, user, activeTab, setActiveTab, selectedProject, s
         
                             <tbody className=''>
                                 {
-                                    currentProjects.map((project, index) => (
+                                    activeProjects.map((project, index) => (
                                         <tr key={index} className='border-y border-[#0000000D] cursor-pointer'>
                                             <td className='py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle truncate'>{project.id}</td>
                                             <td title={project.projectName} className='py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle truncate'>{project.projectName}</td>
@@ -157,12 +163,16 @@ function Dashboard({ projects, user, activeTab, setActiveTab, selectedProject, s
                     </section>
                 </div>
 
-                {/* <div className='flex items-center justify-center absolute top-75.75 left-110 py-14'>
-                    <div className='text-center'>
-                        <p>No projects assigned</p>
-                        <p>You do not have any projects</p>
-                    </div>
-                </div> */}
+                {
+                    activeProjects.length === 0 && (
+                        <div className='flex items-center justify-center py-14'>
+                            <div className='text-center'>
+                                <h2 className='font-bold text-[16px]/[24px] text-[#090909] '>No Active Projects</h2>
+                                <p className='font-normal text-[14px]/[20px] text-[#636363]'>You do not have any active projects</p>
+                            </div>
+                        </div>
+                    )
+                }
             </div>
         </div>
     )

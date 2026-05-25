@@ -16,7 +16,7 @@ function AddProjectManager({
     }) {
 
     const [open, setOpen] = useState(false)
-    const { setNotification } = useNotification()
+    const { showNotification } = useNotification()
     const project = selectedProject
 
 
@@ -38,7 +38,7 @@ function AddProjectManager({
             setAssignedManager(null)
             onClose();
 
-            setNotification({
+            showNotification({
                 type: "success",
                 title: "Project Manager Assigned!",
                 message: `You have successfully assigned a project manager to Project - ${project.projectName}`
@@ -52,7 +52,7 @@ function AddProjectManager({
     };
 
     return (
-        <div className='absolute z-2000 w-full h-full bg-[#00000080] flex flex-col items-end overflow-y-auto overscroll-contain'>
+        <div className='fixed z-2000 w-full h-screen bg-[#00000080] flex flex-col items-end overflow-y-auto overscroll-contain'>
             <div className='flex flex-col w-135.5 h-430 overflow-y-auto overscroll-contain bg-[#F7F7F7] px-4 py-4'>
                 <div className='flex items-center justify-between mb-6'>
                     <h2 className='font-semibold text-[16px]/[20px] text-[#090909]'>Assign A Project Manager</h2>

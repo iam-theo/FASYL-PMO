@@ -62,7 +62,7 @@ function Projects({
             </div>
 
             {/* projects table with details */}
-            <section className='w-full h-176 overflow-y-auto overscroll-contain border-collapse rounded-lg border border-[#0000000D] relative'>
+            <section className='w-full min-h-0 overflow-y-auto no-scrollbar border-collapse rounded-lg border border-[#0000000D] relative'>
                 <table className='w-full'>
                     <thead className='sticky top-0 z-2000 h-11'>
                         <tr className='text-left'>
@@ -98,7 +98,7 @@ function Projects({
                                         <p className='rounded-2xl py-1 px-2 bg-[#228CEE] text-center'>{project.workflowStatus}</p>
                                     </td>
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#FFFFFF] align-middle'>
-                                        <p className='rounded-2xl py-1 px-2 bg-[#228CEE] text-center'>{setCurrentStage(project.currentStage)}</p>
+                                        <p className='rounded-2xl py-1 px-2 bg-[#228CEE] text-center'>{setCurrentStage(project.currentStageOrder)}</p>
                                     </td>
                                     <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] relative justify-center align-middle'>
                                         <i onClick={() => setSelectedProject(project)} className="fa-solid fa-ellipsis-vertical fa-lg cursor-pointer text-[#98a2b3] hover:text-[#1B3C4A]"></i>
@@ -117,7 +117,7 @@ function Projects({
                 </table>
             </section>
 
-            <div className='mt-auto flex items-center justify-between w-full py-6'>
+            <div className='flex items-center justify-between w-full py-6'>
                 <p className='font-medium text-[14px]/[20px] text-[#636363]'>Page {currentPage} of {totalPages}</p>
                 <div className='flex items-center gap-2'>
                     <button onClick={() => setCurrentPage((p) => Math.max(p -1, 1))} className='rounded-md border border-[#0000000D] shadow-[2px] shadow-[#1018280D] py-2.25 px-4.25 bg-[#E8E8E8] hover:bg-[#1B3C4A] font-medium text-[14px]/[20px] text-[#1B3C4A] hover:text-[#FFFFFF] cursor-pointer'>Previous</button>

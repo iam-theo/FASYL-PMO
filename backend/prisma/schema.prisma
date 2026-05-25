@@ -42,7 +42,7 @@ model Project {
   createdAt           DateTime          @default(now())
   updatedAt           DateTime          @updatedAt
   completedAt         DateTime?
-  currentStage        Int               @default(1)
+  currentStageOrder   Int               @default(1)
   dueDate             DateTime?
   progressPercent     Float             @default(0)
   startDate           DateTime?
@@ -62,13 +62,15 @@ model ProjectStage {
   projectId       Int
   stageIndex      Int
   stageName       String
+  stageOrder      Int
+  stageKey        String?
   workflowStatus  WorkflowStatus @default(LOCKED)
   checklist       Json
   requiredDocs    Json?
   completed       Boolean        @default(false)
   completedAt     DateTime?
   submittedAt     DateTime?
-  submittedBy     Int?
+  submittedBy     String?
   approvedAt      DateTime?
   approvedBy      Int?
   escalated       Boolean        @default(false)
@@ -81,7 +83,7 @@ model ProjectStage {
   updatedAt       DateTime       @updatedAt
   project         Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  @@unique([projectId, stageIndex])
+  @@unique([projectId, stageOrder])
 }
 
 model ProjectApproval {
@@ -93,9 +95,8 @@ model ProjectApproval {
   comment     String?
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
-  stageModel  String
   rejectedBy  Int?
-  submittedBy Int?
+  submittedBy String?
   approver    User?          @relation(fields: [approvedBy], references: [id], map: "ProjectApproval_approvedBy_fkey")
   project     Project        @relation(fields: [projectId], references: [id], onDelete: Cascade, map: "ProjectApproval_projectId_fkey")
 

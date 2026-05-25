@@ -6,6 +6,13 @@ import {
   logout,
 } from "./auth.controller.js";
 
+import {
+  loginLimiter,
+  registerLimiter,
+  refreshLimiter,
+  authSlowDown,
+} from "../../middleware/rateLimit.middleware.js";
+
 const router = Router();
 
 /* =========================
@@ -51,7 +58,12 @@ const router = Router();
  *       400:
  *         description: Validation error
  */
-router.post("/register", register);
+router.post(
+  "/register",
+  registerLimiter,
+  authSlowDown,
+  register
+);
 
 /**
  * @swagger
@@ -81,7 +93,12 @@ router.post("/register", register);
  *       401:
  *         description: Invalid credentials
  */
-router.post("/login", login);
+router.post(
+  "/login",
+  loginLimiter,
+  authSlowDown,
+  login
+);
 
 /**
  * @swagger
@@ -97,7 +114,11 @@ router.post("/login", login);
  *       401:
  *         description: Unauthorized or expired token
  */
-router.post("/refresh", refresh);
+router.post(
+  "/refresh",
+  refreshLimiter,
+  refresh
+);
 
 /**
  * @swagger

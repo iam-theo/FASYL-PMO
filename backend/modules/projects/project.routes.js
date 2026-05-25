@@ -2,15 +2,19 @@ import { Router } from "express";
 import { authMiddleWare } from "../../middleware/auth.middleware.js";
 import { allowRoles } from "../../middleware/rbac.middleware.js";
 import { ROLES } from "../../constants/roles.js";
+import { upload } from "../../middleware/upload.middleware.js";
 
 import {
-  createProject,
-  getProjects,
-  getProject,
-  updateProject,
-  deleteProject,
-  updateChecklistBulk
+   createProject,
+   getProjects,
+   getProject,
+   updateProject,
+   deleteProject,
+   updateChecklistBulk,
+   uploadStageDocument,
 } from "./project.controller.js";
+
+import { uploadLimiter, writeLimiter } from "../../middleware/rateLimit.middleware.js";
 
 const router = Router();
 
@@ -73,10 +77,11 @@ const router = Router();
  *         description: Forbidden
  */
 router.post(
-  "/",
-  authMiddleWare,
-  allowRoles(ROLES.HEADOFOPS),
-  createProject
+   "/",
+   writeLimiter,
+   authMiddleWare,
+   allowRoles(ROLES.HEADOFOPS),
+   createProject
 );
 
 /* =========================================
@@ -110,24 +115,34 @@ router.get(
    UPDATE PROJECT
 ========================================= */
 router.put(
-  "/:id",
-  authMiddleWare,
-  allowRoles(ROLES.HEADOFOPS),
-  updateProject
+   "/:id",
+   writeLimiter,
+   authMiddleWare,
+   allowRoles(ROLES.HEADOFOPS),
+   updateProject
 );
 
 /* =========================================
    UPDATE CHECKLIST
 ========================================= */
 router.patch(
-  "/:projectId/stages/:stageId/checklist",
-  (req, res, next) => {
-      console.log("🔥 ROUTE MATCHED");
-      next();
-  },
-  authMiddleWare,
-  allowRoles(ROLES.PROJECTMANAGER),
-  updateChecklistBulk
+   "/:projectId/stages/:stageId/checklist",
+   writeLimiter,
+   authMiddleWare,
+   allowRoles(ROLES.PROJECTMANAGER),
+   updateChecklistBulk
+);
+
+/* =========================================
+   UPLOAD DOCS
+========================================= */
+router.patch(
+   "/:projectId/stages/:stageId/docs/:docKey",
+   uploadLimiter,
+   authMiddleWare,
+   allowRoles(ROLES.PROJECTMANAGER, ROLES.HEADOFOPS),
+   upload.single("file"),
+   uploadStageDocument
 );
 
 
@@ -135,10 +150,11 @@ router.patch(
    DELETE PROJECT
 ========================================= */
 router.delete(
-  "/:id",
-  authMiddleWare,
-  allowRoles(ROLES.HEADOFOPS),
-  deleteProject
+   "/:id",
+   writeLimiter,
+   authMiddleWare,
+   allowRoles(ROLES.HEADOFOPS),
+   deleteProject
 );
 
 export default router;

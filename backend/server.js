@@ -1,13 +1,23 @@
+console.log("SERVER STARTING...");
+console.log("ENV PATH TEST:", process.cwd());
+
 import dotenv from "dotenv";
 dotenv.config();
 
+import { connectCloudinary } from "./config/cloudinary.js";
+connectCloudinary();
+
 import express from "express";
+import path from "path"
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
 import { PrismaClient } from "@prisma/client";
+import {
+  apiLimiter,
+} from "./middleware/rateLimit.middleware.js"
 
 /* =========================
    INIT
@@ -24,6 +34,10 @@ const NODE_ENV = process.env.NODE_ENV || "development";
 
 const API_V1 = "/api/v1";
 const API_LEGACY = "/api";
+
+app.use(apiLimiter);
+
+app.use("/uploads", express.static("backend/uploads"));
 
 /* =========================
    TRUST PROXY

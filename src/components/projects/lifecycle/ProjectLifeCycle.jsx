@@ -3,6 +3,9 @@ import UploadBox from './UploadBox';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toggleChecklist } from './utils/ToggleChecklist';
+import { submitStage, approveStage } from '../../../api';
+import { useNotification } from '../../NotificationContext';
+import { FaRegCircleXmark, FaRegCircleCheck } from 'react-icons/fa6'
 
 function ProjectLifeCycle({ 
     selectedProject, 
@@ -11,15 +14,10 @@ function ProjectLifeCycle({
     setProjects, 
     onClose,  
     user,
-    notification,
-    setNotification,
-    preview,
-    setPreview
     }) {
-
-        // console.log(projects)
         // console.log(selectedProject)
-        // console.log(user)
+
+        const { setNotification } = useNotification()
 
     const STAGES = {
         1: "Client ID",
@@ -32,8 +30,8 @@ function ProjectLifeCycle({
         8: "Closure"
     };
 
-    const setCurrentStage = (currentStage) => {
-        return STAGES[currentStage] || "Unknown Stage";
+    const setCurrentStage = (currentStageOrder) => {
+        return STAGES[currentStageOrder] || "Unknown Stage";
     };
     
     const STAGENAME = {
@@ -50,17 +48,16 @@ function ProjectLifeCycle({
     const setStageTitle = (stageName) => {
         return STAGENAME[stageName] || "Unknown Stage Name";
     };
-    
-    const currentStage = setCurrentStage(selectedProject.currentStage);
-    const stageName = setStageTitle(selectedProject.currentStage)
+    const currentStage = setCurrentStage(selectedProject.currentStageOrder);
+    const stageName = setStageTitle(selectedProject.currentStageOrder)
     const projectStage = selectedProject.stages.find(s => s.stageName === stageName)
-    console.log(projectStage)
-    const nextStage = setCurrentStage((selectedProject.currentStage) + 1)
-    const stageIndex = (selectedProject.currentStage) - 1;
+    // console.log(projectStage)
+    const nextStage = setCurrentStage((selectedProject.currentStageOrder) + 1)
+    const stageIndex = (selectedProject.currentStageOrder) - 1;
     const length = selectedProject.stages.length
     const checklistLength = selectedProject.stages[stageIndex].checklist.length
     const required = projectStage.checklist.filter(item => item.isRequired).length
-    // const completed = projectStage.checklist.filter(item => item.checked).length
+    const completed = projectStage.checklist.filter(item => item.completed).length
 
     const STAGESDESC = {
         0: "Record and qualify the prospective client before any engagement begins.",
@@ -80,95 +77,53 @@ function ProjectLifeCycle({
     const title = selectedProject.stages[stageIndex].stageName;
     const desc = setStageDesc(stageIndex);
 
-    // const handleNextStage = (projectId) => {
-    //     const isHead = user.role === "HEADOFOPS";
-    //     const isPM = user.role === "PROJECTMANAGER";
 
-    //     let shouldNotify = null;
+    const actionMap = {
+        PROJECTMANAGER: submitStage,
+        HEADOFOPS: approveStage,
+    };
 
-    //     const updatedProjects = projects.map(project => {
-    //         if (project.id !== projectId) return project;
+    const handleWorkflowAction = async () => {
+        try {
 
-    //         const currentIndex = project.project_stages.findIndex(
-    //         s => s.status === project.current_status
-    //         );
+            const action = actionMap[user.role];
 
-    //         const currentStage = project.project_stages[currentIndex];
+            if (!action) {
+                console.log("Unauthorized");
+                return;
+            }
 
-    //         const docs = currentStage.requiredDocs
-    //         const hasMissingDoc = docs.some(doc => doc.fileURL === "");
+            const response = await action(
+                selectedProject.id,
+                projectStage.stageOrder
+            );
 
-    //         if (!currentStage?.isCompleted) {
-    //             shouldNotify = {
-    //                 type: "error",
-    //                 title: "Cannot proceed",
-    //                 message: isHead
-    //                 ? "Checklist items has not been completed"
-    //                 : "Checklist items has not been completed"
-    //             };
+            user.role === "PROJECTMANAGER"
+            ? setNotification({
+                type: "success",
+                title: "Signoff Request Sent!",
+                message: `You have successfully sent a signoff request for - ${selectedProject.projectName} (${projectStage.stageName})`
+            }) : setNotification({
+                type: "success",
+                title: "Project Stage Signed off Successful!",
+                message: `You have successfully signed off for - ${selectedProject.projectName} (${projectStage.stageName})`
+            });
 
-    //             return project;
-    //         }
+            onClose()
 
-    //         if(hasMissingDoc) {
-    //             shouldNotify = {
-    //                 type: "error",
-    //                 title: "Cannot proceed",
-    //                 message: "Make sure all required documents are uploaded"
-    //             };
-    //         }
+            console.log(response);
 
-    //         // HEAD OF OPS FLOW
-    //         if (isHead) {
-    //             shouldNotify = {
-    //                 type: "success",
-    //                 title: "Successfully signed off a project status",
-    //                 message: "Signoff successful. Project manager will be notified"
-    //             };
+        } catch (err) {
+            console.error(err);
 
-    //             const nextIndex = currentIndex + 1;
-    //             const nextStage = project.project_stages[nextIndex];
+            setNotification({
+                type: "error",
+                title: "Signoff Request Failed!",
+                message: err.message
+            });
+        }
+    };
 
-    //             if (!nextStage) return project;
-
-    //             return {
-    //                 ...project,
-    //                 current_status: nextStage.status,
-    //                 project_stages: project.project_stages.map((stage, idx) => {
-    //                     if (idx !== nextIndex) return stage;
-
-    //                     return {
-    //                         ...stage,
-    //                         isCompleted: false,
-    //                         checklist: stage.checklist.map(item => ({
-    //                             ...item,
-    //                             checked: false
-    //                         }))
-    //                     };
-    //                 })
-    //             };
-    //         }
-
-    //         // PROJECT MANAGER FLOW
-    //         if (isPM) {
-    //             shouldNotify = {
-    //                 type: "success",
-    //                 title: "Request sent",
-    //                 message: "Signoff has been requested. You will be notified when the status changes"
-    //             };
-
-    //             return project;
-    //         }
-
-    //         return project;
-    //     });
-
-    //     setProjects(updatedProjects);
-
-    //     if (shouldNotify) {
-    //         setNotification(shouldNotify);
-    //     }
-    // };
 
     return (
         <div className='relative'>
@@ -200,7 +155,7 @@ function ProjectLifeCycle({
                     </div>
 
                     <div className='w-62.75 h-22 rounded-lg border border-[#0000000D] p-4 flex flex-col justify-between gap-4 bg-[#F3F3F3]'>
-                        <p className='font-semibold text-[16px]/[20px] text-[#090909]'>{}/{checklistLength}</p>
+                        <p className='font-semibold text-[16px]/[20px] text-[#090909]'>{completed}/{checklistLength}</p>
                         <p className='font-normal text-[16px]/[20px] text-[#636363]'>Completed</p>
                     </div>
                 </div>
@@ -250,22 +205,45 @@ function ProjectLifeCycle({
             <div className=''>
                 <h3 className='font-semibold text-[16px]/[20px] text-[#090909] mb-3'>Upload Supporting Documents</h3>
                 {/* <ClientIDDoc /> */}
-                {/* {projectStage.requiredDocs.map((doc, index) => (
+                {projectStage.requiredDocs.map((doc, index) => (
                     <UploadBox 
                         key={index}
-                        title={doc.key.title}
-                        projects={projects}
+                        title={doc.title}
+                        docKey={doc.key}
+                        docStatus={doc.status}
+                        docName={doc.fileName}
+                        docURL={doc.fileURL}
+                        projectStage={projectStage}
                         selectedProject={selectedProject}
-                        preview={preview}
-                        setPreview={setPreview}
+                        projectId={selectedProject.id}
+                        stageId={projectStage.id}
+                        doc={doc}
                     />
-                ))} */}
-                <button
-                // onClick={() => handleNextStage(selectedProject.id)} 
+                ))}
+                {user.role === "PROJECTMANAGER" && ( <button
+                onClick={handleWorkflowAction} 
                 className='w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#1B3C4A] flex items-center justify-center gap-2 cursor-pointer'>
-                    <i className="fa-regular fa-circle-check text-[#FFFFFF]"></i>
-                    <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>{user.role === "PROJECTMANAGER" ? "Request Signoff" : "Signoff"}</p>
-                </button>
+                    <FaRegCircleCheck className='text-[#FFFFFF]' />
+                    <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>Request Signoff</p>
+                </button>)}
+
+                {user.role === "HEADOFOPS" && ( 
+                    <div className='flex items-center justify-between gap-3'>
+                        <button
+                        onClick={handleWorkflowAction} 
+                        className='w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#1B3C4A] flex items-center justify-center gap-2 cursor-pointer'>
+                            <FaRegCircleCheck className='text-[#FFFFFF]' />
+                            <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>Accept Signoff</p>
+                        </button>
+
+                        <button
+                        // onClick={handleWorkflowAction} 
+                        className='w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#D20019] flex items-center justify-center gap-2 cursor-pointer'>
+                            <FaRegCircleXmark className='text-[#FFFFFF]' />
+                            <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>Reject Signoff</p>
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     )

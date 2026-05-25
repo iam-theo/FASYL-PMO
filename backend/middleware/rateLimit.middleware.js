@@ -70,7 +70,8 @@ export const writeLimiter = rateLimit({
 
 export const uploadLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 10,
+    max: 20,
+    skipSuccessfulRequests: true,
 
     message: {
         success: false,

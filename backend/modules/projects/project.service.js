@@ -1,6 +1,7 @@
 import { PrismaClient, WorkflowStatus } from "@prisma/client";
 import { getPolicy } from "../../modules/workflow/workflow.policy.js";
 const prisma = new PrismaClient();
+import axios from "axios";
 
 const TOTAL_STAGES = 8;
 /* =========================================
@@ -51,144 +52,236 @@ export const getStageKey = (order) => {
   return map[order];
 };
 
-/* =========================================
-    CREATE PROJECT + WORKFLOW INIT
-========================================= */
-export const createProjectService = async (data, user) => {
-  const startOrder = 1;
-
-  const dbUser = await prisma.user.findUnique({
-    where: { id: user.id },
+export const buildWorkflowForProject = async (projectId) => {
+  // PREVENT DUPLICATION
+  const existingCount = await prisma.projectStage.count({
+    where: { projectId },
   });
 
-  if (!dbUser) {
-    throw new Error("Invalid PMO user - does not exist in database");
+  if (existingCount > 0) {
+    return {
+      message: "Workflow already exists",
+      skipped: true,
+    };
   }
 
   // =========================
-  // STEP 1: CREATE PROJECT
-  // =========================
-  const project = await prisma.project.create({
-    data: {
-      projectName: data.name,
-      clientName: data.clientName,
-      industry: data.industry,
-      productName: data.productName,
-      description: data.description || null,
-
-      projectManagerEmail: data.projectManagerEmail || null,
-      pmoId: dbUser.id,
-
-      currentStageOrder: startOrder,
-      workflowStatus: "OPEN",
-      progressPercent: calcProgress(startOrder),
-    },
-  });
-
-  // =========================
-  // STEP 2: BUILD STAGES
+  // BUILD STAGES
   // =========================
   const stagesData = Array.from({ length: TOTAL_STAGES }, (_, index) => {
     const stageOrder = index + 1;
     const stageKey = getStageKey(stageOrder);
-    const stagePolicy = getPolicy(stageKey);
+    const policy = getPolicy(stageKey);
 
     return {
-      projectId: project.id,
-      stageIndex: stageOrder,
-      stageOrder: stageOrder,
-      stageKey: stagePolicy.key,
-      stageName: stagePolicy.name,
+      projectId,
 
-      workflowStatus:
-        stageOrder === 1 ? "OPEN" : "LOCKED",
+      stageIndex: stageOrder,
+      stageOrder,
+
+      stageKey: policy.key,
+      stageName: policy.name,
+
+      workflowStatus: stageOrder === 1 ? "OPEN" : "LOCKED",
 
       checklist: JSON.parse(JSON.stringify(
-        createChecklist(stagePolicy.checklist, stageKey)
+        createChecklist(policy.checklist, stageKey)
       )),
 
       requiredDocs: JSON.parse(JSON.stringify(
-        createRequiredDocs(stagePolicy.requiredDocs || [], stageKey)
+        createRequiredDocs(policy.requiredDocs || [], stageKey)
       )),
     };
   });
 
-  // =========================
-  // STEP 3: INSERT STAGES
-  // =========================
   await prisma.projectStage.createMany({
     data: stagesData,
   });
 
   // =========================
-// STEP 4: CREATE APPROVALS
-// =========================
-const approvalsData = stagesData.map((stage) => ({
-  projectId: project.id,
-  stage: stage.stageOrder,
-
-  // IMPORTANT
-  status: "PENDING", 
-
-  submittedBy: null,
-  approvedBy: null,
-  rejectedBy: null,
-  comment: null,
-}));
-
-await prisma.projectApproval.createMany({
-  data: approvalsData,
-});
-
+  // CREATE APPROVALS
   // =========================
-  // STEP 5: RETURN FULL PROJECT
-  // =========================
+  const approvals = stagesData.map((stage) => ({
+    projectId,
+    stage: stage.stageOrder,
+    status: "PENDING",
+  }));
+
+  await prisma.projectApproval.createMany({
+    data: approvals,
+  });
+
+  return {
+    success: true,
+    message: "Workflow created",
+  };
+};
+
+// export const createProjectService = async (data, user) => {
+//   const dbUser = await prisma.user.findUnique({
+//     where: { id: user.id },
+//   });
+
+//   if (!dbUser) {
+//     throw new Error("Invalid PMO user");
+//   }
+
+//   let projectManagerId = null;
+
+//   if (data.projectManagerEmail) {
+//     const pm = await prisma.user.findUnique({
+//       where: { email: data.projectManagerEmail },
+//     });
+
+//     if (!pm) {
+//       throw new Error("Project Manager not found");
+//     }
+
+//     projectManagerId = pm.id;
+//   }
+
+//   // =========================
+//   // CREATE PROJECT
+//   // =========================
+//   const project = await prisma.project.create({
+//     data: {
+//       projectName: data.name,
+//       clientName: data.clientName,
+//       productName: data.productName,
+
+//       projectManagerId,
+
+//       workflowStatus: "OPEN",
+//       currentStageOrder: 1,
+//     },
+//   });
+
+//   // =========================
+//   // 🔥 BUILD WORKFLOW (ONE SYSTEM FOR ALL)
+//   // =========================
+//   await buildWorkflowForProject(project.id);
+
+//   return prisma.project.findUnique({
+//     where: { id: project.id },
+//     include: {
+//       stages: true,
+//       approvals: true,
+//       projectManager: true,
+//     },
+//   });
+// };
+
+export const assignProjectService = async (projectId, pmEmail) => {
+
+  const user = await prisma.user.findUnique({
+    where: { email: pmEmail }
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  if (user.role !== "PROJECTMANAGER") {
+    throw new Error("User is not a Project Manager");
+  }
+
+  const project = await prisma.project.update({
+    where: { id: Number(projectId) },
+    data: {
+      projectManagerId: user.id,  
+
+      currentStageOrder: 1,
+      workflowStatus: "OPEN",
+    },
+  });
+
+  await prisma.projectStage.updateMany({
+    where: {
+      projectId: project.id,
+      stageOrder: 1,
+    },
+    data: {
+      workflowStatus: "OPEN",
+    },
+  });
+
+  await prisma.projectStage.updateMany({
+    where: {
+      projectId: project.id,
+      stageOrder: { gt: 1 },
+    },
+    data: {
+      workflowStatus: "LOCKED",
+    },
+  });
+
   return await prisma.project.findUnique({
-    where: { id: project.id },
+    where: {
+      id: project.id,
+    },
+
     include: {
-      stages: {
-        orderBy: { stageOrder: "asc" },
+      projectManager: {
+        select: {
+          id: true,
+          fullName: true,
+          email: true,
+        },
       },
-      approvals: {
-        orderBy: { stage: "asc" },
-      }, // checklist + docs already inside JSON
+
+      stages: {
+        orderBy: {
+          stageOrder: "asc",
+        },
+      },
+
+      approvals: true,
     },
   });
 };
 
 /* =========================================
-    GET ALL PROJECTS (ROLE-AWARE)
+    GET PROJECT
 ========================================= */
 export const getProjectsService = async (user) => {
   const where = {};
 
+  // ROLE-BASED FILTERING
   if (user.role === "PROJECTMANAGER") {
-    where.projectManagerEmail = user.email;
+    where.projectManager = user.email;
   }
 
-  return await prisma.project.findMany({
-    where,
+  const projects = await prisma.project.findMany({
     include: {
+      projectManager: {
+        select: {
+          id: true,
+          fullName: true,
+          email: true,
+        },
+      },
       stages: true,
+      approvals: true,
     },
-    orderBy: [
-      { projectManagerEmail: "asc" },
-      { updatedAt: "desc" },
-    ],
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
+
+  return projects;
 };
 
-
-/* =========================================
-    GET PROJECT BY ID
-========================================= */
 export const getProjectByIdService = async (id) => {
   return await prisma.project.findUnique({
     where: { id: Number(id) },
-
     include: {
-      stages:true
-    },
+      stages: {
+        orderBy: { stageOrder: "asc" }
+      },
+      approvals: {
+        orderBy: { stage: "asc" }
+      }
+    }
   });
 };
 

@@ -3,6 +3,7 @@ import {
   loginUser,
   refreshTokenService,
   logoutUser,
+  getProjectManagersService
 } from "./auth.service.js";
 
 /* =========================
@@ -98,5 +99,26 @@ export const logout = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+// GET PROJECT MANAGER
+
+export const getProjectManagers = async (req, res) => {
+  try {
+    const users = await getProjectManagersService();
+
+    return res.status(200).json({
+      success: true,
+      message: "Project managers retrieved successfully",
+      data: users,
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch project managers",
+      error: err.message,
+    });
   }
 };

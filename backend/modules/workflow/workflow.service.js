@@ -154,12 +154,22 @@ export const submitStage = async ({
   });
 
   return await prisma.project.findUnique({
-    where: {
-      id: pid,
-    },
+    where: { id: pid },
+
     include: {
-      stages: true,
-      approvals: true,
+        stages: {
+            orderBy: {
+                stageOrder: "asc"
+            }
+        },
+
+        approvals: {
+            orderBy: {
+                stage: "asc"
+            }
+        },
+
+        projectManager: true,
     },
   });
 };
@@ -253,9 +263,24 @@ export const approveStage = async ({ projectId, stageOrder, userId }) => {
     });
   }
 
-  return prisma.project.findUnique({
+  return await prisma.project.findUnique({
     where: { id: pid },
-    include: { stages: true, approvals: true },
+
+    include: {
+        stages: {
+            orderBy: {
+                stageOrder: "asc"
+            }
+        },
+
+        approvals: {
+            orderBy: {
+                stage: "asc"
+            }
+        },
+
+        projectManager: true,
+    },
   });
 };
 
@@ -329,9 +354,21 @@ export const rejectStage = async ({ projectId, stageOrder, userId, reason }) => 
 
   return await prisma.project.findUnique({
     where: { id: pid },
+
     include: {
-      stages: true,
-      approvals: true,
+        stages: {
+            orderBy: {
+                stageOrder: "asc"
+            }
+        },
+
+        approvals: {
+            orderBy: {
+                stage: "asc"
+            }
+        },
+
+        projectManager: true,
     },
   });
 };

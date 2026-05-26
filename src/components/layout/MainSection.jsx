@@ -39,7 +39,7 @@ function MainSection({
         if (user?.role === "HEADOFOPS") return true; // sees everything
 
         if (user?.role === "PROJECTMANAGER") {
-            return project.projectManagerEmail === user.email; 
+            return project.projectManager?.email === user.email; 
             // only projects assigned
         }
 

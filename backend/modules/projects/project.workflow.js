@@ -57,10 +57,10 @@ const createStage = (projectId, stageOrder) => {
     escalatedAt: null,
     escalatedBy: null,
   };
-};
+};  
 
 /* =========================
-    INIT ALL PROJECT STAGES
+   INIT ALL PROJECT STAGES
 ========================= */
 export const initStages = (projectId) => {
   return Array.from({ length: 8 }, (_, index) =>

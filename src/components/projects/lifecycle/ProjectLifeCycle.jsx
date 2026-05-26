@@ -103,7 +103,7 @@ function ProjectLifeCycle({
                 projectStage.stageOrder
             );
 
-            const updatedProject = structuredClone(response.data)
+            const updatedProject = response.data
 
             setSelectedProject(updatedProject)
 
@@ -131,7 +131,12 @@ function ProjectLifeCycle({
         } catch (err) {
             console.error(err);
 
-            showNotification({
+            user.role === "PROJECTMANAGER"
+            ? showNotification({
+                type: "error",
+                title: "Signoff Request Failed!",
+                message: err.message
+            }) : showNotification({
                 type: "error",
                 title: "Signoff Request Failed!",
                 message: err.message
@@ -148,7 +153,7 @@ function ProjectLifeCycle({
 
                 const response = await rejectStage(pid, order, reason)
 
-                const updatedProject = structuredClone(response.data)
+                const updatedProject = response.data
 
                 setSelectedProject(updatedProject)
 
@@ -160,7 +165,7 @@ function ProjectLifeCycle({
                     )
                 )
 
-                console.log(response)
+                // console.log(response)
 
                 setIsOpen(false)
 

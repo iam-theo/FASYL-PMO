@@ -37,9 +37,9 @@ function MainBody({ user, setUser}) {
     const [checkedList, setCheckedList] = useState([])
 
     const [projects, setProjects] = useState([]);
-    const [projectManagers, setProjectManagers] =  useState(["sekemi@fasylng.com", "desmond@fasylng.com"])
+    const [projectManagers, setProjectManagers] =  useState([])
     const [assignedManager, setAssignedManager] = useState("Select A Project Manager")
-    const [isLoading, setisLoading] = useState(true)
+    const [isLoading, setisLoading] = useState(false)
 
     // selected project
     useEffect(() => {
@@ -55,30 +55,31 @@ function MainBody({ user, setUser}) {
 
     //initial loading of projects
     useEffect(() => {
-
         const loadProjects = async () => {
-    
-            if(projects.length > 0) {
-                setisLoading(false)
-                return
-            }
-    
             try {
-                const { data } = await api.get("/projects")
-                
-                setProjects(data.data)
-
+                const { data } = await api.get("/projects");
+                setProjects(data.data);
             } catch (err) {
                 console.error(err);
-            } finally {
-                setisLoading(false)
             }
-        }
+        };
+
+        const loadProjectManagers = async () => {
+            try {
+                const { data } = await api.get("/auth/project-managers");
+                setProjectManagers(data.data);
+            } catch (err) {
+                console.error(err);
+            }
+        };
 
         loadProjects();
-        
-    }, [])
 
+        if(user?.role === "HEADOFOPS") {
+            loadProjectManagers();
+        }
+
+    }, []);
 
     return (
         <div className='relative flex max-w-360 h-screen bg-[#FFFFFF]'>
@@ -99,7 +100,7 @@ function MainBody({ user, setUser}) {
                 isLoading={isLoading}
             />
 
-            {selectedProject && user.role === "HEADOFOPS" && !selectedProject?.projectManagerEmail ? (
+            {selectedProject && user.role === "HEADOFOPS" && !selectedProject?.projectManager ? (
                 <AddProjectManager
                     projects={projects}
                     setProjects={setProjects}

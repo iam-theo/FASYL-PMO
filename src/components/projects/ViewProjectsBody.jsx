@@ -14,7 +14,7 @@ function ViewProjectsBody({
     user
     }) {
 
-    // console.log(selectedProject);
+    // console.log(selectedProject)
     const [isLoading, setisLoading] = useState(true)
     const hasFetched = useRef(false)
     const [open, setOpen] = useState(true)
@@ -67,7 +67,7 @@ function ViewProjectsBody({
                         user={user}
                     />}
 
-                    {/* {activeDetails === "project_details" && <ProjectDetails selectedProject={selectedProject}/>} */}
+                    {activeDetails === "project_details" && <ProjectDetails selectedProject={selectedProject}/>}
                 </section>
             </div>
         </div>

@@ -96,3 +96,23 @@ export const logoutUser = async (token) => {
     where: { token },
   });
 };
+
+// GET PROJECTMANAGERS
+
+export const getProjectManagersService = async () => {
+  return await prisma.user.findMany({
+    where: {
+      role: "PROJECTMANAGER",
+    },
+    select: {
+      id: true,
+      fullName: true,
+      email: true,
+      role: true,
+      createdAt: true,
+    },
+    orderBy: {
+      fullName: "asc",
+    },
+  });
+};

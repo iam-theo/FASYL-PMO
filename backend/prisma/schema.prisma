@@ -22,9 +22,10 @@ model User {
   role          Role              @default(STAFF)
   createdAt     DateTime          @default(now())
   auditLogs     AuditLog[]
-  projects      Project[]         @relation("PMOProjects")
   refreshTokens RefreshToken[]
   approvals     ProjectApproval[]
+
+  assignedProjects Project[] @relation("ProjectManagerRelation")
 }
 
 model RefreshToken {
@@ -38,27 +39,50 @@ model RefreshToken {
 
 model Project {
   id                  Int               @id @default(autoincrement())
+
+  externalId          String            @unique // projectId from Sales portal
+  source              String @default("SALES")
+
+  status              String            // ACTIVE, etc
+
   projectName         String
+
+  clientId            String?
   clientName          String
-  industry            String?
+
+  productId           String?
   productName         String?
-  projectManager      String?
+  productType         String?
+
+  projectManagerId Int?
+  projectManager User? @relation("ProjectManagerRelation", fields: [projectManagerId], references: [id])
+
   salesId             String?
-  pmoId               Int?
-  status              String            @default("stage1")
+  location            String?
+  amcPercentage       Float?
+  saleTypes           String?
+
+  commencementDate    DateTime?
+  purchaseOrderDate   DateTime?
+
+  milestones          Json?
+  resources           Json?
+
+  pmoAddress          String?
+  startDate           DateTime?
+  endDate             DateTime?
+
   createdAt           DateTime          @default(now())
   updatedAt           DateTime          @updatedAt
   completedAt         DateTime?
-  currentStageOrder   Int               @default(1)
+  currentStageOrder   Int               @default(0)
   dueDate             DateTime?
   progressPercent     Float             @default(0)
-  startDate           DateTime?
-  workflowStatus      WorkflowStatus    @default(OPEN)
-  projectManagerEmail String?
+  workflowStatus      WorkflowStatus    @default(UNASSIGNED)
+
   description         String?
   auditLogs           AuditLog[]
   escalations         Escalation[]
-  pmo                 User?             @relation("PMOProjects", fields: [pmoId], references: [id])
   stages              ProjectStage[]
   timelines           ProjectTimeline[]
   approvals           ProjectApproval[]
@@ -159,9 +183,9 @@ enum Role {
 }
 
 enum WorkflowStatus {
+  UNASSIGNED
   LOCKED
   OPEN
-  IN_PROGRESS
   SUBMITTED
   APPROVED
   REJECTED

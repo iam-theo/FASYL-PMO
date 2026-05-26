@@ -4,6 +4,7 @@ import {
   login,
   refresh,
   logout,
+  getProjectManagers
 } from "./auth.controller.js";
 
 import {
@@ -133,5 +134,10 @@ router.post(
  *         description: Logged out successfully
  */
 router.post("/logout", logout);
+
+router.get(
+  "/project-managers",
+  getProjectManagers
+);
 
 export default router;

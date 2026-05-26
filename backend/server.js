@@ -15,12 +15,24 @@ import { PrismaClient } from "@prisma/client";
 import {
   apiLimiter,
 } from "./middleware/rateLimit.middleware.js"
+import { startSalesSync } from "./modules/projects/salesSync.job.js";
+
+startSalesSync();
 
 /* =========================
-   INIT
+    INIT
 ========================= */
 const app = express();
 const prisma = new PrismaClient();
+
+app.use(express.json());
+
+// START SYNC SYSTEM
+startSalesSync();
+
+app.listen(5000, () => {
+  console.log("Server running on 5000");
+});
 
 /* =========================
    ENV

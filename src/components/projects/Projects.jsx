@@ -29,11 +29,47 @@ function Projects({
         8: "Closure"
     };
 
-    const setCurrentStage = (currentStage) => {
-        return STAGES[currentStage] || "Unknown Stage";
+    // console.log(projects)
+
+    const statusStyles = {
+        UNASSIGNED: {
+            bg: "#F2F4F7",
+            text: "#344054",
+        },
+
+        OPEN: {
+            bg: "#EFF8FF",
+            text: "#228CEE",
+        },
+
+        SUBMITTED: {
+            bg: "#FFF7ED",
+            text: "#EA580C",
+        },
+
+        APPROVED: {
+            bg: "#ECFDF3",
+            text: "#027A48",
+        },
+
+        REJECTED: {
+            bg: "#FEF3F2",
+            text: "#D92D20",
+        },
+
+        COMPLETED: {
+            bg: "#F0FDF4",
+            text: "#15803D",
+        },
     };
 
-    if(isLoading) return <div className={`w-18 h-18 rounded-full border-8 border-[#636363] border-t-[#1B3C4A] absolute top-50 animate-spin`}></div>
+    const setCurrentStage = (currentStage) => {
+        return STAGES[currentStage] || "LOCKED";
+    };
+
+    if(isLoading) return <div className='w-full h-screen flex items-center justify-center'>
+        <div className={`w-18 h-18 rounded-full border-8 border-[#636363] border-t-[#1B3C4A] absolute top-50 animate-spin`}></div>
+    </div>
 
     return (
         <div className='px-4 pt-4 flex flex-col h-screen'>
@@ -83,6 +119,10 @@ function Projects({
                                 value="approved">
                                     APPROVED
                             </option>
+                            <option 
+                                value="rejected">
+                                    REJECTED
+                            </option>
                             <option
                                 value="completed">
                                     COMPLETED
@@ -93,49 +133,57 @@ function Projects({
             </div>
 
             {/* projects table with details */}
-            <section className='w-full min-h-0 overflow-y-auto no-scrollbar border-collapse rounded-lg border border-[#0000000D] relative'>
-                <table className='w-360'>
-                    <thead className='sticky top-0 z-2000 h-11'>
-                        <tr className='text-left'>
-                            <th className='w-25 py-3 px-6 bg-[#F9FAFB] font-semibold text-[12px]/[18px] text-[#090909] justify-center'>ID</th>
-                            <th className='w-50 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Project Name</th>
-                            <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Client</th>
-                            <th className='w-50 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Product</th>
+            <section className='w-full min-h-0 overflow-auto no-scrollbar rounded-lg border border-[#0000000D] relative'>
+                <table className='min-w-300 border-collapse whitespace-nowrap'>
+                    <thead className='sticky top-0 z-2000 h-11 bg-[#F9FAFB]'>
+                        <tr className=''>
+                            <th className='px-4 py-3 font-semibold text-[12px]/[18px] text-[#090909] text-left'>ID</th>
+                            <th className='px-4 py-3 font-semibold text-[12px]/[18px] text-[#090909] text-left'>Project Name</th>
+                            <th className='px-4 py-3 font-semibold text-[12px]/[18px] text-[#090909] text-left'>Client</th>
+                            <th className='px-4 py-3 font-semibold text-[12px]/[18px] text-[#090909] text-left'>Product</th>
                             {
                                 user?.role === "HEADOFOPS" && (
-                                    <th className='w-50 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>PM</th>
+                                    <th className='px-4 py-3 font-semibold text-[12px]/[18px] text-[#090909] text-left'>PM</th>
                                 )
                             }
-                            <th className='w-30 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Status</th>
-                            <th className='w-30 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Stage</th>
-                            <th className='w-10 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'></th>
+                            <th className='px-4 py-3 font-semibold text-[12px]/[18px] text-[#090909] text-left'>Status</th>
+                            <th className='px-4 py-3 font-semibold text-[12px]/[18px] text-[#090909] text-left'>Stage</th>
+                            <th className='w-15 px-4 py-3 font-semibold text-[12px]/[18px] text-[#090909] text-center'></th>
                         </tr>
                     </thead>
 
-                    <tbody className=''>
+                    <tbody className='h-11'>
                         {
                             currentProjects.map((project, index) => (
                                 <tr key={index} className='border-y border-[#0000000D] cursor-pointer'>
-                                    <td className='py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle truncate'>{project.id}</td>
-                                    <td title={project.projectName} className='py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle truncate'>{project.projectName}</td>
-                                    <td title={project.clientName} className='py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle truncate'>{project.clientName}</td>
-                                    <td title={project.productName} className='py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle truncate'>{project.productName}</td>
+                                    <td className='px-4 py-4 font-normal text-[14px]/[20px] text-[#636363] overflow-hidden whitespace-nowrap text-ellipsis'>{project.externalId}</td>
+                                    <td title={project.projectName} className='px-4 py-4 font-normal text-[14px]/[20px] text-[#636363] overflow-hidden whitespace-nowrap text-ellipsis'>{project.projectName}</td>
+                                    <td title={project.clientName} className='px-4 py-4 font-normal text-[14px]/[20px] text-[#636363] overflow-hidden whitespace-nowrap text-ellipsis'>{project.clientName}</td>
+                                    <td title={project.productName} className='px-4 py-4 font-normal text-[14px]/[20px] text-[#636363] overflow-hidden whitespace-nowrap text-ellipsis'>{project.productName}</td>
                                     {
                                         user?.role === "HEADOFOPS" && (
-                                            <td title={project.projectManagerEmail} className='py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.projectManagerEmail === null ? "Not Assigned" : project.projectManagerEmail}</td>
+                                            <td title={project.projectManager} className='px-4 py-4 font-normal text-[14px]/[20px] text-[#636363]'>{!project.projectManager?.email ? "Not Assigned" : project.projectManager?.email}</td>
                                         )
                                     }
-                                    <td className='py-4 px-6 font-normal text-[14px]/[20px] text-[#FFFFFF] align-middle'>
-                                        <p className='rounded-2xl py-1 px-2 bg-[#228CEE] text-center'>{project?.workflowStatus}</p>
+                                    <td className='px-4 py-4 font-normal text-[14px]/[20px] text-[#FFFFFF] text-center'>
+                                        <p
+                                            className="rounded-full py-1"
+                                            style={{
+                                                backgroundColor: statusStyles[project?.workflowStatus]?.bg,
+                                                color: statusStyles[project?.workflowStatus]?.text,
+                                            }}
+                                            >
+                                            {project?.workflowStatus}
+                                        </p>
                                     </td>
-                                    <td className='py-4 px-6 font-normal text-[14px]/[20px] text-[#FFFFFF] align-middle'>
-                                        <p className='rounded-2xl py-1 px-2 bg-[#228CEE] text-center'>{setCurrentStage(project.currentStageOrder)}</p>
+                                    <td className='px-4 py-4 font-normal text-[14px]/[20px] text-[#FFFFFF] text-center'>
+                                        <p className={`rounded-2xl p-1 ${setCurrentStage(project.currentStageOrder) !== "LOCKED" ? "bg-[#228CEE] text-[#FFFFFF]" : "bg-[#52525B] text-[#F4F4F5]"} text-center`}>{setCurrentStage(project.currentStageOrder)}</p>
                                     </td>
-                                    <td className='py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] relative justify-center align-middle'>
+                                    <td className='px-4 py-4 font-normal text-[14px]/[20px] text-[#636363] relative'>
 
                                         <FaEllipsisV 
                                             onClick={() => setSelectedProject(project)} 
-                                            className="cursor-pointer text-[#98a2b3] hover:text-[#1B3C4A] " 
+                                            className="cursor-pointer text-[#98a2b3] hover:text-[#1B3C4A]" 
                                         />
                                     </td>
                                 </tr>

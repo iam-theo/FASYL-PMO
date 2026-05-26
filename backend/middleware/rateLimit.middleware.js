@@ -3,7 +3,8 @@ import slowDown from "express-slow-down";
 
 export const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 300,
+    max: 1000,
+    skipSuccessfulRequests: true,
 
     message: {
         success: false,
@@ -18,8 +19,6 @@ export const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 5,
 
-    skipSuccessfulRequests: true,
-
     message: {
         success: false,
         message: "Too many login attempts. Try again in 15 minutes.",
@@ -32,6 +31,7 @@ export const loginLimiter = rateLimit({
 export const registerLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
     max: 10,
+    skipSuccessfulRequests: true,
 
     message: {
         success: false,
@@ -57,7 +57,7 @@ export const refreshLimiter = rateLimit({
 
 export const writeLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 30,
+    max: 200,
 
     message: {
         success: false,
@@ -70,7 +70,8 @@ export const writeLimiter = rateLimit({
 
 export const uploadLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 10,
+    max: 100,
+    skipSuccessfulRequests: true,
 
     message: {
         success: false,
@@ -88,5 +89,5 @@ export const authSlowDown = slowDown({
 
     delayMs: () => 500,
 
-    axDelayMs: 5000,
+    maxDelayMs: 5000,
 });

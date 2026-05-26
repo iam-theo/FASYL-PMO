@@ -138,8 +138,8 @@ router.patch(
 ========================================= */
 router.patch(
    "/:projectId/stages/:stageId/docs/:docKey",
-   uploadLimiter,
    authMiddleWare,
+   uploadLimiter,
    allowRoles(ROLES.PROJECTMANAGER, ROLES.HEADOFOPS),
    upload.single("file"),
    uploadStageDocument

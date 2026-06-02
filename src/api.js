@@ -58,7 +58,7 @@ export const uploadStageDocument = async (
 
     const formData = new FormData();
 
-    formData.append("file", file);      // MUST match backend: upload.single("file")
+    formData.append("file", file); // MUST match backend: upload.single("file")
 
     return api.patch(
         `/projects/${projectId}/stages/${stageId}/docs/${docKey}`,

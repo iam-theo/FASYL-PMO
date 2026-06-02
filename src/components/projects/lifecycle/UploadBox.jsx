@@ -4,7 +4,7 @@ import { processFile, getFileFromInput, handleDragOver, handleDragLeave, handleD
 import { uploadStageDocument } from '../../../api'
 
 function UploadBox({
-    maxSizeMB = 2,
+    maxSizeMB = 5,
     formats = "SVG, JPG, GIF",
     title,
     docKey,
@@ -13,7 +13,9 @@ function UploadBox({
     docURL,
     projectId,
     stageId,
-    user
+    user,
+    setProjects,
+    setSelectedProject
 }) {
     const inputRef = useRef(null)
     const [isDragging, setIsDragging] = useState(false)
@@ -43,6 +45,8 @@ function UploadBox({
             allowedTypes,
             maxSizeMB
         });
+
+        console.log(result.file)
 
 
         if (!result.success) {
@@ -127,6 +131,8 @@ function UploadBox({
     }
 
     const handleSaveUpload = async (key) => {
+        if (user.role !== "PROJECTMANAGER") return;
+
         if (!uploadState[key].file) return;
 
         const docState = uploadState[key]
@@ -140,6 +146,18 @@ function UploadBox({
                 docState.fileName
             );
             console.log("UPLOAD SUCCESS", res.data);
+
+            const updatedProject = res.data.data;
+
+            setSelectedProject(updatedProject)
+
+            setProjects(prevProjects => 
+                prevProjects.map(project =>
+                    project.id === updatedProject.id
+                        ? updatedProject
+                        : project
+                )
+            )
 
             setUploadState(prev => ({
                 ...prev,
@@ -199,7 +217,7 @@ function UploadBox({
                                     </span> 
                                     or drag and drop
                                 </p>
-                                <p className='font-normal text-[14px]/[20px] text-[#636363]'>{formats} (max. 800x400px)</p>
+                                <p className='font-normal text-[14px]/[20px] text-[#636363]'>{formats} (max. 5mb/4000x4000px)</p>
 
                                 {/* Error */}
                                 {uploadState[docKey]?.error && (

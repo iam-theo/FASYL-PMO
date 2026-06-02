@@ -138,16 +138,8 @@ export const getProjectById = async (req, res) => {
 ========================================= */
 
 export const updateChecklistBulk = async (req, res) => {
-
-  console.log("CHECKLIST ROUTE HIT");
-  console.log("PARAMS:", req.params);
-  console.log("BODY:", req.body);
   
   try {
-    console.log("CHECKLIST ROUTE HIT");
-    console.log("PARAMS:", req.params);
-    console.log("BODY:", req.body);
-
     const { projectId, stageId } = req.params;
     const { checklist } = req.body;
 
@@ -193,7 +185,7 @@ export const uploadStageDocument = async (req, res) => {
 
     const fileUrl = `http://localhost:5000/uploads/${file.filename}`;
 
-    const filename = `${file.filename}`
+    const filename = `${file.originalname}`
 
     const updatedStage = await uploadStageDocumentService(
       projectId,

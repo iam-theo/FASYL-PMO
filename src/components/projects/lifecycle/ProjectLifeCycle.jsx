@@ -1,6 +1,6 @@
 import React from 'react'
 import UploadBox from './UploadBox';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toggleChecklist } from './utils/ToggleChecklist';
 import { submitStage, approveStage, rejectStage } from '../../../api';
@@ -54,10 +54,18 @@ function ProjectLifeCycle({
     const currentStage = getStage(selectedProject?.currentStageOrder);
     const nextStage = getStage((selectedProject?.currentStageOrder) + 1)
     const length = selectedProject?.stages?.length || 0
-    const stageOrder = selectedProject.currentStageOrder
-    const projectStage = selectedProject?.stages?.find(s => s.stageOrder === stageOrder)
-    const stageIndex = (projectStage?.stageOrder);
-    const stageTitle = projectStage.stageName
+    // const projectStage = selectedProject?.stages?.find(s => s.stageOrder === selectedProject?.currentStageOrder)
+    // const projectStage =
+    //     selectedProject?.stages?.find(
+    //         s => s.stageOrder === selectedProject?.currentStageOrder
+    //     ) ?? null;
+    const projectStage = useMemo(() => {
+        return selectedProject?.stages?.find(
+            s => s.stageOrder === selectedProject?.currentStageOrder
+        );
+    }, [selectedProject]);
+    const stageIndex = projectStage?.stageOrder;
+    const stageTitle = projectStage?.stageName
     const checklistLength = projectStage?.checklist?.length || 0
     const required = projectStage?.checklist?.filter(item => item.isRequired)?.length || 0
     const completed = projectStage?.checklist?.filter(item => item.completed)?.length || 0
@@ -193,7 +201,6 @@ function ProjectLifeCycle({
         setReasonn(e.target.value)
     }
 
-
     return (
         <div className='relative'>
             {/* Stage Summary */}
@@ -208,7 +215,7 @@ function ProjectLifeCycle({
                     <div>
                         <p className='font-normal text-[16px]/[20px] text-[#636363]'>
                         {
-                            projectStage.stageOrder !== 8
+                            projectStage?.stageOrder !== 8
                                 ? `Next - ${nextStage}` : null
                         }
                         </p>
@@ -241,9 +248,9 @@ function ProjectLifeCycle({
                 {/* Checklist */}
                 <div className='flex flex-col gap-2'>
                     {
-                        projectStage.checklist.map((item, index) => (
+                        projectStage?.checklist?.map((item, index) => (
                             <div 
-                                key={item.id} 
+                                key={item.id}
                                 onClick={() =>
                                     toggleChecklist(
                                         setProjects,
@@ -279,7 +286,7 @@ function ProjectLifeCycle({
             <div className=''>
                 <h3 className='font-semibold text-[16px]/[20px] text-[#090909] mb-3'>Upload Supporting Documents</h3>
                 {/* <ClientIDDoc /> */}
-                {projectStage.requiredDocs.map((doc, index) => (
+                {projectStage?.requiredDocs?.map((doc, index) => (
                     <UploadBox 
                         key={index}
                         title={doc.title}
@@ -290,6 +297,8 @@ function ProjectLifeCycle({
                         projectId={selectedProject.id}
                         stageId={projectStage.id}
                         user={user}
+                        setProjects={setProjects}
+                        setSelectedProject={setSelectedProject}
                     />
                 ))}
                 {user.role === "PROJECTMANAGER" && ( 
@@ -298,7 +307,7 @@ function ProjectLifeCycle({
                         className={`w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#1B3C4A] cursor-pointer flex items-center justify-center gap-2`}>
                         <FaRegCircleCheck className='text-[#FFFFFF]' />
                         <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>{
-                        projectStage.workflowStatus === "COMPLETED" 
+                        projectStage?.workflowStatus === "COMPLETED" 
                             ? "Stage Completed" 
                             : "Request Signoff"
                         }
@@ -320,7 +329,7 @@ function ProjectLifeCycle({
                         )}
 
                         {
-                            projectStage.workflowStatus !== "COMPLETED" 
+                            projectStage?.workflowStatus !== "COMPLETED" 
                             ? (
                                 <div className='flex items-center justify-between gap-3 w-full'>
                                     <button
@@ -331,7 +340,7 @@ function ProjectLifeCycle({
                                     </button>
 
                                     <button
-                                        onClick={() => handleRejection(selectedProject.id, projectStage.stageOrder, reasonn)} 
+                                        onClick={() => handleRejection(selectedProject.id, projectStage?.stageOrder, reasonn)} 
                                         className='w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#D20019] flex items-center justify-center gap-2 cursor-pointer'>
                                         <FaRegCircleXmark className='text-[#FFFFFF]' />
                                         <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>Reject Signoff</p>

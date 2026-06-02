@@ -295,9 +295,6 @@ export const updateChecklistBulkService = async (
   checklist
 ) => {
 
-  console.log("SERVICE HIT");
-  console.log("DATA RECEIVED:", checklist);
-
   const stage = await prisma.projectStage.findFirst({
     where: {
       id: Number(stageId),
@@ -312,6 +309,10 @@ export const updateChecklistBulkService = async (
 
     if (!incomingItem) return existingItem
 
+    if (existingItem.isRequired) {
+      return existingItem;
+    }
+
     return {
       ...existingItem,
       completed: incomingItem.completed,
@@ -319,22 +320,15 @@ export const updateChecklistBulkService = async (
     };
   });
 
-  console.log("SENDING CHECKLIST:", updatedChecklist)
-
-  const allChecked = updatedChecklist.every(i => i.completed);
-
-  console.log("WRITING TO DB...");
+  const allRequiredDone = stage.requiredDocs.every(d => d.status === "UPLOADED");
 
   const updatedStage = await prisma.projectStage.update({
     where: { id: Number(stageId) },
     data: {
       checklist: updatedChecklist,
-      completed: allChecked,
-      completedAt: new Date(),
+      completed: updatedChecklist.every(i => i.completed && allRequiredDone),
     },
   });
-
-  console.log("DB UPDATE RESULT:", updatedStage);
 
   return updatedStage;
 };
@@ -374,10 +368,37 @@ export const uploadStageDocumentService = async (
     };
   });
 
-  return prisma.projectStage.update({
-    where: { id: Number(stageId) },
+  const allDocsUploaded = updatedDocs.every(
+    doc => doc.status === "UPLOADED"
+  );
+
+  const updatedChecklist = stage.checklist.map(item => {
+    if (!item.isRequired) return item; // optional untouched
+
+    return {
+      ...item,
+      completed: allDocsUploaded ? true : item.completed,
+    };
+  });
+
+  await prisma.projectStage.update({
+    where: {
+      id: Number(stageId),
+    },
     data: {
       requiredDocs: updatedDocs,
+      checklist: updatedChecklist,
+      completed: allDocsUploaded,
+      completedAt: new Date(),
+    },
+  });
+
+  return prisma.project.findUnique({
+    where: { id: Number(projectId) },
+    include: {
+      stages: true,
+      approvals: true,
+      projectManager: true,
     },
   });
 };

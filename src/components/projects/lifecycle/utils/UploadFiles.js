@@ -6,7 +6,7 @@ export const validateImageDimensions = (file) => {
         const url = URL.createObjectURL(file);
 
         img.onload = () => {
-            const isValid = img.width <= 800 && img.height <= 400;
+            const isValid = img.width <= 4000 && img.height <= 4000;
             URL.revokeObjectURL(url);
             resolve(isValid);
         };
@@ -21,7 +21,7 @@ export const validateImageDimensions = (file) => {
 export const processFile = async (file, options = {}) => {
     const {
         allowedTypes = [],
-        maxSizeMB = 2,
+        maxSizeMB = 5,
     } = options;
 
     if (!file) {

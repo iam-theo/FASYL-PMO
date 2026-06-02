@@ -532,10 +532,6 @@ export const getPolicy = (stageKey) => {
 export const validateChecklist = (stageKey, stageData) => {
   const policy = getPolicy(stageKey);
 
-  console.log("=== CHECKLIST DEBUG START ===");
-  console.log("Stage Data Checklist:", stageData?.checklist);
-  console.log("Policy Checklist:", policy?.checklist);
-
   if (!stageData?.checklist) {
     console.log("Missing checklist in stageData");
     return false;
@@ -550,19 +546,8 @@ export const validateChecklist = (stageKey, stageData) => {
       ? item?.completed === true
       : true;
 
-    console.log(
-      `Checklist Item: ${policyItem.key}`,
-      "Found:", !!item,
-      "Completed:", item?.completed,
-      "Required:", policyItem.isRequired,
-      "PASS:", ok
-    );
-
     return ok;
   });
-
-  console.log("Checklist Result:", result);
-  console.log("=== CHECKLIST DEBUG END ===");
 
   return result;
 };
@@ -574,10 +559,6 @@ export const validateChecklist = (stageKey, stageData) => {
  */
 export const validateDocuments = (stageId, stageData) => {
   const policy = getPolicy(stageId);
-
-  console.log("=== DOCS DEBUG START ===");
-  console.log("Stage Docs:", stageData?.requiredDocs);
-  console.log("Policy Docs:", policy?.requiredDocs);
 
   if (!policy?.requiredDocs?.length) {
     console.log("No required docs in policy → auto PASS");
@@ -591,18 +572,8 @@ export const validateDocuments = (stageId, stageData) => {
 
     const ok = Boolean(match?.fileURL);
 
-    console.log(
-      `Doc: ${requiredDoc.key}`,
-      "Found:", !!match,
-      "fileURL:", match?.fileURL,
-      "PASS:", ok
-    );
-
     return ok;
   });
-
-  console.log("Docs Result:", result);
-  console.log("=== DOCS DEBUG END ===");
 
   return result;
 };
@@ -617,11 +588,6 @@ export const canSubmitStage = (stageKey, stageData, role) => {
 
   if(!policy) return false
 
-  console.log("=== CAN SUBMIT DEBUG START ===");
-  console.log("Stage Key:", stageKey);
-  console.log("User Role:", role);
-  console.log("Policy Exists:", !!policy);
-
   if (!policy) {
     console.log("No policy found for stage");
     return false;
@@ -630,13 +596,6 @@ export const canSubmitStage = (stageKey, stageData, role) => {
   const roleAllowed = policy.rolesAllowedToSubmit.includes(role);
   const checklistOk = validateChecklist(stageKey, stageData);
   const docsOk = validateDocuments(stageKey, stageData);
-
-  console.log("Role Allowed:", roleAllowed);
-  console.log("Checklist OK:", checklistOk);
-  console.log("Docs OK:", docsOk);
-
-  console.log("Policy Roles:", policy.rolesAllowedToSubmit);
-  console.log("=== CAN SUBMIT DEBUG END ===");
 
   return roleAllowed && checklistOk && docsOk;
 };

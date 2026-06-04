@@ -242,6 +242,27 @@ function ProjectLifeCycle({
                 </div>
             </div>
 
+            {/* Stage Required Docs */}
+            <div className=''>
+                <h3 className='font-semibold text-[16px]/[20px] text-[#090909] mb-3'>Upload Supporting Documents</h3>
+                {/* <ClientIDDoc /> */}
+                {projectStage?.requiredDocs?.map((doc, index) => (
+                    <UploadBox 
+                        key={index}
+                        title={doc.title}
+                        docKey={doc.key}
+                        docStatus={doc.status}
+                        docName={doc.fileName}
+                        docURL={doc.fileURL}
+                        projectId={selectedProject.id}
+                        stageId={projectStage.id}
+                        user={user}
+                        setProjects={setProjects}
+                        setSelectedProject={setSelectedProject}
+                    />
+                ))}
+            </div>
+
             {/* Stage Checklist */}
             <div className='mb-3'>
                 <h3 className='font-semibold text-[16px]/[20px] text-[#090909] mb-3'>Stage Checklist</h3>
@@ -283,81 +304,62 @@ function ProjectLifeCycle({
                 </div>
             </div>
 
-            <div className=''>
-                <h3 className='font-semibold text-[16px]/[20px] text-[#090909] mb-3'>Upload Supporting Documents</h3>
-                {/* <ClientIDDoc /> */}
-                {projectStage?.requiredDocs?.map((doc, index) => (
-                    <UploadBox 
-                        key={index}
-                        title={doc.title}
-                        docKey={doc.key}
-                        docStatus={doc.status}
-                        docName={doc.fileName}
-                        docURL={doc.fileURL}
-                        projectId={selectedProject.id}
-                        stageId={projectStage.id}
-                        user={user}
-                        setProjects={setProjects}
-                        setSelectedProject={setSelectedProject}
-                    />
-                ))}
-                {user.role === "PROJECTMANAGER" && ( 
-                    <button
-                        onClick={handleWorkflowAction} 
-                        className={`w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#1B3C4A] cursor-pointer flex items-center justify-center gap-2`}>
-                        <FaRegCircleCheck className='text-[#FFFFFF]' />
-                        <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>{
-                        projectStage?.workflowStatus === "COMPLETED" 
-                            ? "Stage Completed" 
-                            : "Request Signoff"
-                        }
-                        </p>
-                    </button>
-                )}
+            {user.role === "PROJECTMANAGER" && ( 
+                <button
+                    onClick={handleWorkflowAction} 
+                    className={`w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#1B3C4A] cursor-pointer flex items-center justify-center gap-2`}>
+                    <FaRegCircleCheck className='text-[#FFFFFF]' />
+                    <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>{
+                    projectStage?.workflowStatus === "COMPLETED" 
+                        ? "Stage Completed" 
+                        : "Request Signoff"
+                    }
+                    </p>
+                </button>
+            )}
 
-                {user.role === "HEADOFOPS" && ( 
-                    <div className='flex items-center justify-between gap-3 relative w-full'>
-                        {isOpen && (
-                            <div className='absolute z-4000 bottom-10 right-0 w-100'>
-                                <textarea
-                                    value={reasonn}
-                                    onInput={(e) => handleReason(e)}
-                                    placeholder='Enter reason for rejection...'
-                                    className='w-full min-h-24 rounded-lg border border-[#E4E7EC] bg-[#FFFFFF] px-4 py-3 outline-none'
-                                />
-                            </div>
-                        )}
-
-                        {
-                            projectStage?.workflowStatus !== "COMPLETED" 
-                            ? (
-                                <div className='flex items-center justify-between gap-3 w-full'>
-                                    <button
-                                        onClick={handleWorkflowAction} 
-                                        className='w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#1B3C4A] flex items-center justify-center gap-2 cursor-pointer'>
-                                        <FaRegCircleCheck className='text-[#FFFFFF]' />
-                                        <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>Accept Signoff</p>
-                                    </button>
-
-                                    <button
-                                        onClick={() => handleRejection(selectedProject.id, projectStage?.stageOrder, reasonn)} 
-                                        className='w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#D20019] flex items-center justify-center gap-2 cursor-pointer'>
-                                        <FaRegCircleXmark className='text-[#FFFFFF]' />
-                                        <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>Reject Signoff</p>
-                                    </button>
-                                </div>
-                            ) : (
-                                <button
-                                    onClick={handleWorkflowAction}
-                                    className='w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#1B3C4A] flex items-center justify-center gap-2 cursor-pointer'>
-                                    <FaRegCircleCheck className='text-[#FFFFFF]' />
-                                    <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>Stage Completed</p>
-                                </button>
-                            )
-                        }
+            {user.role === "HEADOFOPS" && ( 
+            <div className='flex items-center justify-between gap-3 relative w-full'>
+                {isOpen && (
+                    <div className='absolute z-4000 bottom-10 right-0 w-100'>
+                        <textarea
+                            value={reasonn}
+                            onInput={(e) => handleReason(e)}
+                            placeholder='Enter reason for rejection...'
+                            className='w-full min-h-24 rounded-lg border border-[#E4E7EC] bg-[#FFFFFF] px-4 py-3 outline-none'
+                        />
                     </div>
                 )}
+
+                {
+                    projectStage?.workflowStatus !== "COMPLETED" 
+                    ? (
+                        <div className='flex items-center justify-between gap-3 w-full'>
+                            <button
+                                onClick={handleWorkflowAction} 
+                                className='w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#1B3C4A] flex items-center justify-center gap-2 cursor-pointer'>
+                                <FaRegCircleCheck className='text-[#FFFFFF]' />
+                                <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>Accept Signoff</p>
+                            </button>
+
+                            <button
+                                onClick={() => handleRejection(selectedProject.id, projectStage?.stageOrder, reasonn)} 
+                                className='w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#D20019] flex items-center justify-center gap-2 cursor-pointer'>
+                                <FaRegCircleXmark className='text-[#FFFFFF]' />
+                                <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>Reject Signoff</p>
+                            </button>
+                        </div>
+                    ) : (
+                        <button
+                            onClick={handleWorkflowAction}
+                            className='w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#1B3C4A] flex items-center justify-center gap-2 cursor-pointer'>
+                            <FaRegCircleCheck className='text-[#FFFFFF]' />
+                            <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>Stage Completed</p>
+                        </button>
+                    )
+                }
             </div>
+            )}
         </div>
     )
 

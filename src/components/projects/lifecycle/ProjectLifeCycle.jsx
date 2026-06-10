@@ -53,8 +53,6 @@ function ProjectLifeCycle({
         return STAGES[currentStageOrder] || "Unknown Stage";
     };
 
-    // const currentStage = getStage(selectedProject?.currentStageOrder);
-    // const nextStage = getStage((selectedProject?.currentStageOrder) + 1)
     const length = selectedProject?.stages?.length || 0
     const projectStage = selectedStage;
     // console.log(projectStage);

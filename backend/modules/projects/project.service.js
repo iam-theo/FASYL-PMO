@@ -3,6 +3,9 @@ import { getPolicy } from "../../modules/workflow/workflow.policy.js";
 const prisma = new PrismaClient();
 import axios from "axios";
 
+import fs from "fs";
+import path from "path";
+
 const TOTAL_STAGES = 8;
 /* =========================================
     PROGRESS CALCULATION
@@ -18,6 +21,7 @@ const createChecklist = (items, stageKey) => {
     title: item.title,
     desc: item.desc,
     isRequired: item.isRequired ?? false,
+    requiredDoc: item.requiredDoc || null,
     completed: false,
     completedAt: null,
   }));
@@ -157,7 +161,7 @@ export const buildWorkflowForProject = async (projectId) => {
 //   });
 
 //   // =========================
-//   // 🔥 BUILD WORKFLOW (ONE SYSTEM FOR ALL)
+//   //  BUILD WORKFLOW (ONE SYSTEM FOR ALL)
 //   // =========================
 //   await buildWorkflowForProject(project.id);
 
@@ -334,7 +338,9 @@ export const updateChecklistBulkService = async (
 };
 
 
-// UPLOAD DOCS
+/* =========================================
+    UPLOAD DOCS
+========================================= */
 
 export const uploadStageDocumentService = async (
   projectId,
@@ -343,6 +349,7 @@ export const uploadStageDocumentService = async (
   fileUrl,
   fileName
 ) => {
+
   const stage = await prisma.projectStage.findFirst({
     where: {
       id: Number(stageId),
@@ -357,6 +364,7 @@ export const uploadStageDocumentService = async (
     : [];
 
   const updatedDocs = docs.map(doc => {
+
     if (doc.key !== docKey) return doc;
 
     return {
@@ -368,39 +376,177 @@ export const uploadStageDocumentService = async (
     };
   });
 
-  const allDocsUploaded = updatedDocs.every(
-    doc => doc.status === "UPLOADED"
-  );
-
   const updatedChecklist = stage.checklist.map(item => {
-    if (!item.isRequired) return item; // optional untouched
+
+    if (!item.requiredDoc) {
+      return item;
+    }
+
+    const matchingDoc = updatedDocs.find(
+      doc => doc.key === item.requiredDoc
+    );
+
+    console.log(
+      "MATCHING DOC:",
+      matchingDoc
+    );
 
     return {
       ...item,
-      completed: allDocsUploaded ? true : item.completed,
+      completed: matchingDoc?.status === "UPLOADED",
+      completedAt:
+        matchingDoc?.status === "UPLOADED"
+          ? new Date()
+          : null,
     };
   });
 
-  await prisma.projectStage.update({
+  const allChecklistCompleted =
+    updatedChecklist
+      .filter(item => item.isRequired)
+      .every(item => item.completed);
+
+  return prisma.projectStage.update({
     where: {
       id: Number(stageId),
     },
     data: {
       requiredDocs: updatedDocs,
       checklist: updatedChecklist,
-      completed: allDocsUploaded,
-      completedAt: new Date(),
+      completed: allChecklistCompleted,
+      completedAt: allChecklistCompleted ? new Date() : null,
     },
   });
 
-  return prisma.project.findUnique({
-    where: { id: Number(projectId) },
-    include: {
-      stages: true,
-      approvals: true,
-      projectManager: true,
+  // return prisma.project.findUnique({
+  //   where: { id: Number(projectId) },
+  //   include: {
+  //     stages: true,
+  //     approvals: true,
+  //     projectManager: true,
+  //   },
+  // });
+};
+
+/* =========================================
+    DELETE DOC
+========================================= */
+
+export const deleteStageDocumentService = async (
+  projectId,
+  stageId,
+  docKey
+) => {
+
+  const stage = await prisma.projectStage.findFirst({
+    where: {
+      id: Number(stageId),
+      projectId: Number(projectId),
     },
   });
+
+  if (!stage) {
+    throw new Error("Stage not found");
+  }
+
+  const docs = stage.requiredDocs || [];
+
+  const targetDoc = docs.find(
+    doc => doc.key === docKey
+  );
+
+  if (!targetDoc) {
+    throw new Error("Document not found");
+  }
+
+  console.log("TARGET DOC:", targetDoc);
+
+  // DELETE FILE FROM DISK
+  if (targetDoc?.fileURL) {
+
+    console.log("FILE URL:", targetDoc?.fileURL);
+
+    const filename = path.basename(
+      targetDoc.fileURL
+    );
+
+    console.log("FILENAME:", filename);
+
+    const filepath = path.join(
+      process.cwd(),
+      "backend",
+      "uploads",
+      filename
+    );
+
+    console.log("Deleting:", filepath);
+    console.log("FILE PATH:", filepath);
+
+    console.log("FILE EXISTS?", fs.existsSync(filepath));
+
+    if (fs.existsSync(filepath)) {
+      fs.unlinkSync(filepath);
+      console.log("File deleted");
+    }
+  }
+
+  // RESET DOCUMENT
+  const updatedDocs = docs.map(doc => {
+
+    if (doc.key !== docKey) {
+      return doc;
+    }
+
+    return {
+      ...doc,
+      fileURL: null,
+      fileName: null,
+      uploadedAt: null,
+      status: "PENDING",
+    };
+  });
+
+  // UNCHECK RELATED CHECKLIST
+  const updatedChecklist = stage.checklist.map(item => {
+
+    if (item.requiredDoc !== docKey) {
+      return item;
+    }
+
+    return {
+      ...item,
+      completed: false,
+      completedAt: null,
+    };
+  });
+
+  const allChecklistCompleted =
+    updatedChecklist
+      .filter(item => item.isRequired)
+      .every(item => item.completed);
+
+  return prisma.projectStage.update({
+    where: {
+      id: Number(stageId),
+    },
+    data: {
+      requiredDocs: updatedDocs,
+      checklist: updatedChecklist,
+      completed: allChecklistCompleted,
+      completedAt: allChecklistCompleted
+        ? stage.completedAt
+        : null,
+    },
+  });
+
+  // return prisma.project.findUnique({
+  //   where: { id: Number(projectId) },
+  //   include: {
+  //     stages: true,
+  //     approvals: true,
+  //     projectManager: true,
+  //   },
+  // });
 };
 
 /* =========================================

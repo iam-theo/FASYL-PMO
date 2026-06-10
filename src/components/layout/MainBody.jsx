@@ -33,6 +33,8 @@ function MainBody({ user, setUser}) {
     const [activeTab, setActiveTab] = useState("dashboard")
     const [activeDetails, setActiveDetails] = useState("project_lifecycle")
     const [selectedProject, setSelectedProject] = useState(null)
+    const [selectedStage, setSelectedStage] = useState(null);
+    // const [showLifecycleModal, setShowLifecycleModal] = useState(false);
     const [isOpen, setIsOpen] = useState(false)
     const [checkedList, setCheckedList] = useState([])
 
@@ -96,6 +98,8 @@ function MainBody({ user, setUser}) {
                 activeTab={activeTab} 
                 selectedProject={selectedProject}
                 setSelectedProject={setSelectedProject}
+                selectedStage={selectedStage}
+                setSelectedStage={setSelectedStage}
                 user={user}
                 isLoading={isLoading}
             />
@@ -118,6 +122,8 @@ function MainBody({ user, setUser}) {
                     setProjects={setProjects}
                     selectedProject={selectedProject}
                     setSelectedProject={setSelectedProject}
+                    selectedStage={selectedStage}
+                    setSelectedStage={setSelectedStage}
                     onClose={() => setSelectedProject(null)}
                     activeDetails={activeDetails}
                     setActiveDetails={setActiveDetails}

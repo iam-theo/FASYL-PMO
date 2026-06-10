@@ -1,6 +1,8 @@
 import React from 'react'
 import bgSignInTwo from "../../assets/bgSignInTwo.jpg"
 import { FaUserFriends, FaTag, FaExclamationCircle, FaEllipsisV } from 'react-icons/fa'
+import { FaLock } from 'react-icons/fa6';
+import { useState } from 'react'
 
 
 function Dashboard({ 
@@ -9,7 +11,9 @@ function Dashboard({
     activeTab, 
     setActiveTab, 
     selectedProject, 
-    setSelectedProject }) {
+    setSelectedProject,
+    setSelectedStage 
+    }) {
 
     const safeProjects = Array.isArray(projects) ? projects : []
 
@@ -77,6 +81,8 @@ function Dashboard({
     const setCurrentStage = (currentStage) => {
         return STAGES[currentStage] || "Unknown Stage";
     };
+
+    const [openProjectMenu, setOpenProjectMenu] = useState(null);
     
     return (
         <div className=''>
@@ -193,9 +199,56 @@ function Dashboard({
                                             <td className='px-4 py-4 font-normal text-[14px]/[20px] text-[#636363] relative'>
         
                                                 <FaEllipsisV 
-                                                    onClick={() => setSelectedProject(project)} 
+                                                    onClick={() => {
+                                                            if (project.projectManager === null) {
+                                                                return setSelectedProject(project)
+                                                            }
+
+                                                            if (setCurrentStage(project.currentStageOrder) === "LOCKED") return;
+
+                                                            setOpenProjectMenu(prev =>
+                                                                prev === project.id
+                                                                    ? null
+                                                                    : project.id
+                                                            )
+                                                        }
+                                                    } 
                                                     className="cursor-pointer text-[#98a2b3] hover:text-[#1B3C4A] " 
                                                 />
+
+                                                {
+                                                    openProjectMenu === project.id && (
+                                                        <div
+                                                            className='max-h-40 overflow-y-auto no-scrollbar absolute z-1000 w-40 right-5 border border-[#0000000D] bg-[#F9FAFB] rounded-lg text-[14px]/[20px]'>
+                                                            <ul>
+                                                                {
+                                                                    project.stages.map(stage => (
+                                                                        <li
+                                                                            key={stage.id}
+                                                                            className='cursor-pointer flex items-center justify-between border-y border-[#0000000D] px-4 py-2'
+                                                                            onClick={() => {
+
+                                                                                if (stage.workflowStatus === "LOCKED") {
+                                                                                    return;
+                                                                                }
+
+                                                                                setSelectedProject(project);
+                                                                                setSelectedStage(stage);
+                                                                                setOpenProjectMenu(null);
+
+                                                                            }}>
+                                                                                <p> {setCurrentStage(stage.stageOrder)}</p>
+                                                                                
+                                                                                <FaLock 
+                                                                                    className={`${stage.workflowStatus !== "LOCKED" ? "hidden" : "block"}`}
+                                                                                />
+                                                                        </li>
+                                                                    ))
+                                                                }
+                                                            </ul>
+                                                        </div>
+                                                    )
+                                                }
                                             </td>
                                         </tr>
                                     ))

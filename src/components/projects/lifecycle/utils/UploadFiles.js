@@ -32,7 +32,7 @@ export const processFile = async (file, options = {}) => {
     if (!allowedTypes.includes(file.type)) {
         return {
             success: false,
-            error: "Only SVG, JPG, or GIF allowed"
+            error: "Only SVG, JPG, or PDF allowed"
         };
     }
 
@@ -45,13 +45,17 @@ export const processFile = async (file, options = {}) => {
     }
 
     // Dimension validation
-    const isValidSize = await validateImageDimensions(file);
+    const isImage = file.type.startsWith("image/");
 
-    if (!isValidSize) {
-        return {
-            success: false,
-            error: "Image must be max 800x400px"
-        };
+    if (isImage) {
+        const isValidSize = await validateImageDimensions(file);
+
+        if (!isValidSize) {
+            return {
+                success: false,
+                error: "Image must be max 800x400px"
+            };
+        }
     }
 
     // Create preview URL

@@ -131,6 +131,15 @@ export const submitStage = async ({
     },
   });
 
+  await prisma.projectStage.updateMany({
+    where: {
+      stageOrder: order + 1,
+    },
+    data: {
+      workflowStatus: "OPEN",
+    },
+  });
+
 
   await prisma.projectApproval.update({
     where: {

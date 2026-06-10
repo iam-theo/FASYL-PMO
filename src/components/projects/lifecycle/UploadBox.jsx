@@ -1,11 +1,11 @@
 import React from 'react'
 import { useState, useRef } from 'react'
 import { processFile, getFileFromInput, handleDragOver, handleDragLeave, handleDrop, getFileFromDrop } from './utils/UploadFiles'
-import { uploadStageDocument } from '../../../api'
+import { uploadStageDocument, deleteStageDocument } from '../../../api'
 
 function UploadBox({
     maxSizeMB = 5,
-    formats = "SVG, JPG, GIF",
+    formats = "SVG, JPG, PDF",
     title,
     docKey,
     docStatus,
@@ -15,7 +15,8 @@ function UploadBox({
     stageId,
     user,
     setProjects,
-    setSelectedProject
+    setSelectedProject,
+    setSelectedStage
 }) {
     const inputRef = useRef(null)
     const [isDragging, setIsDragging] = useState(false)
@@ -24,7 +25,7 @@ function UploadBox({
 
     const [uploadState, setUploadState] = useState({})
 
-    const allowedTypes = ["image/svg+xml", "image/jpeg", "image/gif"]
+    const allowedTypes = ["image/svg+xml", "image/jpeg", "application/pdf"]
     
     // Open file picker
     const handleClick = () => {
@@ -147,21 +148,44 @@ function UploadBox({
             );
             console.log("UPLOAD SUCCESS", res.data);
 
-            const updatedProject = res.data.data;
+            const updatedStage = res.data.data;
 
-            setSelectedProject(updatedProject)
+            setSelectedStage(prev =>
+                prev?.id === updatedStage.id
+                    ? updatedStage
+                    : prev
+            );
 
-            setProjects(prevProjects => 
-                prevProjects.map(project =>
-                    project.id === updatedProject.id
-                        ? updatedProject
-                        : project
+            setSelectedProject(prev => ({
+                ...prev,
+                stages: prev.stages.map(stage =>
+                    stage.id === updatedStage.id
+                        ? updatedStage
+                        : stage
                 )
-            )
+            }));
+
+            setProjects(prev =>
+                prev.map(project => {
+
+                    if (project.id !== projectId) {
+                        return project;
+                    }
+
+                    return {
+                        ...project,
+                        stages: project.stages.map(stage =>
+                            stage.id === updatedStage.id
+                                ? updatedStage
+                                : stage
+                        )
+                    };
+                })
+            );
 
             setUploadState(prev => ({
                 ...prev,
-                [docKey]: {
+                [key]: {
                     ...prev[docKey],
                     isSaved: true
                 }
@@ -171,6 +195,68 @@ function UploadBox({
             console.error("UPLOAD FAILED", err);
         }
     };
+
+    const handleDeleteUpload = async (key) => {
+        if (user.role !== "PROJECTMANAGER") return;
+
+        try {
+            const res = await deleteStageDocument(
+                projectId,
+                stageId,
+                key
+            );
+            console.log("DELETE SUCCESS", res.data);
+
+            const updatedStage = res.data.data;
+
+            setSelectedStage(prev =>
+                prev?.id === updatedStage.id
+                    ? updatedStage
+                    : prev
+            );
+
+            setSelectedProject(prev => ({
+                ...prev,
+                stages: prev.stages.map(stage =>
+                    stage.id === updatedStage.id
+                        ? updatedStage
+                        : stage
+                )
+            }));
+
+            setProjects(prev =>
+                prev.map(project => {
+
+                    if (project.id !== projectId) {
+                        return project;
+                    }
+
+                    return {
+                        ...project,
+                        stages: project.stages.map(stage =>
+                            stage.id === updatedStage.id
+                                ? updatedStage
+                                : stage
+                        )
+                    };
+                })
+            );
+
+            setUploadState(prev => ({
+                ...prev,
+                [key]: {
+                    file: null,
+                    fileName: "",
+                    previewUrl: "",
+                    isUploaded: false,
+                    isSaved: false,
+                    error: "",
+                }
+            }));
+        } catch(err) {
+            console.error("DELETE FAILED", err);
+        }
+    }
 
     const doc = uploadState[docKey];
 
@@ -199,7 +285,7 @@ function UploadBox({
                         key={docKey}
                         type="file"
                         className='hidden'
-                        accept="image/svg+xml,image/jpeg,image/gif"
+                        accept="image/svg+xml,image/jpeg,application/pdf"
                         onChange={(e) => handleFileChange(e, docKey)} 
                     />
                     {/* Content */}
@@ -249,7 +335,7 @@ function UploadBox({
                                                 {isDeletable ? (
                                                     <button
                                                         className="font-medium text-[14px]/[20px] text-[#D20019] cursor-pointer"
-                                                        // onClick={() => handleDelete(docKey)}
+                                                        onClick={() => handleDeleteUpload(docKey)}
                                                     >
                                                         Delete
                                                     </button>

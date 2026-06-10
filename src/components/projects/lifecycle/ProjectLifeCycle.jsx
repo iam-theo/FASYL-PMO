@@ -9,7 +9,9 @@ import { FaRegCircleXmark, FaRegCircleCheck } from 'react-icons/fa6'
 
 function ProjectLifeCycle({ 
     selectedProject, 
-    setSelectedProject, 
+    setSelectedProject,
+    selectedStage,
+    setSelectedStage, 
     projects, 
     setProjects, 
     onClose,  
@@ -51,19 +53,13 @@ function ProjectLifeCycle({
         return STAGES[currentStageOrder] || "Unknown Stage";
     };
 
-    const currentStage = getStage(selectedProject?.currentStageOrder);
-    const nextStage = getStage((selectedProject?.currentStageOrder) + 1)
+    // const currentStage = getStage(selectedProject?.currentStageOrder);
+    // const nextStage = getStage((selectedProject?.currentStageOrder) + 1)
     const length = selectedProject?.stages?.length || 0
-    // const projectStage = selectedProject?.stages?.find(s => s.stageOrder === selectedProject?.currentStageOrder)
-    // const projectStage =
-    //     selectedProject?.stages?.find(
-    //         s => s.stageOrder === selectedProject?.currentStageOrder
-    //     ) ?? null;
-    const projectStage = useMemo(() => {
-        return selectedProject?.stages?.find(
-            s => s.stageOrder === selectedProject?.currentStageOrder
-        );
-    }, [selectedProject]);
+    const projectStage = selectedStage;
+    // console.log(projectStage);
+    const currentStage = getStage(projectStage?.stageOrder);
+    const nextStage = getStage((projectStage?.stageOrder) + 1)
     const stageIndex = projectStage?.stageOrder;
     const stageTitle = projectStage?.stageName
     const checklistLength = projectStage?.checklist?.length || 0
@@ -78,8 +74,19 @@ function ProjectLifeCycle({
         HEADOFOPS: approveStage,
     };
 
+    const allDocsUploaded = projectStage.requiredDocs.every(doc => doc.status === "UPLOADED")
+
     const handleWorkflowAction = async () => {
         try {
+
+            if (allDocsUploaded === false) {
+                showNotification({
+                    type: "error",
+                    title: "Project Incomplete!",
+                    message: "Upload all supporting documents to submit this stage"
+                }) 
+                return
+            }
 
             if (projectStage.workflowStatus === "COMPLETED" && user.role === "PROJECTMANAGER") { 
                 showNotification({
@@ -245,6 +252,7 @@ function ProjectLifeCycle({
             {/* Stage Required Docs */}
             <div className=''>
                 <h3 className='font-semibold text-[16px]/[20px] text-[#090909] mb-3'>Upload Supporting Documents</h3>
+                <p className='font-normal text-[14px]/[20px] text-[#636363] mb-3'>Upload required documents to complete checklist & request signoff</p>
                 {/* <ClientIDDoc /> */}
                 {projectStage?.requiredDocs?.map((doc, index) => (
                     <UploadBox 
@@ -259,6 +267,8 @@ function ProjectLifeCycle({
                         user={user}
                         setProjects={setProjects}
                         setSelectedProject={setSelectedProject}
+                        setSelectedStage={setSelectedStage}
+                        showNotification={showNotification}
                     />
                 ))}
             </div>

@@ -5,8 +5,12 @@ import {
   updateProjectService,
   deleteProjectService,
   updateChecklistBulkService,
-  uploadStageDocumentService
+  uploadStageDocumentService,
+  deleteStageDocumentService
 } from "./project.service.js";
+
+import fs from "fs";
+import path from "path";
 
 console.log("CHECKLIST ROUTE HIT");
 /* =========================================
@@ -206,6 +210,39 @@ export const uploadStageDocument = async (req, res) => {
       success: false,
       message: err.message,
     });
+  }
+};
+
+/* =========================================
+    DELETE DOCS
+========================================= */
+
+export const deleteStageDocument = async (req, res) => {
+  try {
+
+    const { projectId, stageId, docKey } = req.params;
+
+    const updatedStage = await deleteStageDocumentService(
+      projectId,
+      stageId,
+      docKey
+    );
+
+    return res.json({
+      success: true,
+      message: "Document deleted successfully",
+      data: updatedStage,
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+
   }
 };
 

@@ -8,6 +8,8 @@ function ViewProjectsBody({
     setProjects, 
     selectedProject, 
     setSelectedProject,
+    selectedStage,
+    setSelectedStage,
     onClose, 
     activeDetails, 
     setActiveDetails,
@@ -58,16 +60,23 @@ function ViewProjectsBody({
 
                 <section>
                     {activeDetails === "project_lifecycle" && 
-                    <ProjectLifeCycle 
-                        selectedProject={selectedProject} 
-                        setSelectedProject={setSelectedProject} 
-                        projects={projects} 
-                        setProjects={setProjects} 
-                        onClose={onClose}  
-                        user={user}
-                    />}
+                        <ProjectLifeCycle 
+                            selectedProject={selectedProject}
+                            setSelectedProject={setSelectedProject} 
+                            selectedStage={selectedStage}
+                            setSelectedStage={setSelectedStage}
+                            projects={projects} 
+                            setProjects={setProjects} 
+                            onClose={onClose}  
+                            user={user}
+                        />
+                        }
 
-                    {activeDetails === "project_details" && <ProjectDetails selectedProject={selectedProject}/>}
+                    {activeDetails === "project_details" && 
+                        <ProjectDetails 
+                            selectedProject={selectedProject}
+                        />
+                    }
                 </section>
             </div>
         </div>

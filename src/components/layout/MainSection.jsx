@@ -9,7 +9,9 @@ function MainSection({
     activeTab, 
     setActiveTab,
     selectedProject,
-    setSelectedProject, 
+    setSelectedProject,
+    selectedStage,
+    setSelectedStage,
     projects, 
     user,
     isLoading 
@@ -103,6 +105,7 @@ function MainSection({
                         setActiveTab={setActiveTab}
                         selectedProject={selectedProject}
                         setSelectedProject={setSelectedProject}
+                        setSelectedStage={setSelectedStage}
                     />
                 )}
 
@@ -119,6 +122,8 @@ function MainSection({
                         setCurrentPage={setCurrentPage} 
                         itemsPerPage={itemsPerPage}
                         setSelectedProject={setSelectedProject}
+                        selectedStage={selectedStage}
+                        setSelectedStage={setSelectedStage}
                         user={user} 
                         isLoading={isLoading}
                     />

@@ -71,6 +71,17 @@ export const uploadStageDocument = async (
     );
 };
 
+export const deleteStageDocument = (
+    projectId,
+    stageId,
+    docKey
+) => {
+
+    return api.delete(
+        `/projects/${projectId}/stages/${stageId}/docs/${docKey}`
+    );
+};
+
 export const submitStage = async (
     projectId,
     stageOrder

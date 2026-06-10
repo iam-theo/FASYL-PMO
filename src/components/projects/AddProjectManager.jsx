@@ -58,8 +58,13 @@ function AddProjectManager({
     };
 
     return (
-        <div className='fixed z-2000 w-full h-screen bg-[#00000080] flex flex-col items-end'>
-            <div className='flex flex-col w-135.5 min-h-0 overflow-y-auto no-scrollbar bg-[#F7F7F7] px-4 py-4'>
+        <div 
+            className='fixed z-2000 w-full h-screen bg-[#00000080] flex flex-col items-end'
+            onClick={onClose}
+            >
+            <div 
+                className='flex flex-col w-135.5 min-h-0 overflow-y-auto no-scrollbar bg-[#F7F7F7] px-4 py-4'
+                onClick={(e) => e.stopPropagation()}>
                 <div className='flex items-center justify-between mb-6'>
                     <h2 className='font-semibold text-[16px]/[20px] text-[#090909]'>Assign A Project Manager</h2>
                     <button

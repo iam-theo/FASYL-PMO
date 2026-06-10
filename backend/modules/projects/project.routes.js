@@ -12,6 +12,7 @@ import {
    deleteProject,
    updateChecklistBulk,
    uploadStageDocument,
+   deleteStageDocument
 } from "./project.controller.js";
 
 import { uploadLimiter, writeLimiter } from "../../middleware/rateLimit.middleware.js";
@@ -315,9 +316,17 @@ router.patch(
    "/:projectId/stages/:stageId/docs/:docKey",
    authMiddleWare,
    uploadLimiter,
-   allowRoles(ROLES.PROJECTMANAGER, ROLES.HEADOFOPS),
+   allowRoles(ROLES.PROJECTMANAGER),
    upload.single("file"),
    uploadStageDocument
+);
+
+router.delete(
+   "/:projectId/stages/:stageId/docs/:docKey",
+   writeLimiter,
+   authMiddleWare,
+   allowRoles(ROLES.PROJECTMANAGER),
+   deleteStageDocument
 );
 
 

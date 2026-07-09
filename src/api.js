@@ -17,10 +17,28 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-export const assignProjectManager = async (projectId, email) => {
-    return api.put(`/projects/${projectId}`, {
-        projectManagerEmail: email
-    });
+export const assignProject = async (projectId, projectManagerEmail) => {
+
+    try {
+
+        const { data } = await api.patch(
+            `/projects/${projectId}/assign`,
+            {
+                projectManagerEmail,
+            }
+        );
+
+        return data;
+
+    } catch (error) {
+
+        console.error(
+            "Assign Project Error:",
+            error.response?.data
+        );
+
+        throw error.response?.data || error;
+    }
 };
 
 export const handleChecklist = async (projectId, stageId, updatedChecklist) => {
@@ -40,7 +58,7 @@ export const uploadStageDocument = async (
 
     const formData = new FormData();
 
-    formData.append("file", file);      // MUST match backend: upload.single("file")
+    formData.append("file", file); // MUST match backend: upload.single("file")
 
     return api.patch(
         `/projects/${projectId}/stages/${stageId}/docs/${docKey}`,
@@ -50,6 +68,17 @@ export const uploadStageDocument = async (
             "Content-Type": "multipart/form-data",
         },
         }
+    );
+};
+
+export const deleteStageDocument = (
+    projectId,
+    stageId,
+    docKey
+) => {
+
+    return api.delete(
+        `/projects/${projectId}/stages/${stageId}/docs/${docKey}`
     );
 };
 
@@ -87,7 +116,7 @@ export const approveStage = async (projectId, stageOrder) => {
         console.error("Approve Stage Error:", err.response?.data || err.message);
         
         throw (
-            error.response?.data || {
+            err.response?.data || {
                 message: "Something went wrong",
             }
         );
@@ -102,7 +131,7 @@ export const rejectStage = async (
 
     try {
 
-        const { data } = await API.post(
+        const { data } = await api.post(
             `/workflow/reject/${projectId}/${stageOrder}`,
         {
             reason,

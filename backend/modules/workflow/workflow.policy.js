@@ -9,49 +9,57 @@ const POLICY = {
           key: "clientNameConfirmed",
           title: "Client Name And Legal Entity Confirmed",
           desc: "Full registered name required",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "opr_document"
         },
         {
           key: "industryClass",
           title: "Industry & Regulatory Classification Noted",
           desc: "Banking / Fintech / MFB / Other",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "opr_document"
         },
         {
           key: "contactIdentified",
           title: "Point of Contact (Sponsor) Identified",
           desc: "Executive sponsor name and role",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "opr_document"
         },
         {
           key: "initialNeedsDocumented",
           title: "Initial Needs Assessment Documented",
           desc: "Brief on client pain points / requirements",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "opr_document"
         },
         {
           key: "confidentialitySigned",
           title: "NDA / Confidentiality Agreement Signed",
           desc: "Required before sharing any proprietary material",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "nda_document"
         },
         {
           key: "kycAmlScreeningCompleted",
           title: "KYC / AML Screening Completed",
           desc: "Compliance clearance before engagement",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "kyc_document"
         },
         {
           key: "conflictOfInterestCleared",
           title: "Conflict Of Interest Check Cleared",
           desc: "Internal Compliance sign-off",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "kyc_document"
         },
         {
           key: "opportunityLogged",
           title: "Opportunity Logged In Pipeline Register",
           desc: "Assigned opportunity reference number",
-          isRequired: false
+          isRequired: false,
+          requiredDoc: "opr_document"
         }
       ],
     requiredDocs: [
@@ -73,49 +81,57 @@ const POLICY = {
           key: "rfpReviewed",
           title: "RFP / Tender Document Received & Reviewed",
           desc: "Log receipt date",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "proposal_document"
         },
         {
           key: "technicalAssessment",
           title: "Technical Pre-assessment Conducted",
           desc: "Solution architect sign-off",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "proposal_document"
         },
         {
           key: "commercialProposal",
           title: "Commercial Proposal / Bid Prepared",
           desc: "Pricing reviewed by Finance",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "proposal_document"
         },
         {
           key: "proposalApproved",
           title: "Proposal Reviewed And Approved Internally",
           desc: "MD / CEO approval before submission",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "proposal_document"
         },
         {
           key: "proposalSubmitted",
           title: "Proposal Submitted To Client",
           desc: "Record submission date and version",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "proposal_document"
         },
         {
           key: "clientDemoCompleted",
           title: "Client Presentations / Demos Completed",
           desc: "Log dates and attendees",
-          isRequired: false
+          isRequired: false,
+          requiredDoc: "proposal_document"
         },
         {
           key: "awardReceived",
           title: "Award / Intent Letter Received From Client",
           desc: "Triggers formal project initiation",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "award_letter"
         },
         {
           key: "commercialTermsAgreed",
           title: "Commercial Terms Negotiated And Agreed",
           desc: "Payment milestones, SLA, penalties",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "commercial_terms_sheet"
         }
       ],
     requiredDocs: [
@@ -137,25 +153,29 @@ const POLICY = {
           key: "awardLetterOnFile",
           title: "Order / Award Letter On File",
           desc: "Original signed copy required",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "award_letter"
         },
         {
           key: "invoiceIssued",
           title: "Invoice Issued With Agreed Payment Terms",
           desc: "Must match commercial terms sheet",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "commercial_terms_sheet"
         },
         {
           key: "signedScopeDoc",
           title: "Signed RFP / Project Scope Document",
           desc: "Client-countersigned copy",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "scope_document"
         },
         {
           key: "paymentReceived",
           title: "Evidence Of Advance Payment Received",
           desc: "60% advance per policy (or waiver from GCEO)",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "scope_document"
         },
         {
           key: "deferralObtained",
@@ -167,24 +187,27 @@ const POLICY = {
           key: "projectSigned",
           title: "Project Initiation Form Fully Signed",
           desc: "Project Head, Legal & Compliance, Finance, Marketing",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "initiation_document"
         },
         {
           key: "projectIdAssigned",
           title: "Project ID Assigned",
           desc: "Format: [CLIENT]/[STREAM]/[SEQ]",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "initiation_document"
         },
         {
           key: "deployedToProject",
           title: "Resources Deployed To Project",
           desc: "Team roster confirmed",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "initiation_document"
         }
       ],
     requiredDocs: [
-      {key:"initiation_documet", title: "Project Initiation Form"}, 
-      {key:"kyc_form", title: "KYC Form"}, 
+      {key:"initiation_document", title: "Project Initiation Form"}, 
+      {key:"scope_document", title: "Scope Document"}, 
       {key:"award_letter", title: "Award Letter"}
     ],
     rolesAllowedToSubmit: ["PROJECTMANAGER"],
@@ -201,43 +224,50 @@ const POLICY = {
           key: "charterSigned",
           title: "Project Charter signed By Client",
           desc: "Scope, objectives, assumptions, exclusions",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "project_charter"
         },
         {
           key: "projectPlanReady",
           title: "Project Plan (MS Project / Tracker) shared",
           desc: "Milestones, dependencies, critical path",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "project_plan"
         },
         {
           key: "resourcePlanApproved",
           title: "Resource Plan Approved",
           desc: "Onsite vs remote, third-party vendors",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "project_plan"
         },
         {
           key: "riskDefined",
           title: "Risk Register Initiated",
           desc: "Min. 5 risks identified with mitigations",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "risk_register"
         },
         {
           key: "commPlanApproved",
           title: "Communication Plan Agreed With Client",
           desc: "Meeting cadence, escalation matrix",
-          isRequired: false
+          isRequired: true,
+          requiredDoc: "comms_plan"
         },
         {
           key: "processDefined",
           title: "Change Management Process Defined",
           desc: "CR template, approval workflow",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "project_plan"
         },
         {
           key: "setupCompleted",
           title: "Environment Setup Checklist Completed",
           desc: "DEV / UAT / PROD access confirmed",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "project_plan"
         },
         {
           key: "migrationPlanReviewed",
@@ -249,7 +279,8 @@ const POLICY = {
           key: "kickoffHeld",
           title: "Kick-off Meeting Held And Minuted",
           desc: "Client attendees captured",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "comms_plan"
         }
       ],
     requiredDocs: [
@@ -272,13 +303,15 @@ const POLICY = {
           key: "weeklyReports",
           title: "Weekly Status Reports Issued",
           desc: "Format: RAG status, issues, next steps",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "status_report"
         },
         {
           key: "milestone1Signoff",
           title: "Milestone 1 Sign-Off Received",
           desc: "Client-signed delivery acceptance",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "status_report"
         },
         {
           key: "milestone2Signoff",
@@ -290,13 +323,15 @@ const POLICY = {
           key: "changeRequestsApproved",
           title: "Change Requests Logged And Approved",
           desc: "No scope changes without signed CR",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "cr_form"
         },
         {
           key: "issueLogActive",
           title: "Issue Log Maintained And Current",
           desc: "Open issues reviewed weekly",
-          isRequired: false
+          isRequired: false,
+          requiredDoc: "issue_log"
         },
         {
           key: "migrationCompleted",
@@ -308,19 +343,22 @@ const POLICY = {
           key: "trainingExecuted",
           title: "Training Plan Executed",
           desc: "Attendance register captured",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "sit_report"
         },
         {
           key: "sitCompleted",
           title: "SIT (System Integration Testing) Completed",
           desc: "Test results report signed off",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "sit_report"
         },
         {
           key: "preUatHandoverDone",
           title: "Pre-UAT Environment Handover Done",
           desc: "Access credentials issued to client team",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "sit_report"
         }
       ],
     requiredDocs: [
@@ -343,37 +381,43 @@ const POLICY = {
           key: "uatStarted",
           title: "UAT Test Plan Approved By Client",
           desc: "Scenarios, expected outcomes, acceptance criteria",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "uat_test_plan"
         },
         {
           key: "uatStable",
           title: "UAT Environment Certified And Stable",
           desc: "No open P1 environment issues",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "uat_test_plan"
         },
         {
           key: "issuesLogCreated",
           title: "UAT Issues Log Created And Shared",
           desc: "Using UAT Issues Log template",
-          isRequired: false
+          isRequired: false,
+          // requiredDoc: "uat_issues_log"
         },
         {
           key: "defectsResolved",
           title: "All Critical (P1) Issues Resolved",
           desc: "Zero open P1 before go-live gate",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "uat_issues_log"
         },
         {
           key: "issuesResolved",
           title: "High-priority (P2) Issues Resolved Or Waived",
           desc: "Client written waiver required for any P2 carryover",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "uat_issues_log"
         },
         {
           key: "clientSignoff",
           title: "UAT Sign-off Document Received From Client",
           desc: "Named client signatories required",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "uat_sign_off"
         },
         {
           key: "testCompleted",
@@ -384,7 +428,7 @@ const POLICY = {
       ],
     requiredDocs: [
       {key: "uat_test_plan", title: "UAT Test Plan"}, 
-      {key: "uat_issus_log", title: "UAT Issues Log"}, 
+      {key: "uat_issues_log", title: "UAT Issues Log"}, 
       {key: "uat_sign_off", title: "UAT Sign-Off Form"}
     ],
     rolesAllowedToSubmit: ["PROJECTMANAGER"],
@@ -401,49 +445,57 @@ const POLICY = {
           key: "readinessComplete",
           title: "Go-live Readiness Assessment Completed",
           desc: "All P1 UAT issues resolved",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "uat_issues_log"
         },
         {
           key: "cutoverApproved",
           title: "Cut-over Plan Approved",
           desc: "Rollback procedure documented",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "uat_test_plan"
         },
         {
           key: "productionValidated",
           title: "Production Environment Validated",
           desc: "Infra team sign-off",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "uat_sign_off"
         },
         {
           key: "productionLive",
           title: "Go-live Authorization From Client Obtained",
           desc: "Written approval — email or signed form",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "uat_sign_off"
         },
         {
           key: "cutoverExecuted",
           title: "Cut-over Executed Within Maintenance Window",
           desc: "Log start and end time",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "uat_issues_log"
         },
         {
           key: "smokeTestsPassed",
           title: "Smoke Tests Passed Post-Cut-Over",
           desc: "Critical transactions verified",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "uat_issues_log"
         },
         {
           key: "certIssuedToClient",
           title: "Go-Live Certificate Issued To Client",
           desc: "Triggers post-live support SLA",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "uat_sign_off"
         },
         {
           key: "periodDefined",
           title: "Hypercare / Post-Live Support Period Defined",
           desc: "Duration, team, escalation path",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "uat_test_plan"
         },
         {
           key: "milestoneTriggered",
@@ -454,7 +506,7 @@ const POLICY = {
       ],
     requiredDocs: [
       {key: "uat_test_plan", title: "UAT Test Plan"}, 
-      {key: "uat_issus_log", title: "UAT Issues Log"}, 
+      {key: "uat_issues_log", title: "UAT Issues Log"}, 
       {key: "uat_sign_off", title: "UAT Sign-Off Form"}
     ],
     rolesAllowedToSubmit: ["PROJECTMANAGER"],
@@ -471,36 +523,41 @@ const POLICY = {
           key: "finalReportReady",
           title: "Go-live Readiness Assessment Completed",
           desc: "All P1 UAT issues resolved",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "uat_issues_log"
         },
         {
           key: "clientHandoverDone",
           title: "Cut-over Plan Approved",
           desc: "Rollback procedure documented",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "uat_test_plan"
         },
         {
           key: "documentationDone",
           title: "Production Environment Validated",
           desc: "Infra team sign-off",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "uat_sign_off"
         },
         {
           key: "financialClosure",
           title: "Go-live Authorization From Client Obtained",
           desc: "Written approval — email or signed form",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "uat_sign_off"
         },
         {
           key: "resourceReleased",
           title: "Cut-over Executed Within Maintenance Window",
           desc: "Log start and end time",
-          isRequired: true
+          isRequired: true,
+          requiredDoc: "uat_issues_log"
         }
       ],
     requiredDocs: [
       {key: "uat_test_plan", title: "UAT Test Plan"}, 
-      {key: "uat_issus_log", title: "UAT Issues Log"}, 
+      {key: "uat_issues_log", title: "UAT Issues Log"}, 
       {key: "uat_sign_off", title: "UAT Sign-Off Form"}
     ],
     rolesAllowedToSubmit: ["PROJECTMANAGER"],
@@ -529,15 +586,11 @@ export const getPolicy = (stageKey) => {
  * VALIDATE CHECKLIST
  * =========================
  */
-export const validateChecklist = (stageId, stageData) => {
-  const policy = getPolicy(stageId);
-
-  console.log("=== CHECKLIST DEBUG START ===");
-  console.log("Stage Data Checklist:", stageData?.checklist);
-  console.log("Policy Checklist:", policy?.checklist);
+export const validateChecklist = (stageKey, stageData) => {
+  const policy = getPolicy(stageKey);
 
   if (!stageData?.checklist) {
-    console.log("❌ Missing checklist in stageData");
+    console.log("Missing checklist in stageData");
     return false;
   }
 
@@ -550,19 +603,8 @@ export const validateChecklist = (stageId, stageData) => {
       ? item?.completed === true
       : true;
 
-    console.log(
-      `Checklist Item: ${policyItem.key}`,
-      "Found:", !!item,
-      "Completed:", item?.completed,
-      "Required:", policyItem.isRequired,
-      "PASS:", ok
-    );
-
     return ok;
   });
-
-  console.log("Checklist Result:", result);
-  console.log("=== CHECKLIST DEBUG END ===");
 
   return result;
 };
@@ -573,11 +615,8 @@ export const validateChecklist = (stageId, stageData) => {
  * =========================
  */
 export const validateDocuments = (stageId, stageData) => {
-  const policy = getPolicy(stageId);
 
-  console.log("=== DOCS DEBUG START ===");
-  console.log("Stage Docs:", stageData?.requiredDocs);
-  console.log("Policy Docs:", policy?.requiredDocs);
+  const policy = getPolicy(stageId);
 
   if (!policy?.requiredDocs?.length) {
     console.log("No required docs in policy → auto PASS");
@@ -591,18 +630,8 @@ export const validateDocuments = (stageId, stageData) => {
 
     const ok = Boolean(match?.fileURL);
 
-    console.log(
-      `Doc: ${requiredDoc.key}`,
-      "Found:", !!match,
-      "fileURL:", match?.fileURL,
-      "PASS:", ok
-    );
-
     return ok;
   });
-
-  console.log("Docs Result:", result);
-  console.log("=== DOCS DEBUG END ===");
 
   return result;
 };
@@ -617,11 +646,6 @@ export const canSubmitStage = (stageKey, stageData, role) => {
 
   if(!policy) return false
 
-  console.log("=== CAN SUBMIT DEBUG START ===");
-  console.log("Stage Key:", stageKey);
-  console.log("User Role:", role);
-  console.log("Policy Exists:", !!policy);
-
   if (!policy) {
     console.log("No policy found for stage");
     return false;
@@ -630,13 +654,6 @@ export const canSubmitStage = (stageKey, stageData, role) => {
   const roleAllowed = policy.rolesAllowedToSubmit.includes(role);
   const checklistOk = validateChecklist(stageKey, stageData);
   const docsOk = validateDocuments(stageKey, stageData);
-
-  console.log("Role Allowed:", roleAllowed);
-  console.log("Checklist OK:", checklistOk);
-  console.log("Docs OK:", docsOk);
-
-  console.log("Policy Roles:", policy.rolesAllowedToSubmit);
-  console.log("=== CAN SUBMIT DEBUG END ===");
 
   return roleAllowed && checklistOk && docsOk;
 };

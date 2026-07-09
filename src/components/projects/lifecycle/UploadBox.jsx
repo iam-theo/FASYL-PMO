@@ -1,44 +1,42 @@
 import React from 'react'
 import { useState, useRef } from 'react'
 import { processFile, getFileFromInput, handleDragOver, handleDragLeave, handleDrop, getFileFromDrop } from './utils/UploadFiles'
-import { uploadStageDocument } from '../../../api'
+import { uploadStageDocument, deleteStageDocument } from '../../../api'
 
 function UploadBox({
-    maxSizeMB = 2,
-    formats = "SVG, JPG, GIF",
+    maxSizeMB = 5,
+    formats = "SVG, JPG, PDF",
     title,
     docKey,
     docStatus,
     docName,
     docURL,
-    projectStage,
-    selectedProject,
     projectId,
     stageId,
+    user,
+    setProjects,
+    setSelectedProject,
+    setSelectedStage
 }) {
     const inputRef = useRef(null)
-    const [fileName, setFileName] = useState("")
-    const [error, setError] = useState("")
     const [isDragging, setIsDragging] = useState(false)
-    const [isUploaded, setIsUploaded] = useState(false)
 
     const [selectedFile, setSelectedFile] = useState(null);
-    const [previewUrl, setPreviewUrl] = useState("");
-    const [isSaved, setIsSaved] = useState(false);
 
     const [uploadState, setUploadState] = useState({})
 
-    const allowedTypes = ["image/svg+xml", "image/jpeg", "image/gif"]
-
-    // console.log(docName)  
-    // console.log(doc)  
+    const allowedTypes = ["image/svg+xml", "image/jpeg", "application/pdf"]
+    
     // Open file picker
     const handleClick = () => {
+        if(user.role === "HEADOFOPS") return
         inputRef.current.click()
     }
 
     // INPUT UPLOAD
     const handleFileChange = async (e, key) => {
+
+        if(user.role === "HEADOFOPS") return
 
         const file = getFileFromInput(e);
 
@@ -48,6 +46,8 @@ function UploadBox({
             allowedTypes,
             maxSizeMB
         });
+
+        console.log(result.file)
 
 
         if (!result.success) {
@@ -79,6 +79,8 @@ function UploadBox({
 
     // DROP UPLOAD
     const onDrop = async (e, key) => {
+
+        if(user.role === "HEADOFOPS") return
 
         e.preventDefault()
 
@@ -130,6 +132,8 @@ function UploadBox({
     }
 
     const handleSaveUpload = async (key) => {
+        if (user.role !== "PROJECTMANAGER") return;
+
         if (!uploadState[key].file) return;
 
         const docState = uploadState[key]
@@ -144,9 +148,44 @@ function UploadBox({
             );
             console.log("UPLOAD SUCCESS", res.data);
 
+            const updatedStage = res.data.data;
+
+            setSelectedStage(prev =>
+                prev?.id === updatedStage.id
+                    ? updatedStage
+                    : prev
+            );
+
+            setSelectedProject(prev => ({
+                ...prev,
+                stages: prev.stages.map(stage =>
+                    stage.id === updatedStage.id
+                        ? updatedStage
+                        : stage
+                )
+            }));
+
+            setProjects(prev =>
+                prev.map(project => {
+
+                    if (project.id !== projectId) {
+                        return project;
+                    }
+
+                    return {
+                        ...project,
+                        stages: project.stages.map(stage =>
+                            stage.id === updatedStage.id
+                                ? updatedStage
+                                : stage
+                        )
+                    };
+                })
+            );
+
             setUploadState(prev => ({
                 ...prev,
-                [docKey]: {
+                [key]: {
                     ...prev[docKey],
                     isSaved: true
                 }
@@ -156,6 +195,68 @@ function UploadBox({
             console.error("UPLOAD FAILED", err);
         }
     };
+
+    const handleDeleteUpload = async (key) => {
+        if (user.role !== "PROJECTMANAGER") return;
+
+        try {
+            const res = await deleteStageDocument(
+                projectId,
+                stageId,
+                key
+            );
+            console.log("DELETE SUCCESS", res.data);
+
+            const updatedStage = res.data.data;
+
+            setSelectedStage(prev =>
+                prev?.id === updatedStage.id
+                    ? updatedStage
+                    : prev
+            );
+
+            setSelectedProject(prev => ({
+                ...prev,
+                stages: prev.stages.map(stage =>
+                    stage.id === updatedStage.id
+                        ? updatedStage
+                        : stage
+                )
+            }));
+
+            setProjects(prev =>
+                prev.map(project => {
+
+                    if (project.id !== projectId) {
+                        return project;
+                    }
+
+                    return {
+                        ...project,
+                        stages: project.stages.map(stage =>
+                            stage.id === updatedStage.id
+                                ? updatedStage
+                                : stage
+                        )
+                    };
+                })
+            );
+
+            setUploadState(prev => ({
+                ...prev,
+                [key]: {
+                    file: null,
+                    fileName: "",
+                    previewUrl: "",
+                    isUploaded: false,
+                    isSaved: false,
+                    error: "",
+                }
+            }));
+        } catch(err) {
+            console.error("DELETE FAILED", err);
+        }
+    }
 
     const doc = uploadState[docKey];
 
@@ -184,21 +285,29 @@ function UploadBox({
                         key={docKey}
                         type="file"
                         className='hidden'
-                        accept="image/svg+xml,image/jpeg,image/gif"
+                        accept="image/svg+xml,image/jpeg,application/pdf"
                         onChange={(e) => handleFileChange(e, docKey)} 
                     />
                     {/* Content */}
-                    <div className='w-full'>
+                    <div 
+                        className='w-full'>
                         {
                             uploadState[docKey]?.isUploaded === true || docStatus === "PENDING" &&  
                             (<div className='text-center w-full'>
                                 <i className="fa-solid fa-circle-arrow-up text-[#1B3C4A] mt-3"></i>
-                                <p className='font-normal text-[14px]/[20px] text-[#636363]'><span onClick={handleClick} className='text-[#1B3C4A] font-medium'>Click to upload</span> or drag and drop</p>
-                                <p className='font-normal text-[14px]/[20px] text-[#636363]'>{formats} (max. 800x400px)</p>
+                                <p className='font-normal text-[14px]/[20px] text-[#636363]'>
+                                    <span 
+                                        onClick={handleClick} 
+                                        className='text-[#1B3C4A] font-medium'>
+                                            Click to upload 
+                                    </span> 
+                                    or drag and drop
+                                </p>
+                                <p className='font-normal text-[14px]/[20px] text-[#636363]'>{formats} (max. 5mb/4000x4000px)</p>
 
                                 {/* Error */}
-                                {error && (
-                                    <p className='text-[14px]/[20px] text-[#D20019] font-normal'>{error}</p>
+                                {uploadState[docKey]?.error && (
+                                    <p className='text-[14px]/[20px] text-[#D20019] font-normal'>{uploadState[docKey]?.error}</p>
                                 )}
                             </div>)
                         }
@@ -226,7 +335,7 @@ function UploadBox({
                                                 {isDeletable ? (
                                                     <button
                                                         className="font-medium text-[14px]/[20px] text-[#D20019] cursor-pointer"
-                                                        // onClick={() => handleDelete(docKey)}
+                                                        onClick={() => handleDeleteUpload(docKey)}
                                                     >
                                                         Delete
                                                     </button>

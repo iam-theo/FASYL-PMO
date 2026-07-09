@@ -1,11 +1,10 @@
 import { PrismaClient, WorkflowStatus } from "@prisma/client";
-import { canApproveStage } from "./workflow.policy.js";
+import { canApproveStage, canSubmitStage } from "./workflow.policy.js";
 
 const prisma = new PrismaClient();
 
 import workflowService from "./workflow.service.js";
 import * as policy from "./workflow.policy.js";
-// import { getPolicy } from "./workflow.policy.js";
 /**
  * =========================
  * GET STAGE STATE
@@ -40,14 +39,21 @@ export const getStageState = async (req, res) => {
  */
 export const submitStage = async (req, res) => {
   try {
+
     const { projectId, stageOrder } = req.params;
+
+    const pid = Number(projectId);
+    const order = Number(stageOrder);
 
     const userId = req.user.id;
 
+    // =========================
+    // GET STAGE
+    // =========================
     const stage = await prisma.projectStage.findFirst({
       where: {
-        projectId: Number(projectId),
-        stageOrder: Number(stageOrder),
+        projectId: pid,
+        stageOrder: order,
       },
     });
 
@@ -58,18 +64,12 @@ export const submitStage = async (req, res) => {
       });
     }
 
-    const stageKey = stage.stageKey;
-
-    const stageState = await workflowService.getStageState(
-      Number(projectId),
-      Number(stageOrder)
-    );
-
-    const stageData = stageState?.stageData || {};
-
-    const allowed = policy.canSubmitStage(
-      stageKey,
-      stageData,
+    // =========================
+    // POLICY CHECK
+    // =========================
+    const allowed = canSubmitStage(
+      stage.stageKey,
+      stage,
       req.user.role
     );
 
@@ -80,23 +80,27 @@ export const submitStage = async (req, res) => {
       });
     }
 
+    // =========================
+    // SUBMIT STAGE
+    // =========================
     const result = await workflowService.submitStage({
-      projectId: Number(projectId),
-      stageOrder: Number(stageOrder),
+      projectId: pid,
+      stageOrder: order,
       userId,
     });
 
-    return res.status(200).json({
+    return res.json({
       success: true,
       data: result,
     });
 
   } catch (err) {
-    console.error("Submit Stage Error:", err)
+
+    console.error("Submit Stage Error:", err);
 
     return res.status(400).json({
       success: false,
-      message: err.message
+      message: err.message,
     });
   }
 };
@@ -130,7 +134,7 @@ export const approveStage = async (req, res) => {
 
     const allowed = canApproveStage(
       stage.stageKey,
-      stage,              // stageData (can be enriched later)
+      stage,              
       req.user.role
     );
 
@@ -191,9 +195,9 @@ export const rejectStage = async (req, res) => {
       });
     }
 
-    const allowed = policy.canApproveStage(
+    const allowed = canApproveStage(
       stage.stageKey,
-      stage,
+      stage,              
       req.user.role
     );
 

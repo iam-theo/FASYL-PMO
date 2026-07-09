@@ -11,15 +11,16 @@ import {
 const router = express.Router();
 
 /* =========================================
-   WORKFLOW ROUTES (SWAGGER)
+    WORKFLOW ROUTES (SWAGGER)
 ========================================= */
 
 /**
  * @swagger
- * /workflow/submit/{projectId}/{stageId}:
+ * /workflow/submit/{projectId}/{stageOrder}:
  *   post:
  *     summary: Submit a project stage for approval
- *     tags: [Workflow]
+ *     tags:
+ *       - Workflow
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -28,18 +29,22 @@ const router = express.Router();
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 69
  *         description: Project ID
  *       - in: path
- *         name: stageId
+ *         name: stageOrder
  *         required: true
  *         schema:
  *           type: integer
- *         description: Workflow stage ID
+ *           example: 1
+ *         description: Workflow stage order
  *     responses:
  *       200:
  *         description: Stage submitted successfully
  *       401:
  *         description: Unauthorized
+ *       403:
+ *         description: Not allowed to submit this stage
  */
 router.post(
   "/submit/:projectId/:stageOrder",
@@ -47,12 +52,15 @@ router.post(
   submitStage
 );
 
+
+
 /**
  * @swagger
- * /workflow/approve/{projectId}/{stageId}:
+ * /workflow/approve/{projectId}/{stageOrder}:
  *   post:
- *     summary: Approve a workflow stage (HEAD OF OPS)
- *     tags: [Workflow]
+ *     summary: Approve a workflow stage
+ *     tags:
+ *       - Workflow
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -61,16 +69,24 @@ router.post(
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 69
+ *         description: Project ID
  *       - in: path
- *         name: stageId
+ *         name: stageOrder
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 1
+ *         description: Workflow stage order
  *     responses:
  *       200:
  *         description: Stage approved successfully
+ *       401:
+ *         description: Unauthorized
  *       403:
  *         description: Forbidden (insufficient role)
+ *       404:
+ *         description: Stage not found
  */
 router.post(
   "/approve/:projectId/:stageOrder",
@@ -78,12 +94,15 @@ router.post(
   approveStage
 );
 
+
+
 /**
  * @swagger
- * /workflow/reject/{projectId}/{stageId}:
+ * /workflow/reject/{projectId}/{stageOrder}:
  *   post:
- *     summary: Reject workflow stage
- *     tags: [Workflow]
+ *     summary: Reject a workflow stage
+ *     tags:
+ *       - Workflow
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -92,11 +111,15 @@ router.post(
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 69
+ *         description: Project ID
  *       - in: path
- *         name: stageId
+ *         name: stageOrder
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 1
+ *         description: Workflow stage order
  *     requestBody:
  *       required: true
  *       content:
@@ -108,12 +131,16 @@ router.post(
  *             properties:
  *               reason:
  *                 type: string
- *                 example: "Missing financial approval"
+ *                 example: Missing financial approval
  *     responses:
  *       200:
  *         description: Stage rejected successfully
  *       400:
  *         description: Validation error
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Approval record not found
  */
 router.post(
   "/reject/:projectId/:stageOrder",
@@ -121,12 +148,15 @@ router.post(
   rejectStage
 );
 
+
+
 /**
  * @swagger
- * /workflow/{projectId}:
+ * /workflow/{projectId}/stage/{stageOrder}:
  *   get:
- *     summary: Get full workflow status for a project
- *     tags: [Workflow]
+ *     summary: Get workflow stage state
+ *     tags:
+ *       - Workflow
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -135,16 +165,28 @@ router.post(
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 69
  *         description: Project ID
+ *       - in: path
+ *         name: stageOrder
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: Workflow stage order
  *     responses:
  *       200:
- *         description: Workflow status retrieved successfully
+ *         description: Workflow stage retrieved successfully
+ *       401:
+ *         description: Unauthorized
  *       404:
- *         description: Project not found
+ *         description: Project or stage not found
  */
 router.get(
-  "/:projectId/stage/:stageId",
+  "/:projectId/stage/:stageOrder",
   authMiddleWare,
   getStageState
 );
+
+
 export default router;

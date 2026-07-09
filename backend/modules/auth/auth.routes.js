@@ -4,6 +4,7 @@ import {
   login,
   refresh,
   logout,
+  getProjectManagers
 } from "./auth.controller.js";
 
 import {
@@ -16,7 +17,7 @@ import {
 const router = Router();
 
 /* =========================
-   AUTH ROUTES (SWAGGER)
+    AUTH ROUTES (SWAGGER)
 ========================= */
 
 /**
@@ -133,5 +134,10 @@ router.post(
  *         description: Logged out successfully
  */
 router.post("/logout", logout);
+
+router.get(
+  "/project-managers",
+  getProjectManagers
+);
 
 export default router;

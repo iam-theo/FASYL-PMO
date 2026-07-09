@@ -1,20 +1,25 @@
 import React from 'react'
 import { useEffect, useState, useRef } from 'react'
+import { FaEllipsisV } from 'react-icons/fa';
+import { FaLock } from 'react-icons/fa6';
 
 function Projects({ 
     projects, 
     currentProjects, 
+    searchValue,
+    setSearchValue,
+    filterValue,
+    setFilterValue,
     currentPage, 
     totalPages, 
     setCurrentPage, 
     itemsPerPage,
-    setSelectedProject, 
+    setSelectedProject,
+    selectedStage,
+    setSelectedStage, 
     user,
     isLoading
     }) {
-
-    // console.log(projects)
-    // console.log(user);
 
     const STAGES = {
         1: "Client ID",
@@ -27,11 +32,49 @@ function Projects({
         8: "Closure"
     };
 
-    const setCurrentStage = (currentStage) => {
-        return STAGES[currentStage] || "Unknown Stage";
+    // console.log(projects)
+
+    const statusStyles = {
+        UNASSIGNED: {
+            bg: "#F2F4F7",
+            text: "#344054",
+        },
+
+        OPEN: {
+            bg: "#EFF8FF",
+            text: "#228CEE",
+        },
+
+        SUBMITTED: {
+            bg: "#FFF7ED",
+            text: "#EA580C",
+        },
+
+        APPROVED: {
+            bg: "#ECFDF3",
+            text: "#027A48",
+        },
+
+        REJECTED: {
+            bg: "#FEF3F2",
+            text: "#D92D20",
+        },
+
+        COMPLETED: {
+            bg: "#F0FDF4",
+            text: "#15803D",
+        },
     };
 
-    if(isLoading) return <div className={`w-18 h-18 rounded-full border-8 border-[#636363] border-t-[#1B3C4A] absolute top-50 animate-spin`}></div>
+    const [openProjectMenu, setOpenProjectMenu] = useState(null);
+
+    const setCurrentStage = (currentStage) => {
+        return STAGES[currentStage] || "LOCKED";
+    };
+
+    if(isLoading) return <div className='w-full h-screen flex items-center justify-center'>
+        <div className={`w-18 h-18 rounded-full border-8 border-[#636363] border-t-[#1B3C4A] absolute top-50 animate-spin`}></div>
+    </div>
 
     return (
         <div className='px-4 pt-4 flex flex-col h-screen'>
@@ -44,71 +87,160 @@ function Projects({
                     <p className='font-normal text-[14px]/[20px] text-[#636363] mb-3'>View all assigned projects</p>
                 </div>
 
-                <div className='w-94.5 h-10 flex items-center gap-3 relative'>
-                    <i className="fa-solid fa-magnifying-glass text-[#090909] absolute left-3"></i>
-                    <input type="text" placeholder='Search' className='w-72.25 border border-[#00000026] py-2.5 px-8.5 bg-[#FFFFFF] rounded-lg'/>
-                    <div className='w-19.25 rounded-lg flex gap-2 items-center border border-[#0000000D] bg-[#E8E8E8] hover:bg-[#1B3C4A] text-[#1B3C4A] hover:text-[#E8E8E8] py-2.5 px-4 cursor-pointer'>
-                        <i className="fa-solid fa-sliders fa-md text-[#636363]"></i>
-                        <p className='font-medium text-[14px]/[20px]'>All</p>
+                <div className='w-102.25 h-10 flex items-center gap-3 relative'>
+                    <div
+                        className='w-72.25 border border-[#00000026] py-2.5 px-3 bg-[#FFFFFF] rounded-lg flex items-center gap-3'>
+                        <i className="fa-solid fa-magnifying-glass text-[#090909]"></i>
+                        <input 
+                            type="text"
+                            value={searchValue}
+                            onInput={(e) => setSearchValue(e.target.value)} 
+                            placeholder='Search projects...'
+                            className='outline-none'
+                        />
+                    </div>
+
+                    <div
+                        className='w-30 rounded-lg border border-[#0000000D] bg-[#E8E8E8] text-[#1B3C4A] py-2.5 px-2 cursor-pointer font-semibold text-[13px]'>
+                        <select
+                            value={filterValue}
+                            onChange={(e) => setFilterValue(e.target.value)}
+                            className='outline-none'
+                            name="" 
+                            id="">
+                            <option 
+                                value="all">
+                                    ALL
+                            </option>
+                            <option
+                                value="open">
+                                    OPEN
+                            </option>
+                            <option
+                                value="submitted">
+                                    SUBMITTED
+                            </option>
+                            <option 
+                                value="approved">
+                                    APPROVED
+                            </option>
+                            <option 
+                                value="rejected">
+                                    REJECTED
+                            </option>
+                            <option
+                                value="completed">
+                                    COMPLETED
+                            </option>
+                        </select>
                     </div>
                 </div>
-
-                {/* <div className='flex items-center justify-center w-lg h-104.5 absolute top-10 left-61 py-14'>
-                    <div className='text-center'>
-                        <p>No projects assigned</p>
-                        <p>You do not have any projects</p>
-                    </div>
-                </div> */}
             </div>
 
             {/* projects table with details */}
-            <section className='w-full min-h-0 overflow-y-auto no-scrollbar border-collapse rounded-lg border border-[#0000000D] relative'>
-                <table className='w-full'>
-                    <thead className='sticky top-0 z-2000 h-11'>
-                        <tr className='text-left'>
-                            <th className='w-47 py-3 px-6 bg-[#F9FAFB] font-semibold text-[12px]/[18px] text-[#090909] justify-center'>ID</th>
-                            <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Project Name</th>
-                            <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Client</th>
-                            <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Product</th>
+            <section className='w-full min-h-0 overflow-auto no-scrollbar rounded-lg border border-[#0000000D] relative'>
+                <table className='min-w-300 border-collapse whitespace-nowrap'>
+                    <thead className='sticky top-0 z-2000 h-11 bg-[#F9FAFB]'>
+                        <tr className=''>
+                            <th className='px-4 py-3 font-semibold text-[12px]/[18px] text-[#090909] text-left'>ID</th>
+                            <th className='px-4 py-3 font-semibold text-[12px]/[18px] text-[#090909] text-left'>Project Name</th>
+                            <th className='px-4 py-3 font-semibold text-[12px]/[18px] text-[#090909] text-left'>Client</th>
+                            <th className='px-4 py-3 font-semibold text-[12px]/[18px] text-[#090909] text-left'>Product</th>
                             {
                                 user?.role === "HEADOFOPS" && (
-                                    <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>PM</th>
+                                    <th className='px-4 py-3 font-semibold text-[12px]/[18px] text-[#090909] text-left'>PM</th>
                                 )
                             }
-                            <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Status</th>
-                            <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'>Stage</th>
-                            <th className='w-47 bg-[#F9FAFB] py-3 px-6 font-semibold text-[12px]/[18px] text-[#090909] justify-center'></th>
+                            <th className='px-4 py-3 font-semibold text-[12px]/[18px] text-[#090909] text-left'>Status</th>
+                            <th className='px-4 py-3 font-semibold text-[12px]/[18px] text-[#090909] text-left'>Stage</th>
+                            <th className='w-15 px-4 py-3 font-semibold text-[12px]/[18px] text-[#090909] text-center'></th>
                         </tr>
                     </thead>
 
-                    <tbody className=''>
+                    <tbody className='h-11'>
                         {
                             currentProjects.map((project, index) => (
-                                <tr key={index} className='border-y border-[#0000000D]'>
-                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.id}</td>
-                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.projectName}</td>
-                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.clientName}</td>
-                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.productName}</td>
+                                <tr key={index} className='border-y border-[#0000000D] cursor-pointer'>
+                                    <td className='px-4 py-4 font-normal text-[14px]/[20px] text-[#636363] overflow-hidden whitespace-nowrap text-ellipsis'>{project.externalId}</td>
+                                    <td title={project.projectName} className='px-4 py-4 font-normal text-[14px]/[20px] text-[#636363] overflow-hidden whitespace-nowrap text-ellipsis'>{project.projectName}</td>
+                                    <td title={project.clientName} className='px-4 py-4 font-normal text-[14px]/[20px] text-[#636363] overflow-hidden whitespace-nowrap text-ellipsis'>{project.clientName}</td>
+                                    <td title={project.productName} className='px-4 py-4 font-normal text-[14px]/[20px] text-[#636363] overflow-hidden whitespace-nowrap text-ellipsis'>{project.productName}</td>
                                     {
                                         user?.role === "HEADOFOPS" && (
-                                            <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] justify-center align-middle'>{project.projectManagerEmail === null ? "Not Assigned" : project.projectManagerEmail}</td>
+                                            <td title={project.projectManager} className='px-4 py-4 font-normal text-[14px]/[20px] text-[#636363]'>{!project.projectManager?.email ? "Not Assigned" : project.projectManager?.email}</td>
                                         )
                                     }
-                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#FFFFFF] align-middle'>
-                                        <p className='rounded-2xl py-1 px-2 bg-[#228CEE] text-center'>{project.workflowStatus}</p>
+                                    <td className='px-4 py-4 font-normal text-[14px]/[20px] text-[#FFFFFF] text-center'>
+                                        <p
+                                            className="rounded-full py-1"
+                                            style={{
+                                                backgroundColor: statusStyles[project?.workflowStatus]?.bg,
+                                                color: statusStyles[project?.workflowStatus]?.text,
+                                            }}
+                                            >
+                                            {project?.workflowStatus}
+                                        </p>
                                     </td>
-                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#FFFFFF] align-middle'>
-                                        <p className='rounded-2xl py-1 px-2 bg-[#228CEE] text-center'>{setCurrentStage(project.currentStageOrder)}</p>
+                                    <td className='px-4 py-4 font-normal text-[14px]/[20px] text-[#FFFFFF] text-center'>
+                                        <p 
+                                            className={`rounded-2xl p-1 ${setCurrentStage(project.currentStageOrder) !== "LOCKED" ? "bg-[#228CEE] text-[#FFFFFF]" : "bg-[#52525B] text-[#F4F4F5]"} text-center`}>
+                                                {setCurrentStage(project.currentStageOrder)}
+                                        </p>
                                     </td>
-                                    <td className='w-47 py-4 px-6 font-normal text-[14px]/[20px] text-[#636363] relative justify-center align-middle'>
-                                        <i onClick={() => setSelectedProject(project)} className="fa-solid fa-ellipsis-vertical fa-lg cursor-pointer text-[#98a2b3] hover:text-[#1B3C4A]"></i>
+                                    <td className='px-4 py-4 font-normal text-[14px]/[20px] text-[#636363] relative h-full'>
 
-                                        {/* <button 
-                                            onClick={() => setSelectedProject(project)}
-                                            className='absolute px-4 py-2.5 bg-[#FFFFFF] rounded-lg shadow-[0_12px_16px] shadow-[#10182808] text-[#000000] flex items-center gap-2 cursor-pointer'>
-                                                <i className="fa-regular fa-eye fa-sm"></i>
-                                                <p className='font-normal text-[12px]/[20px] text-[#090909]'>View project</p>
-                                        </button> */}
+                                        <FaEllipsisV 
+                                            onClick={() => {
+                                                    if (project.projectManager === null) {
+                                                        return setSelectedProject(project)
+                                                    }
+
+                                                    if (setCurrentStage(project.currentStageOrder) === "LOCKED") return;
+
+                                                    setOpenProjectMenu(prev =>
+                                                        prev === project.id
+                                                            ? null
+                                                            : project.id
+                                                    )
+                                                }
+                                            } 
+                                            className="cursor-pointer text-[#98a2b3] hover:text-[#1B3C4A]" 
+                                        />
+
+                                        {
+                                            openProjectMenu === project.id && (
+                                                <div
+                                                    className='max-h-40 overflow-y-auto no-scrollbar absolute z-1000 w-40 right-5 border border-[#0000000D] bg-[#F9FAFB] rounded-lg text-[14px]/[20px]'>
+                                                    <ul className=''>
+                                                        {
+                                                            project.stages.map(stage => (
+                                                                <li
+                                                                    key={stage.id}
+                                                                    className='cursor-pointer flex items-center justify-between border-y border-[#0000000D] px-4 py-2'
+                                                                    onClick={() => {
+
+                                                                        if (stage.workflowStatus === "LOCKED") {
+                                                                            return;
+                                                                        }
+
+                                                                        setSelectedProject(project);
+                                                                        setSelectedStage(stage);
+                                                                        setOpenProjectMenu(null);
+
+                                                                    }}
+                                                                    >
+                                                                    <p> {setCurrentStage(stage.stageOrder)}</p>
+                                                                    
+                                                                    <FaLock 
+                                                                        className={`${stage.workflowStatus !== "LOCKED" ? "hidden" : "block"}`}
+                                                                    />
+                                                                </li>
+                                                            ))
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            )
+                                        }
                                     </td>
                                 </tr>
                             ))

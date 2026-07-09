@@ -1,6 +1,10 @@
 import { PrismaClient, WorkflowStatus } from "@prisma/client";
 import { getPolicy } from "../../modules/workflow/workflow.policy.js";
 const prisma = new PrismaClient();
+import axios from "axios";
+
+import fs from "fs";
+import path from "path";
 
 const TOTAL_STAGES = 8;
 /* =========================================
@@ -17,6 +21,7 @@ const createChecklist = (items, stageKey) => {
     title: item.title,
     desc: item.desc,
     isRequired: item.isRequired ?? false,
+    requiredDoc: item.requiredDoc || null,
     completed: false,
     completedAt: null,
   }));
@@ -51,119 +56,236 @@ export const getStageKey = (order) => {
   return map[order];
 };
 
-/* =========================================
-    CREATE PROJECT + WORKFLOW INIT
-========================================= */
-export const createProjectService = async (data, user) => {
-  const startOrder = 1;
-
-  const dbUser = await prisma.user.findUnique({
-    where: { id: user.id },
+export const buildWorkflowForProject = async (projectId) => {
+  // PREVENT DUPLICATION
+  const existingCount = await prisma.projectStage.count({
+    where: { projectId },
   });
 
-  if (!dbUser) {
-    throw new Error("Invalid PMO user - does not exist in database");
+  if (existingCount > 0) {
+    return {
+      message: "Workflow already exists",
+      skipped: true,
+    };
   }
 
   // =========================
-  // STEP 1: CREATE PROJECT
-  // =========================
-  const project = await prisma.project.create({
-    data: {
-      projectName: data.name,
-      clientName: data.clientName,
-      industry: data.industry,
-      productName: data.productName,
-      description: data.description || null,
-
-      projectManagerEmail: data.projectManagerEmail || null,
-      pmoId: dbUser.id,
-
-      currentStageOrder: startOrder,
-      workflowStatus: WorkflowStatus.OPEN,
-      progressPercent: calcProgress(startOrder),
-    },
-  });
-
-  // =========================
-  // STEP 2: BUILD STAGES
+  // BUILD STAGES
   // =========================
   const stagesData = Array.from({ length: TOTAL_STAGES }, (_, index) => {
     const stageOrder = index + 1;
     const stageKey = getStageKey(stageOrder);
-    const stagePolicy = getPolicy(stageKey);
+    const policy = getPolicy(stageKey);
 
     return {
-      projectId: project.id,
-      stageIndex: stageOrder,
-      stageOrder: stageOrder,
-      stageKey: stagePolicy.key,
-      stageName: stagePolicy.name,
+      projectId,
 
-      workflowStatus:
-        stageOrder === 1 ? WorkflowStatus.OPEN : WorkflowStatus.LOCKED,
+      stageIndex: stageOrder,
+      stageOrder,
+
+      stageKey: policy.key,
+      stageName: policy.name,
+
+      workflowStatus: stageOrder === 1 ? "OPEN" : "LOCKED",
 
       checklist: JSON.parse(JSON.stringify(
-        createChecklist(stagePolicy.checklist, stageKey)
+        createChecklist(policy.checklist, stageKey)
       )),
 
       requiredDocs: JSON.parse(JSON.stringify(
-        createRequiredDocs(stagePolicy.requiredDocs || [], stageKey)
+        createRequiredDocs(policy.requiredDocs || [], stageKey)
       )),
     };
   });
 
-  // =========================
-  // STEP 3: INSERT STAGES
-  // =========================
   await prisma.projectStage.createMany({
     data: stagesData,
   });
 
   // =========================
-  // STEP 4: RETURN FULL PROJECT
+  // CREATE APPROVALS
   // =========================
+  const approvals = stagesData.map((stage) => ({
+    projectId,
+    stage: stage.stageOrder,
+    status: "PENDING",
+  }));
+
+  await prisma.projectApproval.createMany({
+    data: approvals,
+  });
+
+  return {
+    success: true,
+    message: "Workflow created",
+  };
+};
+
+// export const createProjectService = async (data, user) => {
+//   const dbUser = await prisma.user.findUnique({
+//     where: { id: user.id },
+//   });
+
+//   if (!dbUser) {
+//     throw new Error("Invalid PMO user");
+//   }
+
+//   let projectManagerId = null;
+
+//   if (data.projectManagerEmail) {
+//     const pm = await prisma.user.findUnique({
+//       where: { email: data.projectManagerEmail },
+//     });
+
+//     if (!pm) {
+//       throw new Error("Project Manager not found");
+//     }
+
+//     projectManagerId = pm.id;
+//   }
+
+//   // =========================
+//   // CREATE PROJECT
+//   // =========================
+//   const project = await prisma.project.create({
+//     data: {
+//       projectName: data.name,
+//       clientName: data.clientName,
+//       productName: data.productName,
+
+//       projectManagerId,
+
+//       workflowStatus: "OPEN",
+//       currentStageOrder: 1,
+//     },
+//   });
+
+//   // =========================
+//   //  BUILD WORKFLOW (ONE SYSTEM FOR ALL)
+//   // =========================
+//   await buildWorkflowForProject(project.id);
+
+//   return prisma.project.findUnique({
+//     where: { id: project.id },
+//     include: {
+//       stages: true,
+//       approvals: true,
+//       projectManager: true,
+//     },
+//   });
+// };
+
+export const assignProjectService = async (projectId, pmEmail) => {
+
+  const user = await prisma.user.findUnique({
+    where: { email: pmEmail }
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  if (user.role !== "PROJECTMANAGER") {
+    throw new Error("User is not a Project Manager");
+  }
+
+  const project = await prisma.project.update({
+    where: { id: Number(projectId) },
+    data: {
+      projectManagerId: user.id,  
+
+      currentStageOrder: 1,
+      workflowStatus: "OPEN",
+    },
+  });
+
+  await prisma.projectStage.updateMany({
+    where: {
+      projectId: project.id,
+      stageOrder: 1,
+    },
+    data: {
+      workflowStatus: "OPEN",
+    },
+  });
+
+  await prisma.projectStage.updateMany({
+    where: {
+      projectId: project.id,
+      stageOrder: { gt: 1 },
+    },
+    data: {
+      workflowStatus: "LOCKED",
+    },
+  });
+
   return await prisma.project.findUnique({
-    where: { id: project.id },
+    where: {
+      id: project.id,
+    },
+
     include: {
-      stages: true, // checklist + docs already inside JSON
+      projectManager: {
+        select: {
+          id: true,
+          fullName: true,
+          email: true,
+        },
+      },
+
+      stages: {
+        orderBy: {
+          stageOrder: "asc",
+        },
+      },
+
+      approvals: true,
     },
   });
 };
 
 /* =========================================
-    GET ALL PROJECTS (ROLE-AWARE)
+    GET PROJECT
 ========================================= */
 export const getProjectsService = async (user) => {
   const where = {};
 
+  // ROLE-BASED FILTERING
   if (user.role === "PROJECTMANAGER") {
-    where.projectManagerEmail = user.email;
+    where.projectManager = user.email;
   }
 
-  return await prisma.project.findMany({
-    where,
+  const projects = await prisma.project.findMany({
     include: {
+      projectManager: {
+        select: {
+          id: true,
+          fullName: true,
+          email: true,
+        },
+      },
       stages: true,
+      approvals: true,
     },
-    orderBy: [
-      { projectManagerEmail: "asc" },
-      { updatedAt: "desc" },
-    ],
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
+
+  return projects;
 };
 
-
-/* =========================================
-    GET PROJECT BY ID
-========================================= */
 export const getProjectByIdService = async (id) => {
   return await prisma.project.findUnique({
     where: { id: Number(id) },
-
     include: {
-      stages:true
-    },
+      stages: {
+        orderBy: { stageOrder: "asc" }
+      },
+      approvals: {
+        orderBy: { stage: "asc" }
+      }
+    }
   });
 };
 
@@ -177,9 +299,6 @@ export const updateChecklistBulkService = async (
   checklist
 ) => {
 
-  console.log("⚙️ SERVICE HIT");
-  console.log("DATA RECEIVED:", checklist);
-
   const stage = await prisma.projectStage.findFirst({
     where: {
       id: Number(stageId),
@@ -189,11 +308,14 @@ export const updateChecklistBulkService = async (
 
   if (!stage) throw new Error("Stage not found");
 
-  // IMPORTANT: normalize incoming checklist
   const updatedChecklist = stage.checklist.map(existingItem => {
     const incomingItem = checklist.find(i => i.id === existingItem.id);
 
     if (!incomingItem) return existingItem
+
+    if (existingItem.isRequired) {
+      return existingItem;
+    }
 
     return {
       ...existingItem,
@@ -202,27 +324,23 @@ export const updateChecklistBulkService = async (
     };
   });
 
-  // console.log("SENDING CHECKLIST:", updatedChecklist)
-
-  const allChecked = updatedChecklist.every(i => i.completed);
-
-  console.log("💾 WRITING TO DB...");
+  const allRequiredDone = stage.requiredDocs.every(d => d.status === "UPLOADED");
 
   const updatedStage = await prisma.projectStage.update({
     where: { id: Number(stageId) },
     data: {
       checklist: updatedChecklist,
-      completed: allChecked,
+      completed: updatedChecklist.every(i => i.completed && allRequiredDone),
     },
   });
-
-  console.log("✅ DB UPDATE RESULT:", updatedStage);
 
   return updatedStage;
 };
 
 
-// UPLOAD DOCS
+/* =========================================
+    UPLOAD DOCS
+========================================= */
 
 export const uploadStageDocumentService = async (
   projectId,
@@ -231,6 +349,7 @@ export const uploadStageDocumentService = async (
   fileUrl,
   fileName
 ) => {
+
   const stage = await prisma.projectStage.findFirst({
     where: {
       id: Number(stageId),
@@ -245,6 +364,7 @@ export const uploadStageDocumentService = async (
     : [];
 
   const updatedDocs = docs.map(doc => {
+
     if (doc.key !== docKey) return doc;
 
     return {
@@ -256,19 +376,178 @@ export const uploadStageDocumentService = async (
     };
   });
 
+  const updatedChecklist = stage.checklist.map(item => {
+
+    if (!item.requiredDoc) {
+      return item;
+    }
+
+    const matchingDoc = updatedDocs.find(
+      doc => doc.key === item.requiredDoc
+    );
+
+    console.log(
+      "MATCHING DOC:",
+      matchingDoc
+    );
+
+    return {
+      ...item,
+      completed: matchingDoc?.status === "UPLOADED",
+      completedAt:
+        matchingDoc?.status === "UPLOADED"
+          ? new Date()
+          : null,
+    };
+  });
+
+  const allChecklistCompleted =
+    updatedChecklist
+      .filter(item => item.isRequired)
+      .every(item => item.completed);
+
   return prisma.projectStage.update({
-    where: { id: Number(stageId) },
+    where: {
+      id: Number(stageId),
+    },
     data: {
       requiredDocs: updatedDocs,
+      checklist: updatedChecklist,
+      completed: allChecklistCompleted,
+      completedAt: allChecklistCompleted ? new Date() : null,
     },
   });
+
+  // return prisma.project.findUnique({
+  //   where: { id: Number(projectId) },
+  //   include: {
+  //     stages: true,
+  //     approvals: true,
+  //     projectManager: true,
+  //   },
+  // });
 };
 
-// await prisma.projectStage.updateMany({
-//   data: {
-//     requiredDocs: []
-//   }
-// });
+/* =========================================
+    DELETE DOC
+========================================= */
+
+export const deleteStageDocumentService = async (
+  projectId,
+  stageId,
+  docKey
+) => {
+
+  const stage = await prisma.projectStage.findFirst({
+    where: {
+      id: Number(stageId),
+      projectId: Number(projectId),
+    },
+  });
+
+  if (!stage) {
+    throw new Error("Stage not found");
+  }
+
+  const docs = stage.requiredDocs || [];
+
+  const targetDoc = docs.find(
+    doc => doc.key === docKey
+  );
+
+  if (!targetDoc) {
+    throw new Error("Document not found");
+  }
+
+  console.log("TARGET DOC:", targetDoc);
+
+  // DELETE FILE FROM DISK
+  if (targetDoc?.fileURL) {
+
+    console.log("FILE URL:", targetDoc?.fileURL);
+
+    const filename = path.basename(
+      targetDoc.fileURL
+    );
+
+    console.log("FILENAME:", filename);
+
+    const filepath = path.join(
+      process.cwd(),
+      "backend",
+      "uploads",
+      filename
+    );
+
+    console.log("Deleting:", filepath);
+    console.log("FILE PATH:", filepath);
+
+    console.log("FILE EXISTS?", fs.existsSync(filepath));
+
+    if (fs.existsSync(filepath)) {
+      fs.unlinkSync(filepath);
+      console.log("File deleted");
+    }
+  }
+
+  // RESET DOCUMENT
+  const updatedDocs = docs.map(doc => {
+
+    if (doc.key !== docKey) {
+      return doc;
+    }
+
+    return {
+      ...doc,
+      fileURL: null,
+      fileName: null,
+      uploadedAt: null,
+      status: "PENDING",
+    };
+  });
+
+  // UNCHECK RELATED CHECKLIST
+  const updatedChecklist = stage.checklist.map(item => {
+
+    if (item.requiredDoc !== docKey) {
+      return item;
+    }
+
+    return {
+      ...item,
+      completed: false,
+      completedAt: null,
+    };
+  });
+
+  const allChecklistCompleted =
+    updatedChecklist
+      .filter(item => item.isRequired)
+      .every(item => item.completed);
+
+  return prisma.projectStage.update({
+    where: {
+      id: Number(stageId),
+    },
+    data: {
+      requiredDocs: updatedDocs,
+      checklist: updatedChecklist,
+      completed: allChecklistCompleted,
+      completedAt: allChecklistCompleted
+        ? stage.completedAt
+        : null,
+    },
+  });
+
+  // return prisma.project.findUnique({
+  //   where: { id: Number(projectId) },
+  //   include: {
+  //     stages: true,
+  //     approvals: true,
+  //     projectManager: true,
+  //   },
+  // });
+};
 
 /* =========================================
     UPDATE PROJECT

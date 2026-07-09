@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import { assignProjectManager } from '../../api'
+import { assignProject } from '../../api'
 import { useNotification } from '../NotificationContext'
 
 function AddProjectManager({
@@ -16,44 +16,55 @@ function AddProjectManager({
     }) {
 
     const [open, setOpen] = useState(false)
-    const { setNotification } = useNotification()
+    const { showNotification } = useNotification()
     const project = selectedProject
 
-
-    const handleAssign = async (projectId, p) => {
-        if(user.role !== "HEADOFOPS") return;
-
+    const handleAssign = async (projectId, email) => {
         try {
-            await assignProjectManager(projectId, p)
-
-            setProjects(prev => 
-                prev.map(project =>
-                    project.id === projectId
-                        ? {...project, projectManagerEmail: p}
-                        : project,
-                )
+            const response = await assignProject(
+            projectId,
+            email
             );
 
-            setAssignedManager(p);
-            setAssignedManager(null)
+            // console.log(response.data)
+            const updatedProject = response.data
+            setSelectedProject(updatedProject)
+
+            setProjects(prevProjects => 
+                prevProjects.map(project =>
+                    project.id === updatedProject.id
+                        ? updatedProject
+                        : project
+                )
+            )
+
             onClose();
 
-            setNotification({
+            showNotification({
                 type: "success",
                 title: "Project Manager Assigned!",
                 message: `You have successfully assigned a project manager to Project - ${project.projectName}`
             });
 
         } catch (err) {
-            console.error(err)
-            alert("Failed to assign project manager")
-        }
+            console.error(err);
 
+            showNotification({
+                type: "error",
+                title: "Failed To AssignProject Manager!",
+                message: "Unable to assign a project manager"
+            });
+        }
     };
 
     return (
-        <div className='absolute z-2000 w-full h-full bg-[#00000080] flex flex-col items-end overflow-y-auto overscroll-contain'>
-            <div className='flex flex-col w-135.5 h-430 overflow-y-auto overscroll-contain bg-[#F7F7F7] px-4 py-4'>
+        <div 
+            className='fixed z-2000 w-full h-screen bg-[#00000080] flex flex-col items-end'
+            onClick={onClose}
+            >
+            <div 
+                className='flex flex-col w-135.5 min-h-0 overflow-y-auto no-scrollbar bg-[#F7F7F7] px-4 py-4'
+                onClick={(e) => e.stopPropagation()}>
                 <div className='flex items-center justify-between mb-6'>
                     <h2 className='font-semibold text-[16px]/[20px] text-[#090909]'>Assign A Project Manager</h2>
                     <button
@@ -92,6 +103,7 @@ function AddProjectManager({
                         <label htmlFor="" className='font-medium text-[14px]/[20px] text-[#090909]'>Sales ID</label>
                         <input 
                         type="text"
+                        value={project.salesId}
                         readOnly
                         className='font-normal text-[16px]/[24px] text-[#667085] rounded-lg border border-[#D0D5DD] bg-[#EFEFEF] pt-2.5 pb-2.5 pl-3.5' />
                     </div>
@@ -99,17 +111,18 @@ function AddProjectManager({
                         <label htmlFor="" className='font-medium text-[14px]/[20px] text-[#090909]'>Client PMO Address</label>
                         <input 
                         type="text"
+                        value={project.pmoAddress}
                         readOnly
                         className='font-normal text-[16px]/[24px] text-[#667085] rounded-lg border border-[#D0D5DD] bg-[#EFEFEF] pt-2.5 pb-2.5 pl-3.5' />
                     </div>
-                    <div className='flex flex-col gap-1.5'>
+                    {/* <div className='flex flex-col gap-1.5'>
                         <label htmlFor="" className='font-medium text-[14px]/[20px] text-[#090909]'>PMO ID</label>
                         <input 
                         type="text" 
-                        value={project.pmoId}
+                        // value={project.pmoId}
                         readOnly
                         className='font-normal text-[16px]/[24px] text-[#667085] rounded-lg border border-[#D0D5DD] bg-[#EFEFEF] pt-2.5 pb-2.5 pl-3.5' />
-                    </div>
+                    </div> */}
                     <div className='flex flex-col gap-1.5 sticky'>
                         <label htmlFor="" className='font-medium text-[14px]/[20px] text-[#090909]'> Assign Project Manager</label>
                         <button 
@@ -121,17 +134,17 @@ function AddProjectManager({
                         
                         {
                             open && (
-                                <div className='flex flex-col items-start w-full h-35.75 rounded-lg -mt-1.5 overflow-y-auto overscroll-contain cursor-pointer'>
+                                <div className='flex flex-col items-start w-full min-h-0 rounded-lg -mt-1.5 overflow-auto no-scrollbar overscroll-contain cursor-pointer'>
                                     {
-                                        projectManagers.map((p, index) => (
+                                        projectManagers?.map((p, index) => (
                                             <button
                                                 key={index}
                                                 onClick={() => {
-                                                    setAssignedManager(p)
+                                                    setAssignedManager(p.email)
                                                     setOpen(!open)
                                                 }}
                                                 className='font-medium text-[16px]/[24px] text-[#090909] pt-2.5 pb-2.5 pl-3.5  border border-[#D0D5DD] bg-[#EFEFEF] w-full text-left cursor-pointer'>
-                                                    {p}
+                                                    {p.email}
                                             </button>
                                         ))
                                     }

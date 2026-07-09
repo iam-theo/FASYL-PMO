@@ -1,48 +1,72 @@
 import {
-  createProjectService,
   getProjectsService,
   getProjectByIdService,
+  assignProjectService,
   updateProjectService,
   deleteProjectService,
   updateChecklistBulkService,
-  uploadStageDocumentService
+  uploadStageDocumentService,
+  deleteStageDocumentService
 } from "./project.service.js";
 
-console.log("🔥 CHECKLIST ROUTE HIT");
+import fs from "fs";
+import path from "path";
+
+console.log("CHECKLIST ROUTE HIT");
 /* =========================================
     CREATE PROJECT
 ========================================= */
-export const createProject = async (req, res) => {
-  try {
-    const project = await createProjectService(req.body, req.user);
+// export const createProject = async (req, res) => {
+//   try {
+//     if (!req.user) {
+//       return res.status(401).json({
+//         success: false,
+//         message: "Unauthorized user",
+//       });
+//     }
 
-    return res.status(201).json({
-      success: true,
-      message: "Project created successfully",
-      data: project,
-    });
-  } catch (err) {
-    return res.status(500).json({
-      success: false,
-      message: "Failed to create project",
-      error: err.message,
-    });
-  }
-};
+//     const project = await createProjectService(req.body, req.user);
+
+//     return res.status(201).json({
+//       success: true,
+//       message: "Project created successfully",
+//       data: project,
+//     });
+
+//   } catch (err) {
+//     console.error("CREATE PROJECT ERROR:", err);
+
+//     return res.status(500).json({
+//       success: false,
+//       message: "Failed to create project",
+//       error: err.message,
+//     });
+//   }
+// };
 
 /* =========================================
     GET ALL PROJECTS (ROLE-AWARE)
 ========================================= */
 export const getProjects = async (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized user",
+      });
+    }
+
     const projects = await getProjectsService(req.user);
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       message: "Projects retrieved successfully",
       data: projects,
     });
+
   } catch (err) {
+    console.error("GET PROJECTS ERROR:", err);
+
     return res.status(500).json({
       success: false,
       message: "Failed to fetch projects",
@@ -51,12 +75,43 @@ export const getProjects = async (req, res) => {
   }
 };
 
+export const assignProject = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { projectManagerEmail } = req.body;
+
+    if (!projectManagerEmail) {
+      return res.status(400).json({
+        success: false,
+        message: "projectManagerEmail is required",
+      });
+    }
+
+    const project = await assignProjectService(id, projectManagerEmail);
+
+    return res.status(200).json({
+      success: true,
+      message: "Project assigned successfully",
+      data: project,
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to assign project",
+      error: err.message,
+    });
+  }
+};
+
 /* =========================================
     GET SINGLE PROJECT
 ========================================= */
-export const getProject = async (req, res) => {
+export const getProjectById = async (req, res) => {
   try {
-    const project = await getProjectByIdService(req.params.id);
+    const { id } = req.params;
+
+    const project = await getProjectByIdService(id);
 
     if (!project) {
       return res.status(404).json({
@@ -65,12 +120,15 @@ export const getProject = async (req, res) => {
       });
     }
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       message: "Project retrieved successfully",
       data: project,
     });
+
   } catch (err) {
+    console.error("GET PROJECT BY ID ERROR:", err);
+
     return res.status(500).json({
       success: false,
       message: "Failed to fetch project",
@@ -84,16 +142,8 @@ export const getProject = async (req, res) => {
 ========================================= */
 
 export const updateChecklistBulk = async (req, res) => {
-
-  console.log("🔥 CHECKLIST ROUTE HIT");
-  console.log("PARAMS:", req.params);
-  console.log("BODY:", req.body);
   
   try {
-    console.log("🔥 CHECKLIST ROUTE HIT");
-    console.log("PARAMS:", req.params);
-    console.log("BODY:", req.body);
-
     const { projectId, stageId } = req.params;
     const { checklist } = req.body;
 
@@ -139,7 +189,7 @@ export const uploadStageDocument = async (req, res) => {
 
     const fileUrl = `http://localhost:5000/uploads/${file.filename}`;
 
-    const filename = `${file.filename}`
+    const filename = `${file.originalname}`
 
     const updatedStage = await uploadStageDocumentService(
       projectId,
@@ -164,32 +214,54 @@ export const uploadStageDocument = async (req, res) => {
 };
 
 /* =========================================
+    DELETE DOCS
+========================================= */
+
+export const deleteStageDocument = async (req, res) => {
+  try {
+
+    const { projectId, stageId, docKey } = req.params;
+
+    const updatedStage = await deleteStageDocumentService(
+      projectId,
+      stageId,
+      docKey
+    );
+
+    return res.json({
+      success: true,
+      message: "Document deleted successfully",
+      data: updatedStage,
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+
+  }
+};
+
+/* =========================================
     UPDATE PROJECT
 ========================================= */
 export const updateProject = async (req, res) => {
   try {
-    console.log("PARAMS:", req.params)
-    console.log("BODY:", req.body)
-    
-    const project = await updateProjectService(
-      req.params.id,
-      req.body
-    );
+    const updated = await updateProjectService(req.params.id, req.body);
 
-    if (!project) {
-      return res.status(404).json({
-        success: false,
-        message: "Project not found",
-      });
-    }
-
-
-    return res.json({
+    return res.status(200).json({
       success: true,
       message: "Project updated successfully",
-      data: project,
+      data: updated,
     });
+
   } catch (err) {
+    console.error("UPDATE PROJECT ERROR:", err);
+
     return res.status(500).json({
       success: false,
       message: "Failed to update project",
@@ -203,20 +275,16 @@ export const updateProject = async (req, res) => {
 ========================================= */
 export const deleteProject = async (req, res) => {
   try {
-    const project = await deleteProjectService(req.params.id);
+    await deleteProjectService(req.params.id);
 
-    if (!project) {
-      return res.status(404).json({
-        success: false,
-        message: "Project not found",
-      });
-    }
-
-    return res.json({
+    return res.status(200).json({
       success: true,
       message: "Project deleted successfully",
     });
+
   } catch (err) {
+    console.error("DELETE PROJECT ERROR:", err);
+
     return res.status(500).json({
       success: false,
       message: "Failed to delete project",

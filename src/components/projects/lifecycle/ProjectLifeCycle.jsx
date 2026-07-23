@@ -1,7 +1,6 @@
-import React from 'react'
 import UploadBox from './UploadBox';
-import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+// import { useNavigate } from 'react-router-dom';
 import { toggleChecklist } from './utils/ToggleChecklist';
 import { submitStage, approveStage, rejectStage } from '../../../api';
 import { useNotification } from '../../NotificationContext';
@@ -10,16 +9,13 @@ import { FaRegCircleXmark, FaRegCircleCheck } from 'react-icons/fa6'
 function ProjectLifeCycle({ 
     selectedProject, 
     setSelectedProject,
-    selectedStage,
-    setSelectedStage, 
-    projects, 
     setProjects, 
     onClose,  
     user,
     }) {
 
         const { showNotification } = useNotification()
-        const [isRejected, setIsRejected] = useState(false);
+        // const [isRejected, setIsRejected] = useState(false);
         const [reasonn, setReasonn] = useState("");
         const [isOpen, setIsOpen] = useState(false);
 
@@ -53,8 +49,11 @@ function ProjectLifeCycle({
         return STAGES[currentStageOrder] || "Unknown Stage";
     };
 
-    const length = selectedProject?.stages?.length || 0
-    const projectStage = selectedStage;
+    console.log(selectedProject);
+
+    // const length = selectedProject?.stages?.length || 0
+    const currentStageOrder = selectedProject?.currentStageOrder;
+    const projectStage = selectedProject?.stages?.find(s => s.stageOrder === currentStageOrder) || selectedProject?.stages?.[0] || null;
     // console.log(projectStage);
     const currentStage = getStage(projectStage?.stageOrder);
     const nextStage = getStage((projectStage?.stageOrder) + 1)
@@ -72,7 +71,7 @@ function ProjectLifeCycle({
         HEADOFOPS: approveStage,
     };
 
-    const allDocsUploaded = projectStage.requiredDocs.every(doc => doc.status === "UPLOADED")
+    const allDocsUploaded = projectStage?.requiredDocs ? projectStage.requiredDocs.every(doc => doc.status === "UPLOADED") : false;
 
     const handleWorkflowAction = async () => {
         try {
@@ -86,25 +85,25 @@ function ProjectLifeCycle({
                 return
             }
 
-            if (projectStage.workflowStatus === "COMPLETED" && user.role === "PROJECTMANAGER") { 
+            if (projectStage?.workflowStatus === "COMPLETED" && user?.role === "PROJECTMANAGER") { 
                 showNotification({
                     type: "success",
                     title: "Project Completed!",
-                    message: `You have successfully completed - ${selectedProject.projectName}`
+                    message: `You have successfully completed - ${selectedProject?.projectName}`
                 }) 
                 return 
             } 
 
-            if (projectStage.workflowStatus === "COMPLETED" && user.role === "HEADOFOPS") { 
+            if (projectStage?.workflowStatus === "COMPLETED" && user?.role === "HEADOFOPS") { 
                 showNotification({
                     type: "success",
                     title: "Project Completed!",
-                    message: `This project - ${selectedProject.projectName} has been successfully completed`
+                    message: `This project - ${selectedProject?.projectName} has been successfully completed`
                 }) 
                 return 
             } 
 
-            const action = actionMap[user.role];
+            const action = actionMap[user?.role];
 
             if (!action) {
                 console.log("Unauthorized");
@@ -112,8 +111,8 @@ function ProjectLifeCycle({
             }
 
             const response = await action(
-                selectedProject.id,
-                projectStage.stageOrder
+                selectedProject?.projectId,
+                projectStage?.stageOrder
             );
 
             const updatedProject = response.data
@@ -122,21 +121,21 @@ function ProjectLifeCycle({
 
             setProjects(prevProjects => 
                 prevProjects.map(project =>
-                    project.id === updatedProject.id
+                    project.projectId === updatedProject.projectId
                         ? updatedProject
                         : project
                 )
             )
 
-            user.role === "PROJECTMANAGER"
+            user?.role === "PROJECTMANAGER"
             ? showNotification({
                 type: "success",
                 title: "Signoff Request Sent!",
-                message: `You have successfully sent a signoff request for - ${selectedProject.projectName} (${projectStage.stageName})`
+                message: `You have successfully sent a signoff request for - ${selectedProject?.projectName} (${projectStage?.stageName})`
             }) : showNotification({
                 type: "success",
                 title: "Project Stage Signed off Successful!",
-                message: `You have successfully signed off for - ${selectedProject.projectName} (${projectStage.stageName})`
+                message: `You have successfully signed off for - ${selectedProject?.projectName} (${projectStage?.stageName})`
             });
 
             onClose()
@@ -144,7 +143,7 @@ function ProjectLifeCycle({
         } catch (err) {
             console.error(err);
 
-            user.role === "PROJECTMANAGER"
+            user?.role === "PROJECTMANAGER"
             ? showNotification({
                 type: "error",
                 title: "Signoff Request Failed!",
@@ -172,7 +171,7 @@ function ProjectLifeCycle({
 
                 setProjects(prevProjects => 
                     prevProjects.map(project =>
-                        project.id === updatedProject.id
+                        project.projectId === updatedProject.projectId
                             ? updatedProject
                             : project
                     )
@@ -185,7 +184,7 @@ function ProjectLifeCycle({
                 showNotification({
                     type: "success",
                     title: "Project Stage Signoff Rejected!",
-                    message: `You have successfully rejected signoff for - ${selectedProject.projectName} (${projectStage.stageName})`
+                    message: `You have successfully rejected signoff for - ${selectedProject?.projectName} (${projectStage?.stageName})`
                 });
 
                 onClose()
@@ -260,12 +259,11 @@ function ProjectLifeCycle({
                         docStatus={doc.status}
                         docName={doc.fileName}
                         docURL={doc.fileURL}
-                        projectId={selectedProject.id}
-                        stageId={projectStage.id}
+                        projectId={selectedProject?.projectId}
+                        stageId={projectStage?.id}
                         user={user}
                         setProjects={setProjects}
                         setSelectedProject={setSelectedProject}
-                        setSelectedStage={setSelectedStage}
                         showNotification={showNotification}
                     />
                 ))}
@@ -277,14 +275,14 @@ function ProjectLifeCycle({
                 {/* Checklist */}
                 <div className='flex flex-col gap-2'>
                     {
-                        projectStage?.checklist?.map((item, index) => (
+                        projectStage?.checklist?.map((item) => (
                             <div 
                                 key={item.id}
                                 onClick={() =>
                                     toggleChecklist(
                                         setProjects,
-                                        selectedProject.id,
-                                        projectStage.id,
+                                        selectedProject?.projectId,
+                                        projectStage?.id,
                                         item.id,
                                         user
                                     )
@@ -312,7 +310,7 @@ function ProjectLifeCycle({
                 </div>
             </div>
 
-            {user.role === "PROJECTMANAGER" && ( 
+            {user?.role === "PROJECTMANAGER" && ( 
                 <button
                     onClick={handleWorkflowAction} 
                     className={`w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#1B3C4A] cursor-pointer flex items-center justify-center gap-2`}>
@@ -326,7 +324,7 @@ function ProjectLifeCycle({
                 </button>
             )}
 
-            {user.role === "HEADOFOPS" && ( 
+            {user?.role === "HEADOFOPS" && ( 
             <div className='flex items-center justify-between gap-3 relative w-full'>
                 {isOpen && (
                     <div className='absolute z-4000 bottom-10 right-0 w-100'>
@@ -351,7 +349,7 @@ function ProjectLifeCycle({
                             </button>
 
                             <button
-                                onClick={() => handleRejection(selectedProject.id, projectStage?.stageOrder, reasonn)} 
+                                onClick={() => handleRejection(selectedProject?.projectId, projectStage?.stageOrder, reasonn)} 
                                 className='w-full border border-[#0000000D] rounded-lg px-4 py-2.5 bg-[#D20019] flex items-center justify-center gap-2 cursor-pointer'>
                                 <FaRegCircleXmark className='text-[#FFFFFF]' />
                                 <p className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>Reject Signoff</p>

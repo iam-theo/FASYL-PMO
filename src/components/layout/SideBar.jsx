@@ -1,10 +1,12 @@
 import React from 'react'
 import { AiTwotoneDashboard, AiTwotoneFolderOpen } from "react-icons/ai";
+import { FaTasks } from "react-icons/fa"
 
-function SideBar({ activeTab, setActiveTab, handleLogout }) {
+function SideBar({ activeTab, setActiveTab, setOpenProject, handleLogout }) {
     const tabs = [
         { name: "dashboard", label: "Dashboard"},
-        { name: "projects", label: "Projects"}
+        { name: "projects", label: "Projects"},
+        // { name: "tasks", label: "Tasks"}
     ]
 
     return (
@@ -22,7 +24,10 @@ function SideBar({ activeTab, setActiveTab, handleLogout }) {
                         tabs.map((tab) => (
                             <button 
                                 key={tab.name} 
-                                onClick={() => setActiveTab(tab.name)}  
+                                onClick={() => {
+                                    setActiveTab(tab.name),
+                                    setOpenProject(false)
+                                }}  
                                 className={`w-full py-2 px-3 flex items-center gap-3 rounded-md cursor-pointer ${
                                     activeTab === `${tab.name}`
                                     ? "bg-[#0000000D] text-[#1B3C4A]"
@@ -36,9 +41,14 @@ function SideBar({ activeTab, setActiveTab, handleLogout }) {
                                             ? <AiTwotoneDashboard
                                                 className="text-5xl"
                                             />
-                                            : <AiTwotoneFolderOpen
+                                            : tab.name === "projects" 
+                                            ? <AiTwotoneFolderOpen
                                                 className="text-5xl"
-                                            />
+                                            /> 
+                                            : null
+                                            // <FaTasks 
+                                            //     className="text-xl" 
+                                            // />
                                     }
                                 </div>
                                 <p className='font-medium text-[16px]/[24px]'>{tab.label}</p>

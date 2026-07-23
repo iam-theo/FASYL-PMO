@@ -1,5 +1,6 @@
-import { PrismaClient, WorkflowStatus } from "@prisma/client";
+import {  WorkflowStatus } from "@prisma/client";
 
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 /**
@@ -9,7 +10,7 @@ const prisma = new PrismaClient();
  */
 const getProjectOrThrow = async (projectId) => {
   const project = await prisma.project.findUnique({
-    where: { id: projectId },
+    where: { projectId: projectId },
     include: {
       stages: true,
       approvals: true,
@@ -26,12 +27,11 @@ const getProjectOrThrow = async (projectId) => {
  * =========================
  */
 export const getStageState = async (projectId, stageOrder) => {
-  const pid = Number(projectId);
   const order = Number(stageOrder);
 
   const [project, stage, approval] = await Promise.all([
     prisma.project.findUnique({
-      where: { id: pid },
+      where: { projectId: projectId },
       include: {
         stages: true,
         approvals: true,
@@ -41,7 +41,7 @@ export const getStageState = async (projectId, stageOrder) => {
     prisma.projectStage.findUnique({
       where: {
         projectId_stageOrder: {
-          projectId: pid,
+          projectId: projectId,
           stageOrder: order,
         },
       },
@@ -49,7 +49,7 @@ export const getStageState = async (projectId, stageOrder) => {
 
     prisma.projectApproval.findFirst({
       where: {
-        projectId: pid,
+        projectId: projectId,
         stage: order,
       },
     }),
@@ -80,11 +80,16 @@ export const submitStage = async ({
   userId,
 }) => {
 
-  const pid = Number(projectId);
   const order = Number(stageOrder);
   const uid = Number(userId);
 
-  const project = await getProjectOrThrow(pid);
+  const project = await getProjectOrThrow(projectId);
+
+  // const head = await prisma.user.findFirst({
+  //   where: {
+  //     role: "HEADOFOPS"
+  //   }
+  // });
 
   if (!project) {
     throw new Error("Project not found");
@@ -92,7 +97,7 @@ export const submitStage = async ({
 
   const stage = await prisma.projectStage.findFirst({
     where: {
-      projectId: pid,
+      projectId: projectId,
       stageOrder: order,
     },
   });
@@ -107,7 +112,7 @@ export const submitStage = async ({
 
   const approval = await prisma.projectApproval.findFirst({
     where: {
-      projectId: pid,
+      projectId: projectId,
       stage: order,
       status: {
         in: ["PENDING", "REJECTED"]
@@ -125,7 +130,7 @@ export const submitStage = async ({
       id: stage.id,
     },
     data: {
-      workflowStatus: "SUBMITTED",
+      workflowStatus: WorkflowStatus.SUBMITTED,
       submittedAt: new Date(),
       submittedBy: uid, 
     },
@@ -136,7 +141,7 @@ export const submitStage = async ({
       stageOrder: order + 1,
     },
     data: {
-      workflowStatus: "OPEN",
+      workflowStatus: WorkflowStatus.OPEN,
     },
   });
 
@@ -146,7 +151,7 @@ export const submitStage = async ({
       id: approval.id,
     },
     data: {
-      status: "SUBMITTED", 
+      status: WorkflowStatus.SUBMITTED, 
       submittedBy: uid, 
       updatedAt: new Date(),
     },
@@ -155,15 +160,15 @@ export const submitStage = async ({
 
   await prisma.project.update({
     where: {
-      id: pid,
+      projectId: projectId,
     },
     data: {
-      workflowStatus: "SUBMITTED",
+      workflowStatus: WorkflowStatus.SUBMITTED,
     },
   });
 
   return await prisma.project.findUnique({
-    where: { id: pid },
+    where: { projectId: projectId },
 
     include: {
         stages: {
@@ -190,17 +195,16 @@ export const submitStage = async ({
  */
 export const approveStage = async ({ projectId, stageOrder, userId }) => {
 
-  const pid = Number(projectId);
   const order = Number(stageOrder);
   const uid = Number(userId)
 
-  const project = await getProjectOrThrow(pid);
+  const project = await getProjectOrThrow(projectId);
 
   if (!project) throw new Error("Project not found");
 
   const stage = await prisma.projectStage.findFirst({
     where: {
-      projectId: pid,
+      projectId: projectId,
       stageOrder: order,
     },
   });
@@ -211,9 +215,9 @@ export const approveStage = async ({ projectId, stageOrder, userId }) => {
 
   const approval = await prisma.projectApproval.findFirst({
     where: {
-      projectId: pid,
+      projectId: projectId,
       stage: order,
-      status: "SUBMITTED", 
+      status: WorkflowStatus.SUBMITTED, 
     },
   });
 
@@ -226,7 +230,7 @@ export const approveStage = async ({ projectId, stageOrder, userId }) => {
   await prisma.projectApproval.update({
     where: { id: approval.id },
     data: {
-      status: "APPROVED",
+      status: WorkflowStatus.APPROVED,
       approvedBy: uid, 
       updatedAt: new Date()
     }
@@ -238,42 +242,43 @@ export const approveStage = async ({ projectId, stageOrder, userId }) => {
     await prisma.projectStage.update({
       where: { id: stage.id },
       data: {
-        workflowStatus: "APPROVED",
+        workflowStatus: WorkflowStatus.APPROVED,
         approvedAt: new Date(),
         approvedBy: uid 
       }
     });
 
     await prisma.project.update({
-      where: { id: pid },
+      where: { projectId: projectId },
       data: {
         currentStageOrder: nextStage,
-        workflowStatus: "APPROVED",
+        workflowStatus: WorkflowStatus.APPROVED,
         progressPercent: Math.round((nextStage / 8) * 100)
       }
     });
+
   } else {
       await prisma.projectStage.update({
       where: { id: stage.id },
       data: {
-        workflowStatus: "COMPLETED",
+        workflowStatus: WorkflowStatus.COMPLETED,
         completedAt: new Date(),
         completed: true 
       }
     });
 
     await prisma.project.update({
-      where: { id: pid },
+      where: { projectId: projectId },
       data: {
         currentStageOrder: order,
-        workflowStatus: "COMPLETED",
+        workflowStatus: WorkflowStatus.COMPLETED,
         progressPercent: Math.round((order / 8) * 100)
       }
     });
   }
 
   return await prisma.project.findUnique({
-    where: { id: pid },
+    where: { projectId: projectId },
 
     include: {
         stages: {
@@ -300,11 +305,10 @@ export const approveStage = async ({ projectId, stageOrder, userId }) => {
  */
 export const rejectStage = async ({ projectId, stageOrder, userId, reason }) => {
 
-  const pid = Number(projectId);
   const order = Number(stageOrder);
   const uid = Number(userId)
 
-  const project = await getProjectOrThrow(pid);
+  const project = await getProjectOrThrow(projectId);
 
   if (!project) {
     throw new Error("Project not found");
@@ -312,7 +316,7 @@ export const rejectStage = async ({ projectId, stageOrder, userId, reason }) => 
 
   const stage = await prisma.projectStage.findFirst({
     where: {
-      projectId: pid,
+      projectId: projectId,
       stageOrder: order,
     },
   });
@@ -323,9 +327,9 @@ export const rejectStage = async ({ projectId, stageOrder, userId, reason }) => 
 
   const approval = await prisma.projectApproval.findFirst({
     where: {
-      projectId: pid,
+      projectId: projectId,
       stage: order,
-      status: "SUBMITTED" 
+      status: WorkflowStatus.SUBMITTED 
     }
   });
 
@@ -336,7 +340,7 @@ export const rejectStage = async ({ projectId, stageOrder, userId, reason }) => 
   await prisma.projectApproval.update({
     where: { id: approval.id },
     data: {
-      status: "REJECTED",
+      status: WorkflowStatus.REJECTED,
       rejectedBy: uid, 
       comment: reason,
       updatedAt: new Date()
@@ -346,7 +350,7 @@ export const rejectStage = async ({ projectId, stageOrder, userId, reason }) => 
   await prisma.projectStage.update({
     where: { id: stage.id },
     data: {
-      workflowStatus: "REJECTED",
+      workflowStatus: WorkflowStatus.REJECTED,
       rejectedAt: new Date(),
       rejectedBy: uid, 
     },
@@ -354,15 +358,15 @@ export const rejectStage = async ({ projectId, stageOrder, userId, reason }) => 
 
   await prisma.project.update({
     where: {
-      id: pid,
+      projectId: projectId,
     },
     data: {
-      workflowStatus: "REJECTED",
+      workflowStatus: WorkflowStatus.REJECTED,
     },
   });
 
   return await prisma.project.findUnique({
-    where: { id: pid },
+    where: { projectId: projectId },
 
     include: {
         stages: {

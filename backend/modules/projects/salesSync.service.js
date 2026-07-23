@@ -2,6 +2,7 @@ import { PrismaClient, WorkflowStatus } from "@prisma/client";
 const prisma = new PrismaClient();
 import axios from "axios";
 import { buildWorkflowForProject } from "./project.service.js";
+// import { notifyNewProject } from "../notifications/notification.service.js";
 
 const fetchSalesProjects = async () => {
     const response = await axios.get(
@@ -67,6 +68,16 @@ export const syncProjects = async (projects) => {
 
         if (!existing) {
             await buildWorkflowForProject(project.id);
+            
+            // const heads = await prisma.user.findMany({
+            //     where: {
+            //         role: "HEADOFOPS"
+            //     }
+            // });
+
+            // for (const head of heads) {
+            //     await notifyNewProject(head.id, project)
+            // }
         }
     }
 }

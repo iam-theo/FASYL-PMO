@@ -4,17 +4,26 @@ import Dashboard from './Dashboard'
 import Projects from '../projects/Projects'
 import ViewProjectsBody from '../projects/ViewProjectsBody'
 import { FaBell, FaUserTag } from 'react-icons/fa'
+import ProjectWorkspace from '../projects/tasks/ProjectWorkspace'
 
 function MainSection({
     activeTab, 
     setActiveTab,
     selectedProject,
     setSelectedProject,
-    selectedStage,
-    setSelectedStage,
     projects, 
+    setProjects,
     user,
-    isLoading 
+    isLoading,
+    setOpenProject,
+    openProject,
+    isSetupModalOpen,
+    setIsSetupModalOpen,
+    isSetupComplete,
+    activeSubTab,
+    setActiveSubTab,
+    activeDetails,
+    setActiveDetails
     }) {
 
     const [currentPage, setCurrentPage] = useState(1)
@@ -22,6 +31,8 @@ function MainSection({
     const [filter, setFilter] = useState("")
     const [searching, setSearching] = useState(false)
     const [filteringing, setFiltering] = useState(false)
+    // const [openProject, setOpenProject] = useState(false)
+    // const [activeSubTab, setActiveSubTab] = useState("overview")
 
     useEffect(() => {
         if (!value) return
@@ -97,7 +108,7 @@ function MainSection({
             </header>
             <section className='mt-18 h-full'>
 
-                {activeTab === "dashboard" && (
+                {activeTab === "dashboard" && openProject === false && (
                     <Dashboard
                         projects={projects}
                         user={user}
@@ -105,11 +116,12 @@ function MainSection({
                         setActiveTab={setActiveTab}
                         selectedProject={selectedProject}
                         setSelectedProject={setSelectedProject}
-                        setSelectedStage={setSelectedStage}
+                        setOpenProject={setOpenProject}
+                        setActiveSubTab={setActiveSubTab}
                     />
                 )}
 
-                {activeTab === "projects" && (
+                {activeTab === "projects" && openProject === false && (
                     <Projects
                         projects={projects} 
                         currentProjects={currentProjects}
@@ -122,10 +134,33 @@ function MainSection({
                         setCurrentPage={setCurrentPage} 
                         itemsPerPage={itemsPerPage}
                         setSelectedProject={setSelectedProject}
-                        selectedStage={selectedStage}
-                        setSelectedStage={setSelectedStage}
                         user={user} 
                         isLoading={isLoading}
+                        setOpenProject={setOpenProject}
+                        setActiveSubTab={setActiveSubTab}
+                    />
+                )}
+
+                {openProject === true && (
+                    <ProjectWorkspace 
+                        project={selectedProject}
+                        setSelectedProject={setSelectedProject}
+                        projects={projects}
+                        setProjects={setProjects}
+                        user={user}
+                        setIsSetupModalOpen={setIsSetupModalOpen}
+                        activeSubTab={activeSubTab}
+                        setActiveSubTab={setActiveSubTab}
+                        activeDetails={activeDetails}
+                        setActiveDetails={setActiveDetails}
+                        onNavigateToDashboard={() => {
+                            setActiveTab("dashboard");
+                            setOpenProject(false);
+                        }}
+                        onNavigateToProjects={() => {
+                            setActiveTab("projects");
+                            setOpenProject(false);
+                        }}
                     />
                 )}
             </section>

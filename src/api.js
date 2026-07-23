@@ -41,8 +41,30 @@ export const assignProject = async (projectId, projectManagerEmail) => {
     }
 };
 
+// export const getAssignableResources = async () => {
+//     try {
+//         const { data } = await api.get("/resources");
+//         return data;
+//     } catch (error) {
+//         console.error("Get Assignable Resources Error:", error.response?.data);
+//         throw error.response?.data || error;
+//     }
+// };
+
+// export const setupProjectResources = async (projectId, resourceIds) => {
+//     try {
+//         const { data } = await api.patch(`/projects/${projectId}/setup`, {
+//             resourceIds,
+//         });
+//         return data;
+//     } catch (error) {
+//         console.error("Setup Project Resources Error:", error.response?.data);
+//         throw error.response?.data || error;
+//     }
+// };
+
 export const handleChecklist = async (projectId, stageId, updatedChecklist) => {
-    return api.patch(`/projects/${projectId}/stages/${stageId}/checklist`, 
+    return api.patch(`/projects/${projectId}/stages/${stageId}/checklist`,
         {
         checklist: updatedChecklist,
     })
@@ -52,8 +74,7 @@ export const uploadStageDocument = async (
     projectId,
     stageId,
     docKey,
-    file,
-    fileName
+    file
     ) => {
 
     const formData = new FormData();

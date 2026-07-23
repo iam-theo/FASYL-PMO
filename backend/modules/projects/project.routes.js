@@ -17,6 +17,7 @@ import {
 
 import { uploadLimiter, writeLimiter } from "../../middleware/rateLimit.middleware.js";
 
+
 const router = Router();
 
 /* =========================================
@@ -111,7 +112,7 @@ router.get(
    ASSIGN PROJECT
 ========================================= */
 router.patch(
-   "/:id/assign/",
+   "/:projectId/assign/",
    authMiddleWare,
    allowRoles(ROLES.HEADOFOPS),
    assignProject
@@ -144,7 +145,7 @@ router.patch(
  *         description: Unauthorized
  */
 router.get(
-   "/:id",
+   "/:projectId",
    authMiddleWare,
    allowRoles(ROLES.HEADOFOPS, ROLES.PROJECTMANAGER),
    getProjectById
@@ -197,7 +198,7 @@ router.get(
  *         description: Project not found
  */
 router.put(
-   "/:id",
+   "/:projectId",
    writeLimiter,
    authMiddleWare,
    allowRoles(ROLES.HEADOFOPS),
@@ -357,7 +358,7 @@ router.delete(
  *         description: Project not found
  */
 router.delete(
-   "/:id",
+   "/:projectId",
    writeLimiter,
    authMiddleWare,
    allowRoles(ROLES.HEADOFOPS),

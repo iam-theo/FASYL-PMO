@@ -7,6 +7,7 @@ import ProjectLifeCycle from '../projects/lifecycle/ProjectLifeCycle'
 import AddProjectManager from '../projects/AddProjectManager'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { api } from '../../api'
+import SetupProjectModal from '../projects/tasks/SetupProjectModal'
 
 function MainBody({ user, setUser}) {
 
@@ -16,7 +17,7 @@ function MainBody({ user, setUser}) {
 
         try {
 
-            // clear frontend storage
+            // clear frontend storage-
             localStorage.clear()
 
             // reset state if needed
@@ -31,9 +32,13 @@ function MainBody({ user, setUser}) {
     }
 
     const [activeTab, setActiveTab] = useState("dashboard")
+    const [openProject, setOpenProject] = useState(false)
+    const [isSetupModalOpen, setIsSetupModalOpen] = useState(false)
+    const [activeSubTab, setActiveSubTab] = useState("overview")
+
+    // const isSetupComplete = (selectedProject?.resources?.length ?? 0) > 0
     const [activeDetails, setActiveDetails] = useState("project_lifecycle")
     const [selectedProject, setSelectedProject] = useState(null)
-    const [selectedStage, setSelectedStage] = useState(null);
     // const [showLifecycleModal, setShowLifecycleModal] = useState(false);
     const [isOpen, setIsOpen] = useState(false)
     const [checkedList, setCheckedList] = useState([])
@@ -45,14 +50,15 @@ function MainBody({ user, setUser}) {
 
     // selected project
     useEffect(() => {
-        if (!selectedProject?.id) return;
+        const idToMatch = selectedProject?.projectId || selectedProject?.id || selectedProject?._id;
+        if (!idToMatch) return;
 
-        const updated = projects.find(p => p.id === selectedProject.id);
+        const updated = projects.find(p => p.projectId === idToMatch || p.id === idToMatch || p._id === idToMatch);
 
         if (!updated) return;
 
         setSelectedProject(updated);
-    }, [projects]); // ONLY projects
+    }, [projects, selectedProject?.projectId, selectedProject?.id, selectedProject?._id]);
 
 
     //initial loading of projects
@@ -90,21 +96,50 @@ function MainBody({ user, setUser}) {
                 activeTab={activeTab} 
                 setActiveTab={setActiveTab} 
                 handleLogout={handleLogout}
+                setOpenProject={setOpenProject}
             />
 
             <MainSection
                 projects={projects}
+                setProjects={setProjects}
                 setActiveTab={setActiveTab}
-                activeTab={activeTab} 
+                activeTab={activeTab}
+                setOpenProject={setOpenProject}
+                openProject={openProject}
+                isSetupModalOpen={isSetupModalOpen}
+                setIsSetupModalOpen={setIsSetupModalOpen}
+                activeSubTab={activeSubTab}
+                setActiveSubTab={setActiveSubTab}
                 selectedProject={selectedProject}
                 setSelectedProject={setSelectedProject}
-                selectedStage={selectedStage}
-                setSelectedStage={setSelectedStage}
                 user={user}
                 isLoading={isLoading}
+                activeDetails={activeDetails}
+                setActiveDetails={setActiveDetails}
             />
 
-            {selectedProject && user.role === "HEADOFOPS" && !selectedProject?.projectManager ? (
+            {isSetupModalOpen && (
+                <SetupProjectModal
+                    project={selectedProject}
+                    onClose={() => setIsSetupModalOpen(false)}
+                    // onSetupComplete={onProjectUpdated}
+                />
+            )}
+
+            {/* {selectedProject && activeSubTab === "project_lifecycle" && (
+                <ViewProjectsBody
+                    projects={projects}
+                    setProjects={setProjects}
+                    selectedProject={selectedProject}
+                    setSelectedProject={setSelectedProject}
+                    onClose={() => setSelectedProject(null)}
+                    activeDetails={activeDetails}
+                    setActiveDetails={setActiveDetails}
+                    user={user}
+                />
+            )} */}
+
+            {/* {selectedProject && user.role === "HEADOFOPS" && !selectedProject?.projectManager ? (
                 <AddProjectManager
                     projects={projects}
                     setProjects={setProjects}
@@ -129,7 +164,7 @@ function MainBody({ user, setUser}) {
                     setActiveDetails={setActiveDetails}
                     user={user}
                 />
-            ) : null}
+            ) : null} */}
         </div>
     )
 }

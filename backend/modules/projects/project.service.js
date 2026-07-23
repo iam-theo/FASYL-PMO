@@ -1,7 +1,7 @@
 import { PrismaClient, WorkflowStatus } from "@prisma/client";
 import { getPolicy } from "../../modules/workflow/workflow.policy.js";
 const prisma = new PrismaClient();
-import axios from "axios";
+// import axios from "axios";
 
 import fs from "fs";
 import path from "path";
@@ -10,9 +10,9 @@ const TOTAL_STAGES = 8;
 /* =========================================
     PROGRESS CALCULATION
 ========================================= */
-const calcProgress = (stage) => {
-  return (stage / TOTAL_STAGES) * 100;
-};
+// const calcProgress = (stage) => {
+//   return (stage / TOTAL_STAGES) * 100;
+// };
 
 const createChecklist = (items, stageKey) => {
   return items.map((item, index) => ({
@@ -190,38 +190,38 @@ export const assignProjectService = async (projectId, pmEmail) => {
   }
 
   const project = await prisma.project.update({
-    where: { id: Number(projectId) },
+    where: { projectId: projectId },
     data: {
       projectManagerId: user.id,  
 
       currentStageOrder: 1,
-      workflowStatus: "OPEN",
+      workflowStatus: WorkflowStatus.OPEN,
     },
   });
 
   await prisma.projectStage.updateMany({
     where: {
-      projectId: project.id,
+      projectId: project.projectId,
       stageOrder: 1,
     },
     data: {
-      workflowStatus: "OPEN",
+      workflowStatus: WorkflowStatus.OPEN,
     },
   });
 
   await prisma.projectStage.updateMany({
     where: {
-      projectId: project.id,
+      projectId: project.projectId,
       stageOrder: { gt: 1 },
     },
     data: {
-      workflowStatus: "LOCKED",
+      workflowStatus: WorkflowStatus.LOCKED,
     },
   });
 
   return await prisma.project.findUnique({
     where: {
-      id: project.id,
+      projectId: project.projectId
     },
 
     include: {
@@ -275,9 +275,9 @@ export const getProjectsService = async (user) => {
   return projects;
 };
 
-export const getProjectByIdService = async (id) => {
+export const getProjectByIdService = async (projectId) => {
   return await prisma.project.findUnique({
-    where: { id: Number(id) },
+    where: { projectId: projectId },
     include: {
       stages: {
         orderBy: { stageOrder: "asc" }
@@ -302,7 +302,7 @@ export const updateChecklistBulkService = async (
   const stage = await prisma.projectStage.findFirst({
     where: {
       id: Number(stageId),
-      projectId: Number(projectId),
+      projectId: projectId
     },
   });
 
@@ -353,7 +353,7 @@ export const uploadStageDocumentService = async (
   const stage = await prisma.projectStage.findFirst({
     where: {
       id: Number(stageId),
-      projectId: Number(projectId),
+      projectId: projectId
     },
   });
 
@@ -372,7 +372,7 @@ export const uploadStageDocumentService = async (
       fileURL: fileUrl,
       fileName: fileName,
       uploadedAt: new Date(),
-      status: "UPLOADED",
+      status: WorkflowStatus.UPLOADED,
     };
   });
 
@@ -441,7 +441,7 @@ export const deleteStageDocumentService = async (
   const stage = await prisma.projectStage.findFirst({
     where: {
       id: Number(stageId),
-      projectId: Number(projectId),
+      projectId: projectId,
     },
   });
 
@@ -552,9 +552,9 @@ export const deleteStageDocumentService = async (
 /* =========================================
     UPDATE PROJECT
 ========================================= */
-export const updateProjectService = async (id, data) => {
+export const updateProjectService = async (projectId, data) => {
   return await prisma.project.update({
-    where: { id: Number(id) },
+    where: {projectId: projectId },
     data: {
       ...(data.name !== undefined && { projectName: data.name }),
       ...(data.clientName !== undefined && { clientName: data.clientName }),
@@ -571,8 +571,8 @@ export const updateProjectService = async (id, data) => {
 /* =========================================
     DELETE PROJECT
 ========================================= */
-export const deleteProjectService = async (id) => {
+export const deleteProjectService = async (projectId) => {
   return await prisma.project.delete({
-    where: { id: Number(id) },
+    where: { projectId: projectId },
   });
 };

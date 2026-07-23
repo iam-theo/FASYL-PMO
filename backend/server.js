@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
-import path from "path"
+// import path from "path"
 import cors from "cors";
 import helmet from "helmet";
 import swaggerUi from "swagger-ui-express";
@@ -70,7 +70,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 /* =========================
-   REQUEST LOGGER
+    REQUEST LOGGER
 ========================= */
 app.use((req, res, next) => {
   console.log(`[${req.method}] ${req.originalUrl}`);
@@ -83,6 +83,7 @@ app.use((req, res, next) => {
 import authRoutes from "./modules/auth/auth.routes.js";
 import projectRoutes from "./modules/projects/project.routes.js";
 import workflowRoutes from "./modules/workflow/workflow.routes.js";
+// import { ErrorHandler } from "./middleware/error.middleware.js";
 
 /* =========================
     ROUTE MOUNTING (DUAL SUPPORT)
@@ -108,9 +109,9 @@ app.use(`${API_LEGACY}/workflow`, workflowRoutes);
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`Server running on ${PORT}`);
+// });
 
 /* =========================
     HEALTH CHECK
@@ -145,7 +146,7 @@ app.get(`${API_V1}/test-db`, async (req, res) => {
 });
 
 /* =========================
-   GLOBAL 404
+    GLOBAL 404
 ========================= */
 app.use((req, res) => {
   res.status(404).json({
@@ -155,9 +156,9 @@ app.use((req, res) => {
 });
 
 /* =========================
-   GLOBAL ERROR HANDLER
+    GLOBAL ERROR HANDLER
 ========================= */
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   console.error("🔥 SERVER ERROR:", err);
 
   res.status(err.status || 500).json({
@@ -166,8 +167,10 @@ app.use((err, req, res, next) => {
   });
 });
 
+// app.use(ErrorHandler);
+
 /* =========================
-   START SERVER
+    START SERVER
 ========================= */
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

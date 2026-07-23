@@ -77,7 +77,7 @@ export const getProjects = async (req, res) => {
 
 export const assignProject = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { projectId } = req.params;
     const { projectManagerEmail } = req.body;
 
     if (!projectManagerEmail) {
@@ -87,7 +87,7 @@ export const assignProject = async (req, res) => {
       });
     }
 
-    const project = await assignProjectService(id, projectManagerEmail);
+    const project = await assignProjectService(projectId, projectManagerEmail);
 
     return res.status(200).json({
       success: true,
@@ -109,9 +109,9 @@ export const assignProject = async (req, res) => {
 ========================================= */
 export const getProjectById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { projectId } = req.params;
 
-    const project = await getProjectByIdService(id);
+    const project = await getProjectByIdService(projectId);
 
     if (!project) {
       return res.status(404).json({
@@ -251,7 +251,7 @@ export const deleteStageDocument = async (req, res) => {
 ========================================= */
 export const updateProject = async (req, res) => {
   try {
-    const updated = await updateProjectService(req.params.id, req.body);
+    const updated = await updateProjectService(req.params.projectId, req.body);
 
     return res.status(200).json({
       success: true,
@@ -275,7 +275,7 @@ export const updateProject = async (req, res) => {
 ========================================= */
 export const deleteProject = async (req, res) => {
   try {
-    await deleteProjectService(req.params.id);
+    await deleteProjectService(req.params.projectId);
 
     return res.status(200).json({
       success: true,

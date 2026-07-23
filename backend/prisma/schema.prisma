@@ -8,7 +8,7 @@ datasource db {
 }
 
 enum ApprovalStatus {
-  PENDING 
+  PENDING
   SUBMITTED
   APPROVED
   REJECTED
@@ -19,13 +19,13 @@ model User {
   fullName      String
   email         String            @unique
   password      String
-  role          Role              @default(STAFF)
+  role          Role              @default(MEMBER)
   createdAt     DateTime          @default(now())
   auditLogs     AuditLog[]
   refreshTokens RefreshToken[]
   approvals     ProjectApproval[]
 
-  assignedProjects Project[] @relation("ProjectManagerRelation")
+  assignedProjects   Project[]       @relation("ProjectManagerRelation")
 }
 
 model RefreshToken {
@@ -38,59 +38,59 @@ model RefreshToken {
 }
 
 model Project {
-  id                  Int               @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  externalId          String            @unique // projectId from Sales portal
-  source              String @default("SALES")
+  projectId String @unique // projectId from Sales portal
+  source    String @default("SALES")
 
-  status              String            // ACTIVE, etc
+  status String // ACTIVE, etc
 
-  projectName         String
+  projectName String
 
-  clientId            String?
-  clientName          String
+  clientId   String?
+  clientName String
 
-  productId           String?
-  productName         String?
-  productType         String?
+  productId   String?
+  productName String?
+  productType String?
 
   projectManagerId Int?
-  projectManager User? @relation("ProjectManagerRelation", fields: [projectManagerId], references: [id])
+  projectManager   User? @relation("ProjectManagerRelation", fields: [projectManagerId], references: [id])
 
-  salesId             String?
-  location            String?
-  amcPercentage       Float?
-  saleTypes           String?
+  salesId       String?
+  location      String?
+  amcPercentage Float?
+  saleTypes     String?
 
-  commencementDate    DateTime?
-  purchaseOrderDate   DateTime?
+  commencementDate  DateTime?
+  purchaseOrderDate DateTime?
 
-  milestones          Json?
-  resources           Json?
+  milestones Json?
+  resources  Json?
 
-  pmoAddress          String?
-  startDate           DateTime?
-  endDate             DateTime?
+  pmoAddress String?
+  startDate  DateTime?
+  endDate    DateTime?
 
-  createdAt           DateTime          @default(now())
-  updatedAt           DateTime          @updatedAt
-  completedAt         DateTime?
-  currentStageOrder   Int               @default(0)
-  dueDate             DateTime?
-  progressPercent     Float             @default(0)
-  workflowStatus      WorkflowStatus    @default(UNASSIGNED)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  completedAt       DateTime?
+  currentStageOrder Int            @default(0)
+  dueDate           DateTime?
+  progressPercent   Float          @default(0)
+  workflowStatus    WorkflowStatus @default(UNASSIGNED)
 
-  description         String?
-  auditLogs           AuditLog[]
-  escalations         Escalation[]
-  stages              ProjectStage[]
-  timelines           ProjectTimeline[]
-  approvals           ProjectApproval[]
+  description String?
+  auditLogs   AuditLog[]
+  escalations Escalation[]
+  stages      ProjectStage[]
+  timelines   ProjectTimeline[]
+  approvals   ProjectApproval[]
 }
 
 model ProjectStage {
   id              Int            @id @default(autoincrement())
-  projectId       Int
+  projectId       String
   stageIndex      Int
   stageName       String
   stageOrder      Int
@@ -112,14 +112,14 @@ model ProjectStage {
   rejectionReason String?
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
-  project         Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project         Project        @relation(fields: [projectId], references: [projectId], onDelete: Cascade)
 
   @@unique([projectId, stageOrder])
 }
 
 model ProjectApproval {
   id          Int            @id(map: "ProjectApproval_pkey") @default(autoincrement())
-  projectId   Int
+  projectId   String
   stage       Int
   status      ApprovalStatus @default(PENDING)
   approvedBy  Int?
@@ -129,7 +129,7 @@ model ProjectApproval {
   rejectedBy  Int?
   submittedBy Int?
   approver    User?          @relation(fields: [approvedBy], references: [id], map: "ProjectApproval_approvedBy_fkey")
-  project     Project        @relation(fields: [projectId], references: [id], onDelete: Cascade, map: "ProjectApproval_projectId_fkey")
+  project     Project        @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "ProjectApproval_projectId_fkey")
 
   @@index([projectId, stage], map: "ProjectApproval_projectId_stage_idx")
   @@map("project_approvals")
@@ -137,27 +137,27 @@ model ProjectApproval {
 
 model ProjectTimeline {
   id        Int      @id @default(autoincrement())
-  projectId Int
+  projectId String
   stage     Int
   action    String
   note      String?
   createdBy Int?
   createdAt DateTime @default(now())
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project   Project  @relation(fields: [projectId], references: [projectId], onDelete: Cascade)
 
   @@index([projectId])
 }
 
 model Escalation {
   id         Int             @id @default(autoincrement())
-  projectId  Int
+  projectId  String
   stage      Int
   level      EscalationLevel @default(LOW)
   reason     String
   resolved   Boolean         @default(false)
   resolvedAt DateTime?
   createdAt  DateTime        @default(now())
-  project    Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project    Project         @relation(fields: [projectId], references: [projectId], onDelete: Cascade)
 
   @@index([projectId, resolved])
 }
@@ -165,12 +165,12 @@ model Escalation {
 model AuditLog {
   id        Int      @id @default(autoincrement())
   userId    Int?
-  projectId Int?
+  projectId String?
   module    String
   action    String
   details   String?
   createdAt DateTime @default(now())
-  project   Project? @relation(fields: [projectId], references: [id])
+  project   Project? @relation(fields: [projectId], references: [projectId])
   user      User?    @relation(fields: [userId], references: [id])
 
   @@index([projectId])
@@ -179,7 +179,7 @@ model AuditLog {
 enum Role {
   HEADOFOPS
   PROJECTMANAGER
-  STAFF
+  MEMBER
 }
 
 enum WorkflowStatus {

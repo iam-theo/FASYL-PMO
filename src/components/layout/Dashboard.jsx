@@ -1,5 +1,5 @@
-import React from 'react'
-import bgSignInTwo from "../../assets/bgSignInTwo.jpg"
+// import React from 'react'
+// import bgSignInTwo from "../../assets/bgSignInTwo.jpg"
 import { FaUserFriends, FaTag, FaExclamationCircle, FaEllipsisV } from 'react-icons/fa'
 import { FaLock } from 'react-icons/fa6';
 import { useState } from 'react'
@@ -7,12 +7,11 @@ import { useState } from 'react'
 
 function Dashboard({ 
     projects, 
-    user, 
-    activeTab, 
-    setActiveTab, 
-    selectedProject, 
+    user,  
+    setActiveTab,  
     setSelectedProject,
-    setSelectedStage 
+    setOpenProject,
+    setActiveSubTab
     }) {
 
     const safeProjects = Array.isArray(projects) ? projects : []
@@ -30,7 +29,7 @@ function Dashboard({
         return false;
     });
 
-    const items = 10
+    // const items = 10
     const activeProjects = filteredProjects.filter((project) =>
         !["COMPLETED", "OPEN", "UNASSIGNED"].includes(project.workflowStatus)
     ).slice(0, 10)
@@ -170,8 +169,15 @@ function Dashboard({
                             <tbody className='h-11'>
                                 {
                                     activeProjects.map((project, index) => (
-                                        <tr key={index} className='border-y border-[#0000000D] cursor-pointer'>
-                                            <td className='px-4 py-4 font-normal text-[14px]/[20px] text-[#636363] overflow-hidden whitespace-nowrap text-ellipsis'>{project.externalId}</td>
+                                        <tr 
+                                            key={index} 
+                                            className='border-y border-[#0000000D] cursor-pointer'
+                                            onClick={() => {
+                                                setOpenProject(true);
+                                                setSelectedProject(project);
+                                                setActiveSubTab("overview");
+                                            }}>
+                                            <td className='px-4 py-4 font-normal text-[14px]/[20px] text-[#636363] overflow-hidden whitespace-nowrap text-ellipsis'>{project.projectId}</td>
                                             <td title={project.projectName} className='px-4 py-4 font-normal text-[14px]/[20px] text-[#636363] overflow-hidden whitespace-nowrap text-ellipsis'>{project.projectName}</td>
                                             <td title={project.clientName} className='px-4 py-4 font-normal text-[14px]/[20px] text-[#636363] overflow-hidden whitespace-nowrap text-ellipsis'>{project.clientName}</td>
                                             <td title={project.productName} className='px-4 py-4 font-normal text-[14px]/[20px] text-[#636363] overflow-hidden whitespace-nowrap text-ellipsis'>{project.productName}</td>
@@ -207,9 +213,9 @@ function Dashboard({
                                                             if (setCurrentStage(project.currentStageOrder) === "LOCKED") return;
 
                                                             setOpenProjectMenu(prev =>
-                                                                prev === project.id
+                                                                prev === project.projectId
                                                                     ? null
-                                                                    : project.id
+                                                                    : project.projectId
                                                             )
                                                         }
                                                     } 
@@ -217,7 +223,7 @@ function Dashboard({
                                                 />
 
                                                 {
-                                                    openProjectMenu === project.id && (
+                                                    openProjectMenu === project.projectId && (
                                                         <div
                                                             className='max-h-40 overflow-y-auto no-scrollbar absolute z-1000 w-40 right-5 border border-[#0000000D] bg-[#F9FAFB] rounded-lg text-[14px]/[20px]'>
                                                             <ul>
@@ -233,7 +239,6 @@ function Dashboard({
                                                                                 }
 
                                                                                 setSelectedProject(project);
-                                                                                setSelectedStage(stage);
                                                                                 setOpenProjectMenu(null);
 
                                                                             }}>

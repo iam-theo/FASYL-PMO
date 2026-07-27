@@ -7,7 +7,7 @@ import { DUE_DATE_FILTERS, matchesDueDateFilter } from '../tasks/dueDateFilters'
 import KanbanColumn from './KanbanColumn'
 import { STATUS_COLUMNS } from './kanbanConstants'
 
-function KanbanTab({ tasks, setTasks }) {
+function KanbanTab({ tasks, setTasks, viewToggle }) {
     const [statusFilter, setStatusFilter] = useState("All Status")
     const [priorityFilter, setPriorityFilter] = useState("All Priorities")
     const [assigneeFilter, setAssigneeFilter] = useState("All Team Members")
@@ -80,6 +80,8 @@ function KanbanTab({ tasks, setTasks }) {
                     </div>
 
                     <div className='flex items-center gap-3'>
+                        {viewToggle}
+
                         <button
                             type="button"
                             className='px-4 py-2.5 rounded-lg border border-[#0000000D] bg-[#E8E8E8] flex items-center gap-2 cursor-pointer'

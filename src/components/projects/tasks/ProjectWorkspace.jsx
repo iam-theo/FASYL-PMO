@@ -5,7 +5,6 @@ import ProjectOnboardingEmptyState from './ProjectOnboardingEmptyState'
 import ResourcesTab from './resources/ResourcesTab'
 import TasksTab from './tasks/TasksTab'
 import { INITIAL_TASKS } from './tasks/mockTasks'
-import KanbanTab from './kanban/KanbanTab'
 import CalendarTab from './calender/CalendarTab'
 import ViewProjectsBody from '../ViewProjectsBody';
 
@@ -56,15 +55,13 @@ function ProjectWorkspace({
                 )}
 
                 {activeSubTab === "resources" && (
-                    <ResourcesTab />
+                    <ResourcesTab 
+                        project={project}
+                    />
                 )}
 
                 {activeSubTab === "tasks" && (
                     <TasksTab tasks={tasks} setTasks={setTasks} />
-                )}
-
-                {activeSubTab === "kanban" && (
-                    <KanbanTab tasks={tasks} setTasks={setTasks} />
                 )}
 
                 {activeSubTab === "calendar" && (

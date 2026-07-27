@@ -4,10 +4,9 @@ export const PROJECT_WORKSPACE_TABS = [
     { key: "overview", label: "Overview" },
     { key: "resources", label: "Resources" },
     { key: "tasks", label: "Tasks" },
-    { key: "kanban", label: "Kanban" },
     { key: "calendar", label: "Calendar" },
-    { key: "timeline", label: "Timeline" },
-    { key: "analytics", label: "Analytics" },
+    // { key: "timeline", label: "Timeline" },
+    { key: "reports", label: "Reports" },
     { key: "project_lifecycle", label: "Project Lifecycle" },
 ]
 

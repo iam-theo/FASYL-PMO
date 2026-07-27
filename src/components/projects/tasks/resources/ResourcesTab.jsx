@@ -1,43 +1,49 @@
-import React, { useMemo, useState } from 'react'
-import { AiTwotonePlusCircle } from "react-icons/ai"
+import { useMemo, useState } from 'react'
+// import { AiTwotonePlusCircle } from "react-icons/ai"
 import ResourceCard from './ResourceCard'
-import AddResourceModal from './AddResourceModal'
-import RemoveResourceModal from './RemoveResourceModal'
-import { AVAILABLE_RESOURCES, INITIAL_PROJECT_RESOURCES } from './mockResources'
+// import AddResourceModal from './AddResourceModal'
+// import RemoveResourceModal from './RemoveResourceModal'
+// import { AVAILABLE_RESOURCES, INITIAL_PROJECT_RESOURCES } from './mockResources'
 
 const ITEMS_PER_PAGE = 6
 
-function ResourcesTab() {
+function ResourcesTab({
+    project
+}) {
 
-    const [resources, setResources] = useState(INITIAL_PROJECT_RESOURCES)
+    // console.log(project)
+
+    // const [resources, setResources] = useState(project)
     const [currentPage, setCurrentPage] = useState(1)
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-    const [resourceToRemove, setResourceToRemove] = useState(null)
+    // const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+    // const [resourceToRemove, setResourceToRemove] = useState(null)
 
-    const totalPages = Math.max(1, Math.ceil(resources.length / ITEMS_PER_PAGE))
+    const resources = project?.resources;
+
+    const totalPages = Math.max(1, Math.ceil(resources?.length / ITEMS_PER_PAGE))
 
     const paginatedResources = useMemo(() => {
         const start = (currentPage - 1) * ITEMS_PER_PAGE
         return resources.slice(start, start + ITEMS_PER_PAGE)
     }, [resources, currentPage])
 
-    const availableToAdd = useMemo(
-        () => AVAILABLE_RESOURCES.filter((resource) => !resources.some((r) => r.id === resource.id)),
-        [resources]
-    )
+    // const availableToAdd = useMemo(
+    //     () => AVAILABLE_RESOURCES.filter((resource) => !resources.some((r) => r.id === resource.id)),
+    //     [resources]
+    // )
 
-    const handleAddResources = (resourceIds) => {
-        const newResources = AVAILABLE_RESOURCES.filter((resource) => resourceIds.includes(resource.id))
-        if (newResources.length > 0) {
-            setResources((prev) => [...prev, ...newResources])
-        }
-        setIsAddModalOpen(false)
-    }
+    // const handleAddResources = (resourceIds) => {
+    //     const newResources = AVAILABLE_RESOURCES.filter((resource) => resourceIds.includes(resource.id))
+    //     if (newResources.length > 0) {
+    //         setResources((prev) => [...prev, ...newResources])
+    //     }
+    //     setIsAddModalOpen(false)
+    // }
 
-    const handleRemoveResource = (resource) => {
-        setResources((prev) => prev.filter((r) => r.id !== resource.id))
-        setResourceToRemove(null)
-    }
+    // const handleRemoveResource = (resource) => {
+    //     setResources((prev) => prev.filter((r) => r.id !== resource.id))
+    //     setResourceToRemove(null)
+    // }
 
     return (
         <div className='flex flex-col h-full'>
@@ -61,14 +67,14 @@ function ResourcesTab() {
                             <span className='font-medium text-[14px]/[20px] text-[#1B3C4A]'>Export</span>
                         </button>
 
-                        <button
+                        {/* <button
                             type="button"
                             onClick={() => setIsAddModalOpen(true)}
                             className='px-4 py-2.5 rounded-lg border border-[#0000000D] bg-[#1B3C4A] flex items-center gap-2 cursor-pointer'
                         >
                             <AiTwotonePlusCircle size={18} className='text-[#FFFFFF]' />
                             <span className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>Add New Resource</span>
-                        </button>
+                        </button> */}
                     </div>
                 </div>
             </div>
@@ -84,7 +90,7 @@ function ResourcesTab() {
                             <ResourceCard
                                 key={resource.id}
                                 resource={resource}
-                                onRemove={setResourceToRemove}
+                                // onRemove={setResourceToRemove}
                             />
                         ))}
                     </div>
@@ -113,7 +119,7 @@ function ResourcesTab() {
                 </div>
             </div>
 
-            {isAddModalOpen && (
+            {/* {isAddModalOpen && (
                 <AddResourceModal
                     availableResources={availableToAdd}
                     onClose={() => setIsAddModalOpen(false)}
@@ -127,7 +133,7 @@ function ResourcesTab() {
                     onCancel={() => setResourceToRemove(null)}
                     onConfirm={handleRemoveResource}
                 />
-            )}
+            )} */}
         </div>
     )
 }

@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { ChevronDownIcon, CheckboxCheckIcon, MoreVerticalIcon, TrashIcon, PlusCircleIcon } from '../icons'
 import CreateTaskModal from './CreateTaskModal'
 import DeleteTaskModal from './DeleteTaskModal'
+import KanbanTab from '../kanban/KanbanTab'
 import {
     TASK_STATUS_OPTIONS,
     TASK_PRIORITY_OPTIONS,
@@ -13,6 +14,7 @@ import { DUE_DATE_FILTERS, matchesDueDateFilter } from './dueDateFilters'
 const ITEMS_PER_PAGE = 5
 
 function TasksTab({ tasks, setTasks }) {
+    const [view, setView] = useState('list')
     const [selectedIds, setSelectedIds] = useState([])
     const [currentPage, setCurrentPage] = useState(1)
     const [openMenuId, setOpenMenuId] = useState(null)
@@ -85,6 +87,16 @@ function TasksTab({ tasks, setTasks }) {
         setOpenMenuId(null)
     }
 
+    if (view === 'kanban') {
+        return (
+            <KanbanTab
+                tasks={tasks}
+                setTasks={setTasks}
+                viewToggle={<ViewToggle view={view} onChange={setView} />}
+            />
+        )
+    }
+
     return (
         <div className='flex flex-col h-full'>
             <div className='px-4 pt-4 flex flex-col gap-4'>
@@ -99,6 +111,8 @@ function TasksTab({ tasks, setTasks }) {
                     </div>
 
                     <div className='flex items-center gap-3'>
+                        <ViewToggle view={view} onChange={setView} />
+
                         <button
                             type="button"
                             className='px-4 py-2.5 rounded-lg border border-[#0000000D] bg-[#E8E8E8] flex items-center gap-2 cursor-pointer'
@@ -373,6 +387,56 @@ function TasksEmptyState({ onCreateTask }) {
                     <span className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>Create Task</span>
                 </button>
             </div>
+        </div>
+    )
+}
+
+function ListViewIcon() {
+    return (
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7.60059 4.1665H17.6006" stroke="black" strokeWidth="1.25" strokeLinecap="round" />
+            <path d="M7.60059 10H17.6006" stroke="black" strokeWidth="1.25" strokeLinecap="round" />
+            <path d="M7.60059 15.8335H17.6006" stroke="black" strokeWidth="1.25" strokeLinecap="round" />
+            <path d="M2.70508 4.16683H2.60091M2.80924 4.16683C2.80924 4.28189 2.71597 4.37516 2.60091 4.37516C2.48585 4.37516 2.39258 4.28189 2.39258 4.16683C2.39258 4.05177 2.48585 3.9585 2.60091 3.9585C2.71597 3.9585 2.80924 4.05177 2.80924 4.16683Z" stroke="black" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M2.70508 9.99984H2.60091M2.80924 9.99984C2.80924 10.1149 2.71597 10.2082 2.60091 10.2082C2.48585 10.2082 2.39258 10.1149 2.39258 9.99984C2.39258 9.88475 2.48585 9.7915 2.60091 9.7915C2.71597 9.7915 2.80924 9.88475 2.80924 9.99984Z" stroke="black" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M2.70508 15.8333H2.60091M2.80924 15.8333C2.80924 15.9484 2.71597 16.0417 2.60091 16.0417C2.48585 16.0417 2.39258 15.9484 2.39258 15.8333C2.39258 15.7182 2.48585 15.625 2.60091 15.625C2.71597 15.625 2.80924 15.7182 2.80924 15.8333Z" stroke="black" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    )
+}
+
+function KanbanViewIcon() {
+    return (
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.757 3.24286C17.9163 4.40224 17.9163 6.26821 17.9163 10.0002C17.9163 13.7321 17.9163 15.5981 16.757 16.7575C15.5976 17.9168 13.7316 17.9168 9.99967 17.9168C6.26772 17.9168 4.40175 17.9168 3.24237 16.7575C2.08301 15.5981 2.08301 13.7321 2.08301 10.0002C2.08301 6.26821 2.08301 4.40224 3.24237 3.24286C4.40175 2.0835 6.26772 2.0835 9.99967 2.0835C13.7316 2.0835 15.5976 2.0835 16.757 3.24286Z" fill="#C6C6C6" fillOpacity="0.8" stroke="black" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M7.08301 2.0835V17.9168" stroke="black" strokeWidth="1.25" />
+            <path d="M12.917 2.0835V17.9168" stroke="black" strokeWidth="1.25" />
+        </svg>
+    )
+}
+
+function ViewToggle({ view, onChange }) {
+    return (
+        <div className='flex h-10 items-center gap-2 rounded-lg border border-[#0000000D] bg-[#FFFFFF] px-2 py-3'>
+            <button
+                type="button"
+                onClick={() => onChange('list')}
+                className={`flex items-center justify-center gap-2 rounded px-2 py-2.5 h-6.5 cursor-pointer ${
+                    view === 'list' ? 'border border-[#0000000D] bg-[#E8E8E8]' : ''
+                }`}
+            >
+                <ListViewIcon />
+                <span className='font-medium text-[14px]/[20px] text-[#1B3C4A]'>List</span>
+            </button>
+            <button
+                type="button"
+                onClick={() => onChange('kanban')}
+                className={`flex items-center justify-center gap-2 rounded px-2 py-3 h-5 cursor-pointer ${
+                    view === 'kanban' ? 'border border-[#0000000D] bg-[#E8E8E8]' : ''
+                }`}
+            >
+                <KanbanViewIcon />
+                <span className='font-medium text-[14px]/[20px] text-[#1B3C4A]'>Kanban</span>
+            </button>
         </div>
     )
 }

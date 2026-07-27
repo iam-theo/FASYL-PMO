@@ -1,0 +1,1138 @@
+[
+    {
+        "id": "SBK-123",
+        "project_name": "Project Orion",
+        "client": "Oracle",
+        "product": "Xnett",
+        "type": "IP",
+        "location": "Nigeria",
+        "site_code": "ST-CD-001",
+        "amc": "5%",
+        "register_for": "Project, Support",
+        "purchase_order_date": "5/5/2025",
+        "commencement_date": "5/5/2025",
+        "project_manager": "",
+        "order_letter": "Order Letter.pdf",
+        "cost_sheet": "Profit analysis.pdf",
+        "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
+        "sales": [
+            {"name": "John Doe", "email": "jd@fasylsales.com"}
+        ],
+        "current_status": "Client ID",
+        "project_stages": [
+            {
+                "status": "Client ID",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Engagement",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Initiation",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Planning",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Execution",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "UAT",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Go-Live",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Closure",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            }
+        ]
+    },
+    {
+        "id": "SBK-124",
+        "project_name": "Feed The Nation",
+        "client": "Fasyl",
+        "product": "Xnett",
+        "type": "IP",
+        "location": "Nigeria",
+        "site_code": "ST-CD-001",
+        "amc": "5%",
+        "register_for": "Project, Support",
+        "purchase_order_date": "5/5/2025",
+        "commencement_date": "5/5/2025",
+        "project_manager": "",
+        "order_letter": "Order Letter.pdf",
+        "cost_sheet": "Profit analysis.pdf",
+        "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
+        "sales": [
+            {"name": "John Doe", "email": "jd@fasylsales.com"}
+        ],
+        "current_status": "Client ID",
+        "project_stages": [
+            {
+                "status": "Client ID",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Engagement",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Initiation",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Planning",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Execution",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "UAT",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Go-Live",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Closure",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            }
+        ]
+    },
+    {
+        "id": "SBK-125",
+        "project_name": "Feed The Nation",
+        "client": "Fasyl",
+        "product": "Xnett",
+        "type": "IP",
+        "location": "Nigeria",
+        "site_code": "ST-CD-001",
+        "amc": "5%",
+        "register_for": "Project, Support",
+        "purchase_order_date": "5/5/2025",
+        "commencement_date": "5/5/2025",
+        "project_manager": "",
+        "order_letter": "Order Letter.pdf",
+        "cost_sheet": "Profit analysis.pdf",
+        "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
+        "sales": [
+            {"name": "John Doe", "email": "jd@fasylsales.com"}
+        ],
+        "current_status": "Client ID",
+        "project_stages": [
+            {
+                "status": "Client ID",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Engagement",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Initiation",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Planning",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Execution",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "UAT",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Go-Live",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Closure",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            }
+        ]
+    },
+    {
+        "id": "SBK-126",
+        "project_name": "Feed The Nation",
+        "client": "Fasyl",
+        "product": "Xnett",
+        "type": "IP",
+        "location": "Nigeria",
+        "site_code": "ST-CD-001",
+        "amc": "5%",
+        "register_for": "Project, Support",
+        "purchase_order_date": "5/5/2025",
+        "commencement_date": "5/5/2025",
+        "project_manager": "",
+        "order_letter": "Order Letter.pdf",
+        "cost_sheet": "Profit analysis.pdf",
+        "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
+        "sales": [
+            {"name": "John Doe", "email": "jd@fasylsales.com"}
+        ],
+        "current_status": "Client ID",
+        "project_stages": [
+            {
+                "status": "Client ID",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Engagement",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Initiation",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Planning",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Execution",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "UAT",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Go-Live",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Closure",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            }
+        ]
+    },
+    {
+        "id": "SBK-127",
+        "project_name": "Feed The Nation",
+        "client": "Fasyl",
+        "product": "Xnett",
+        "type": "IP",
+        "location": "Nigeria",
+        "site_code": "ST-CD-001",
+        "amc": "5%",
+        "register_for": "Project, Support",
+        "purchase_order_date": "5/5/2025",
+        "commencement_date": "5/5/2025",
+        "project_manager": "",
+        "order_letter": "Order Letter.pdf",
+        "cost_sheet": "Profit analysis.pdf",
+        "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
+        "sales": [
+            {"name": "John Doe", "email": "jd@fasylsales.com"}
+        ],
+        "current_status": "Client ID",
+        "project_stages": [
+            {
+                "status": "Client ID",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Engagement",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Initiation",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Planning",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Execution",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "UAT",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Go-Live",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Closure",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            }
+        ]
+    },
+    {
+        "id": "SBK-128",
+        "project_name": "Feed The Nation",
+        "client": "Fasyl",
+        "product": "Xnett",
+        "type": "IP",
+        "location": "Nigeria",
+        "site_code": "ST-CD-001",
+        "amc": "5%",
+        "register_for": "Project, Support",
+        "purchase_order_date": "5/5/2025",
+        "commencement_date": "5/5/2025",
+        "project_manager": "",
+        "order_letter": "Order Letter.pdf",
+        "cost_sheet": "Profit analysis.pdf",
+        "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
+        "sales": [
+            {"name": "John Doe", "email": "jd@fasylsales.com"}
+        ],
+        "current_status": "Client ID",
+        "project_stages": [
+            {
+                "status": "Client ID",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Engagement",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Initiation",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Planning",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Execution",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "UAT",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Go-Live",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Closure",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            }
+        ]
+    },
+    {
+        "id": "SBK-129",
+        "project_name": "Feed The Nation",
+        "client": "Fasyl",
+        "product": "Xnett",
+        "type": "IP",
+        "location": "Nigeria",
+        "site_code": "ST-CD-001",
+        "amc": "5%",
+        "register_for": "Project, Support",
+        "purchase_order_date": "5/5/2025",
+        "commencement_date": "5/5/2025",
+        "project_manager": "",
+        "order_letter": "Order Letter.pdf",
+        "cost_sheet": "Profit analysis.pdf",
+        "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
+        "sales": [
+            {"name": "John Doe", "email": "jd@fasylsales.com"}
+        ],
+        "current_status": "Client ID",
+        "project_stages": [
+            {
+                "status": "Client ID",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Engagement",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Initiation",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Planning",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Execution",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "UAT",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Go-Live",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Closure",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            }
+        ]
+    },
+    {
+        "id": "SBK-130",
+        "project_name": "Feed The Nation",
+        "client": "Fasyl",
+        "product": "Xnett",
+        "type": "IP",
+        "location": "Nigeria",
+        "site_code": "ST-CD-001",
+        "amc": "5%",
+        "register_for": "Project, Support",
+        "purchase_order_date": "5/5/2025",
+        "commencement_date": "5/5/2025",
+        "project_manager": "",
+        "order_letter": "Order Letter.pdf",
+        "cost_sheet": "Profit analysis.pdf",
+        "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
+        "sales": [
+            {"name": "John Doe", "email": "jd@fasylsales.com"}
+        ],
+        "current_status": "Client ID",
+        "project_stages": [
+            {
+                "status": "Client ID",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Engagement",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Initiation",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Planning",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Execution",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "UAT",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Go-Live",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Closure",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            }
+        ]
+    },
+    {
+        "id": "SBK-131",
+        "project_name": "Feed The Nation",
+        "client": "Fasyl",
+        "product": "Xnett",
+        "type": "IP",
+        "location": "Nigeria",
+        "site_code": "ST-CD-001",
+        "amc": "5%",
+        "register_for": "Project, Support",
+        "purchase_order_date": "5/5/2025",
+        "commencement_date": "5/5/2025",
+        "project_manager": "",
+        "order_letter": "Order Letter.pdf",
+        "cost_sheet": "Profit analysis.pdf",
+        "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
+        "sales": [
+            {"name": "John Doe", "email": "jd@fasylsales.com"}
+        ],
+        "current_status": "Client ID",
+        "project_stages": [
+            {
+                "status": "Client ID",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Engagement",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Initiation",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Planning",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Execution",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "UAT",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Go-Live",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Closure",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            }
+        ]
+    },
+    {
+        "id": "SBK-132",
+        "project_name": "Feed The Nation",
+        "client": "Fasyl",
+        "product": "Xnett",
+        "type": "IP",
+        "location": "Nigeria",
+        "site_code": "ST-CD-001",
+        "amc": "5%",
+        "register_for": "Project, Support",
+        "purchase_order_date": "5/5/2025",
+        "commencement_date": "5/5/2025",
+        "project_manager": "",
+        "order_letter": "Order Letter.pdf",
+        "cost_sheet": "Profit analysis.pdf",
+        "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
+        "sales": [
+            {"name": "John Doe", "email": "jd@fasylsales.com"}
+        ],
+        "current_status": "Client ID",
+        "project_stages": [
+            {
+                "status": "Client ID",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Engagement",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Initiation",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Planning",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Execution",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "UAT",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Go-Live",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Closure",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            }
+        ]
+    },
+    {
+        "id": "SBK-133",
+        "project_name": "Feed The Nation",
+        "client": "Fasyl",
+        "product": "Xnett",
+        "type": "IP",
+        "location": "Nigeria",
+        "site_code": "ST-CD-001",
+        "amc": "5%",
+        "register_for": "Project, Support",
+        "purchase_order_date": "5/5/2025",
+        "commencement_date": "5/5/2025",
+        "project_manager": "",
+        "order_letter": "Order Letter.pdf",
+        "cost_sheet": "Profit analysis.pdf",
+        "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
+        "sales": [
+            {"name": "John Doe", "email": "jd@fasylsales.com"}
+        ],
+        "current_status": "Client ID",
+        "project_stages": [
+            {
+                "status": "Client ID",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Engagement",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Initiation",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Planning",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Execution",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "UAT",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Go-Live",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Closure",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            }
+        ]
+    },
+    {
+        "id": "SBK-134",
+        "project_name": "Project Orion",
+        "client": "Oracle",
+        "product": "Xnett",
+        "type": "IP",
+        "location": "Nigeria",
+        "site_code": "ST-CD-001",
+        "amc": "5%",
+        "register_for": "Project, Support",
+        "purchase_order_date": "5/5/2025",
+        "commencement_date": "5/5/2025",
+        "project_manager": "",
+        "order_letter": "Order Letter.pdf",
+        "cost_sheet": "Profit analysis.pdf",
+        "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
+        "sales": [
+            {"name": "John Doe", "email": "jd@fasylsales.com"}
+        ],
+        "current_status": "Client ID",
+        "project_stages": [
+            {
+                "status": "Client ID",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Engagement",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Initiation",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Planning",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Execution",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "UAT",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Go-Live",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Closure",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            }
+        ]
+    },
+    {
+        "id": "SBK-135",
+        "project_name": "Feed The Nation",
+        "client": "Fasyl",
+        "product": "Xnett",
+        "type": "IP",
+        "location": "Nigeria",
+        "site_code": "ST-CD-001",
+        "amc": "5%",
+        "register_for": "Project, Support",
+        "purchase_order_date": "5/5/2025",
+        "commencement_date": "5/5/2025",
+        "project_manager": "",
+        "order_letter": "Order Letter.pdf",
+        "cost_sheet": "Profit analysis.pdf",
+        "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
+        "sales": [
+            {"name": "John Doe", "email": "jd@fasylsales.com"}
+        ],
+        "current_status": "Client ID",
+        "project_stages": [
+            {
+                "status": "Client ID",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Engagement",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Initiation",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Planning",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Execution",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "UAT",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Go-Live",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Closure",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            }
+        ]
+    },
+    {
+        "id": "SBK-136",
+        "project_name": "Feed The Nation",
+        "client": "Fasyl",
+        "product": "Xnett",
+        "type": "IP",
+        "location": "Nigeria",
+        "site_code": "ST-CD-001",
+        "amc": "5%",
+        "register_for": "Project, Support",
+        "purchase_order_date": "5/5/2025",
+        "commencement_date": "5/5/2025",
+        "project_manager": "",
+        "order_letter": "Order Letter.pdf",
+        "cost_sheet": "Profit analysis.pdf",
+        "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
+        "sales": [
+            {"name": "John Doe", "email": "jd@fasylsales.com"}
+        ],
+        "current_status": "Client ID",
+        "project_stages": [
+            {
+                "status": "Client ID",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Engagement",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Initiation",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Planning",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Execution",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "UAT",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Go-Live",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Closure",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            }
+        ]
+    },
+    {
+        "id": "SBK-137",
+        "project_name": "Feed The Nation",
+        "client": "Fasyl",
+        "product": "Xnett",
+        "type": "IP",
+        "location": "Nigeria",
+        "site_code": "ST-CD-001",
+        "amc": "5%",
+        "register_for": "Project, Support",
+        "purchase_order_date": "5/5/2025",
+        "commencement_date": "5/5/2025",
+        "project_manager": "",
+        "order_letter": "Order Letter.pdf",
+        "cost_sheet": "Profit analysis.pdf",
+        "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
+        "sales": [
+            {"name": "John Doe", "email": "jd@fasylsales.com"}
+        ],
+        "current_status": "Client ID",
+        "project_stages": [
+            {
+                "status": "Client ID",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Engagement",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Initiation",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Planning",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Execution",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "UAT",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Go-Live",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Closure",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            }
+        ]
+    },
+    {
+        "id": "SBK-138",
+        "project_name": "Feed The Nation",
+        "client": "Fasyl",
+        "product": "Xnett",
+        "type": "IP",
+        "location": "Nigeria",
+        "site_code": "ST-CD-001",
+        "amc": "5%",
+        "register_for": "Project, Support",
+        "purchase_order_date": "5/5/2025",
+        "commencement_date": "5/5/2025",
+        "project_manager": "",
+        "order_letter": "Order Letter.pdf",
+        "cost_sheet": "Profit analysis.pdf",
+        "additional_info": "Voluptas nisi aut. Est vitae dolore molestias porro praesentium. Tempore recusandae voluptatem necessitatibus corporis inventore neque magnam ut.",
+        "sales": [
+            {"name": "John Doe", "email": "jd@fasylsales.com"}
+        ],
+        "current_status": "Client ID",
+        "project_stages": [
+            {
+                "status": "Client ID",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Engagement",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Initiation",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Planning",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Execution",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "UAT",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Go-Live",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            },
+            {
+                "status": "Closure",
+                "isCompleted": false,
+                "checklist": [],
+                "uploadedDocs": []
+            }
+        ]
+    }
+]

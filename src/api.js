@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-    baseURL: "http://localhost:5000/api",
+    baseURL: "http://localhost:5000/api/v1",
     headers: {
         "Content-Type": "application/json"
     },
@@ -165,6 +165,85 @@ export const rejectStage = async (
 
         console.error(
             "Reject Stage Error:",
+            error.response?.data
+        );
+
+        throw error.response?.data || error;
+    }
+};
+
+export const createTask = async (
+    payload
+) => {
+
+    try {
+        const { data } = await api.post(
+            `/tasks/`, payload);
+
+        return data;
+
+    } catch (error) {
+        console.error(
+            "Create Task Error:",
+            error.response?.data
+        );
+
+        throw error.response?.data || error;
+    }
+}
+
+export const getTasks = async (
+    projectId,
+    stageOrder
+) => {
+
+    try {
+        const { data } = await api.get(`/tasks/project/${projectId}/stage/${stageOrder}`);
+
+        return data
+    } catch (error) {
+
+        console.error(
+            "Task Retrieval Error:",
+            error.response?.data
+        );
+
+        throw error.response?.data || error;
+    }
+}
+
+export const updateTask = async(
+    taskId,
+    payload
+) => {
+
+    try {
+
+        const { data } = await api.patch(`/tasks/${taskId}`, payload);
+
+        return data
+    } catch(error) {
+
+        console.error(
+            "Task Update Error:",
+            error.response?.data
+        );
+
+        throw error.response?.data || error;
+    }
+}
+
+export const deleteTask = async (taskId) => {
+
+    try {
+        const { data } = await api.delete(`/tasks/${taskId}`);
+
+        return data;
+
+    } catch (error) {
+        
+        console.error(
+            "Delete Task Error:",
             error.response?.data
         );
 

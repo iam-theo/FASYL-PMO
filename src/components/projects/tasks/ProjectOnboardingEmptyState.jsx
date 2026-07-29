@@ -4,7 +4,7 @@ import { AiTwotonePlusCircle } from "react-icons/ai"
 function ProjectOnboardingEmptyState({ onSetupProject }) {
     return (
         <div className='flex items-center justify-center py-20 px-4'>
-            <div className='w-88 flex flex-col items-center gap-6 text-center'>
+            <div className='w-full max-w-88 flex flex-col items-center gap-6 text-center'>
                 <div className='flex flex-col items-center gap-4'>
                     <div className='w-15.5 h-15.5 rounded-lg border border-[#0000000D] bg-[#F3F3F3] flex items-center justify-center'>
                         <i className="fa-solid fa-briefcase fa-xl text-[#DBDBDB]"></i>

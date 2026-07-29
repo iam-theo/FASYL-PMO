@@ -1,10 +1,16 @@
-import React from 'react'
 import { ChevronDownIcon, TrashOutlineIcon } from '../icons'
 import { ChevronLeftIcon, ChevronRightIcon } from './kanbanIcons'
 import { TASK_PRIORITY_OPTIONS, PRIORITY_BADGE_COLORS } from '../tasks/mockTasks'
 import { formatDueDate } from './kanbanConstants'
 
-function KanbanTaskCard({ task, canMoveLeft, canMoveRight, onMove, onChangePriority, onDelete }) {
+function KanbanTaskCard({ 
+    task, 
+    canMoveLeft, 
+    canMoveRight, 
+    onMove, 
+    updatePriority, 
+    onDelete 
+}) {
     return (
         <div className='rounded-lg border border-[#0000000D] bg-[#F3F3F3] p-3 flex flex-col gap-5.5'>
             <div className='flex flex-col gap-4'>
@@ -44,12 +50,17 @@ function KanbanTaskCard({ task, canMoveLeft, canMoveRight, onMove, onChangePrior
                 >
                     <select
                         value={task.priority}
-                        onChange={(e) => onChangePriority(task.id, e.target.value)}
+                        onChange={(e) => updatePriority(task.id, e.target.value)}
                         aria-label="Change priority"
                         className='absolute inset-0 w-full h-full opacity-0 cursor-pointer'
                     >
                         {TASK_PRIORITY_OPTIONS.map((option) => (
-                            <option key={option} value={option}>{option}</option>
+                            <option 
+                                key={option} 
+                                value={option}
+                                className='text-[#667085]'>
+                                    {option}
+                            </option>
                         ))}
                     </select>
                     <span className='font-medium text-[14px]/[20px] text-[#FFFFFF] pointer-events-none'>{task.priority}</span>

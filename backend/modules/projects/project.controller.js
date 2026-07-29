@@ -87,7 +87,7 @@ export const assignProject = async (req, res) => {
       });
     }
 
-    const project = await assignProjectService(projectId, projectManagerEmail);
+    const project = await assignProjectService(Number(projectId), projectManagerEmail);
 
     return res.status(200).json({
       success: true,

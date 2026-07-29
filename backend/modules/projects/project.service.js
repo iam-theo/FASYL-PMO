@@ -190,7 +190,7 @@ export const assignProjectService = async (projectId, pmEmail) => {
   }
 
   const project = await prisma.project.update({
-    where: { projectId: projectId },
+    where: { id: projectId },
     data: {
       projectManagerId: user.id,  
 
@@ -264,7 +264,17 @@ export const getProjectsService = async (user) => {
           email: true,
         },
       },
-      stages: true,
+      stages: {
+        include: {
+          tasks: true,
+          reminders: true,
+          reports: true
+        },
+
+        orderBy: {
+          stageOrder: "asc"
+        }
+      },
       approvals: true,
     },
     orderBy: {

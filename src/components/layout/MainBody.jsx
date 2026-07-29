@@ -35,6 +35,7 @@ function MainBody({ user, setUser}) {
     const [openProject, setOpenProject] = useState(false)
     const [isSetupModalOpen, setIsSetupModalOpen] = useState(false)
     const [activeSubTab, setActiveSubTab] = useState("overview")
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
     // const isSetupComplete = (selectedProject?.resources?.length ?? 0) > 0
     const [activeDetails, setActiveDetails] = useState("project_lifecycle")
@@ -92,16 +93,39 @@ function MainBody({ user, setUser}) {
     return (
         <div className='relative flex max-w-360 h-screen bg-[#FFFFFF]'>
 
-            <SideBar 
-                activeTab={activeTab} 
-                setActiveTab={setActiveTab} 
+            <SideBar
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
                 handleLogout={handleLogout}
                 setOpenProject={setOpenProject}
+                isSidebarOpen={isSidebarOpen}
+                setIsSidebarOpen={setIsSidebarOpen}
             />
+
+            {
+                selectedProject && user.role === "HEADOFOPS" && !selectedProject?.projectManager && (
+                    <AddProjectManager
+                        projects={projects}
+                        setProjects={setProjects}
+                        selectedProject={selectedProject}
+                        setSelectedProject={setSelectedProject}
+                        onClose={() => {
+                            setActiveTab("projects")
+                            setOpenProject(false)
+                            setSelectedProject(null)
+                        }}
+                        projectManagers={projectManagers}
+                        assignedManager={assignedManager}
+                        setAssignedManager={setAssignedManager}
+                        user={user}
+                    />
+                )
+            }
 
             <MainSection
                 projects={projects}
                 setProjects={setProjects}
+                projectManagers={projectManagers}
                 setActiveTab={setActiveTab}
                 activeTab={activeTab}
                 setOpenProject={setOpenProject}
@@ -116,6 +140,7 @@ function MainBody({ user, setUser}) {
                 isLoading={isLoading}
                 activeDetails={activeDetails}
                 setActiveDetails={setActiveDetails}
+                setIsSidebarOpen={setIsSidebarOpen}
             />
 
             {isSetupModalOpen && (
@@ -125,46 +150,6 @@ function MainBody({ user, setUser}) {
                     // onSetupComplete={onProjectUpdated}
                 />
             )}
-
-            {/* {selectedProject && activeSubTab === "project_lifecycle" && (
-                <ViewProjectsBody
-                    projects={projects}
-                    setProjects={setProjects}
-                    selectedProject={selectedProject}
-                    setSelectedProject={setSelectedProject}
-                    onClose={() => setSelectedProject(null)}
-                    activeDetails={activeDetails}
-                    setActiveDetails={setActiveDetails}
-                    user={user}
-                />
-            )} */}
-
-            {/* {selectedProject && user.role === "HEADOFOPS" && !selectedProject?.projectManager ? (
-                <AddProjectManager
-                    projects={projects}
-                    setProjects={setProjects}
-                    selectedProject={selectedProject}
-                    setSelectedProject={setSelectedProject}
-                    onClose={() => setSelectedProject(null)}
-                    projectManagers={projectManagers}
-                    assignedManager={assignedManager}
-                    setAssignedManager={setAssignedManager}
-                    user={user}
-                />
-            ) : selectedProject ? (
-                <ViewProjectsBody
-                    projects={projects}
-                    setProjects={setProjects}
-                    selectedProject={selectedProject}
-                    setSelectedProject={setSelectedProject}
-                    selectedStage={selectedStage}
-                    setSelectedStage={setSelectedStage}
-                    onClose={() => setSelectedProject(null)}
-                    activeDetails={activeDetails}
-                    setActiveDetails={setActiveDetails}
-                    user={user}
-                />
-            ) : null} */}
         </div>
     )
 }

@@ -1,8 +1,14 @@
-import React from 'react'
 import KanbanTaskCard from './KanbanTaskCard'
 import { STATUS_COLUMNS } from './kanbanConstants'
 
-function KanbanColumn({ column, tasks, onMove, onChangePriority, onDelete }) {
+function KanbanColumn({ 
+    column, 
+    tasks, 
+    onMove, 
+    updatePriority, 
+    onDelete 
+}) {
+    
     const columnIndex = STATUS_COLUMNS.findIndex((c) => c.key === column.key)
 
     return (
@@ -22,7 +28,7 @@ function KanbanColumn({ column, tasks, onMove, onChangePriority, onDelete }) {
                         canMoveLeft={columnIndex > 0}
                         canMoveRight={columnIndex < STATUS_COLUMNS.length - 1}
                         onMove={onMove}
-                        onChangePriority={onChangePriority}
+                        updatePriority={updatePriority}
                         onDelete={onDelete}
                     />
                 ))}

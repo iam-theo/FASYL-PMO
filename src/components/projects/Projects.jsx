@@ -81,27 +81,27 @@ function Projects({
             <div className='cursor-pointer'>
                 <span className='font-medium text-[14px]/[20px] text-[#949494]'>Dashboard</span> <span className='text-[#949494]'>/</span> <span className='font-medium text-[14px]/[20px] text-[#1B3C4A]'>Projects</span>
             </div>
-            <div className='flex items-center justify-between gap-2 relative'>
+            <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-2 relative'>
                 <div className='py-4'>
                     <h3 className='font-semibold text-[14px]/[20px] text-[#090909] mb-2'>Projects</h3>
                     <p className='font-normal text-[14px]/[20px] text-[#636363] mb-3'>View all assigned projects</p>
                 </div>
 
-                <div className='w-102.25 h-10 flex items-center gap-3 relative'>
+                <div className='w-full sm:w-102.25 h-10 flex items-center gap-3 relative'>
                     <div
-                        className='w-72.25 border border-[#00000026] py-2.5 px-3 bg-[#FFFFFF] rounded-lg flex items-center gap-3'>
+                        className='flex-1 sm:w-72.25 border border-[#00000026] py-2.5 px-3 bg-[#FFFFFF] rounded-lg flex items-center gap-3'>
                         <i className="fa-solid fa-magnifying-glass text-[#090909]"></i>
-                        <input 
+                        <input
                             type="text"
                             value={searchValue}
-                            onInput={(e) => setSearchValue(e.target.value)} 
+                            onInput={(e) => setSearchValue(e.target.value)}
                             placeholder='Search projects...'
-                            className='outline-none'
+                            className='outline-none w-full min-w-0'
                         />
                     </div>
 
                     <div
-                        className='w-30 rounded-lg border border-[#0000000D] bg-[#E8E8E8] text-[#1B3C4A] py-2.5 px-2 cursor-pointer font-semibold text-[13px]'>
+                        className='shrink-0 sm:w-30 rounded-lg border border-[#0000000D] bg-[#E8E8E8] text-[#1B3C4A] py-2.5 px-2 cursor-pointer font-semibold text-[13px]'>
                         <select
                             value={filterValue}
                             onChange={(e) => setFilterValue(e.target.value)}
@@ -140,7 +140,7 @@ function Projects({
             {/* projects table with details */}
             <section className='w-full min-h-0 overflow-auto no-scrollbar rounded-lg border border-[#0000000D] relative'>
                 <table className='min-w-300 border-collapse whitespace-nowrap'>
-                    <thead className='sticky top-0 z-2000 h-11 bg-[#F9FAFB]'>
+                    <thead className='sticky top-0 z-20 h-11 bg-[#F9FAFB]'>
                         <tr className=''>
                             <th className='px-4 py-3 font-semibold text-[12px]/[18px] text-[#090909] text-left'>ID</th>
                             <th className='px-4 py-3 font-semibold text-[12px]/[18px] text-[#090909] text-left'>Project Name</th>
@@ -255,7 +255,7 @@ function Projects({
                 </table>
             </section>
 
-            <div className='flex items-center justify-between w-full py-6'>
+            <div className='flex flex-wrap items-center justify-between gap-3 w-full py-6'>
                 <p className='font-medium text-[14px]/[20px] text-[#636363]'>Page {currentPage} of {totalPages}</p>
                 <div className='flex items-center gap-2'>
                     <button onClick={() => setCurrentPage((p) => Math.max(p -1, 1))} className='rounded-md border border-[#0000000D] shadow-[2px] shadow-[#1018280D] py-2.25 px-4.25 bg-[#E8E8E8] hover:bg-[#1B3C4A] font-medium text-[14px]/[20px] text-[#1B3C4A] hover:text-[#FFFFFF] cursor-pointer'>Previous</button>

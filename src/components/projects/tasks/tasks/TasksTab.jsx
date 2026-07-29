@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ChevronDownIcon, CheckboxCheckIcon, MoreVerticalIcon, TrashIcon, PlusCircleIcon } from '../icons'
 import CreateTaskModal from './CreateTaskModal'
 import DeleteTaskModal from './DeleteTaskModal'
@@ -6,16 +6,33 @@ import KanbanTab from '../kanban/KanbanTab'
 import {
     TASK_STATUS_OPTIONS,
     TASK_PRIORITY_OPTIONS,
-    TASK_ASSIGNEES,
     PRIORITY_BADGE_COLORS,
 } from './mockTasks'
 import { DUE_DATE_FILTERS, matchesDueDateFilter } from './dueDateFilters'
+import { createTask, deleteTask, updateTask } from '../../../../api'
+import { useNotification } from '../../../NotificationContext'
 
 const ITEMS_PER_PAGE = 5
 
-function TasksTab({ tasks, setTasks }) {
+function TasksTab({ 
+    tasks, 
+    setTasks, 
+    resources, 
+    loggedInUser,
+    projectManagers,
+    project, 
+    // setProject 
+}) {
+
+    // console.log(project)
+
+    const { showNotification } = useNotification();
+
     const [view, setView] = useState('list')
     const [selectedIds, setSelectedIds] = useState([])
+    const [isEditing, setIsEditing] = useState(false)
+    // const [editingTask, setEditingTask] = useState(null)
+    const [editValues, setEditValues] = useState(null);
     const [currentPage, setCurrentPage] = useState(1)
     const [openMenuId, setOpenMenuId] = useState(null)
 
@@ -27,22 +44,42 @@ function TasksTab({ tasks, setTasks }) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [deleteTarget, setDeleteTarget] = useState(null) // { ids: [...] } | null
 
-    const assigneeOptions = useMemo(
-        () => Array.from(new Set([...TASK_ASSIGNEES, ...tasks.map((t) => t.assignedTo)])),
-        [tasks]
-    )
+    const assigneeOptions = useMemo(() => {
+        const members = [...resources, ...tasks.map(t => t.assignedTo)]
+            .filter(Boolean);
+
+        const unique = members.filter(
+            (member, index, self) =>
+                index === self.findIndex(
+                    m => m.recordId === member.recordId
+                )
+        );
+
+        return unique.map(member => ({
+            value: member.recordId,
+            label: `${member.firstName} ${member.lastName}`
+        }));
+    }, [resources, tasks]);
+
+    // console.log(tasks);
 
     const filteredTasks = useMemo(() => {
         return tasks.filter((task) => {
             if (statusFilter !== "All Status" && task.status !== statusFilter) return false
+
             if (priorityFilter !== "All Priorities" && task.priority !== priorityFilter) return false
-            if (assigneeFilter !== "All Team Members" && task.assignedTo !== assigneeFilter) return false
+
+            if (assigneeFilter !== "All Team Members" && task.assignee?.id !== assigneeFilter) return false
+
             if (!matchesDueDateFilter(task.dueDate, dueDateFilter)) return false
+
             return true
         })
     }, [tasks, statusFilter, priorityFilter, assigneeFilter, dueDateFilter])
 
+
     const totalPages = Math.max(1, Math.ceil(filteredTasks.length / ITEMS_PER_PAGE))
+
 
     const paginatedTasks = useMemo(() => {
         const start = (currentPage - 1) * ITEMS_PER_PAGE
@@ -59,43 +96,263 @@ function TasksTab({ tasks, setTasks }) {
         }
     }
 
+
     const toggleSelectTask = (taskId) => {
         setSelectedIds((prev) =>
             prev.includes(taskId) ? prev.filter((id) => id !== taskId) : [...prev, taskId]
         )
     }
 
-    const handleApplyChanges = () => {
-        setSelectedIds([])
+    const handleEditTask = (task) => {
+
+        setIsEditing(true);
+
+        // setEditingTask(task);
+
+        setEditValues({
+            id: task.id,
+            title: task.title,
+            description: task.description,
+            status: task.status,
+            priority: task.priority,
+            startDate: task.startDate?.split("T")[0] ?? "",
+            dueDate: task.dueDate?.split("T")[0] ?? "",
+            assignee: task.assignee,
+        });
+
+        setIsCreateModalOpen(true);
+    };
+
+
+    const handleStatusChange = async (taskId, newStatus) => {
+
+        try {
+
+            const response = await updateTask(taskId, {status: newStatus});
+
+            const updatedTask = response.data;
+
+            console.log("updatedTask", updatedTask);
+
+            setTasks((prevTasks) =>
+                prevTasks
+                    .map((task) =>
+                        task.id === updatedTask.id ? updatedTask : task
+                    )
+                    .sort(
+                        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                    )
+            );
+
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handlePriorityChange = async (taskId, newPriority) => {
+        
+        try {
+
+            const response = await updateTask(taskId, {priority: newPriority});
+
+            const updatedTask = response.data;
+
+            console.log("updatedTask", updatedTask);
+
+            setTasks((prevTasks) =>
+                prevTasks
+                    .map((task) =>
+                        task.id === updatedTask.id ? updatedTask : task
+                    )
+                    .sort(
+                        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                    )
+            );
+
+        } catch (err) {
+            console.error(err);
+        }
     }
 
-    const handleStatusChange = (taskId, newStatus) => {
-        setTasks((prev) => prev.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t)))
+    // const handleDueDateChange = async (taskId, dueDate) => {
+
+    //     try {
+
+    //         const response = await updateTask(taskId, {
+    //             dueDate
+    //         });
+
+    //         const updatedTask = response.data;
+
+    //         setTasks(prev =>
+    //             prev.map(task =>
+    //                 task.id === updatedTask.id
+    //                     ? updatedTask
+    //                     : task
+    //             )
+    //         );
+
+    //     } catch (err) {
+    //         console.error(err);
+    //     }
+    // };
+
+    // const handleAssigneeChange = async (taskId, assignedResourceId) => {
+
+    //     try {
+
+    //         const response = await updateTask(taskId, {
+    //             assignedResourceId
+    //         });
+
+    //         const updatedTask = response.data;
+
+    //         setTasks(prev =>
+    //             prev.map(task =>
+    //                 task.id === updatedTask.id
+    //                     ? updatedTask
+    //                     : task
+    //             )
+    //         );
+
+    //     } catch (err) {
+    //         console.error(err);
+    //     }
+    // };
+
+    const handleSaveTask = async (taskId, editTask) => {
+
+        try {
+
+            const response = await updateTask(
+                taskId,
+                editTask
+            );
+
+            console.log(response);
+
+            const updatedTask = response.data;
+
+            // console.log("updatedTask", updatedTask);
+
+            setTasks((prevTasks) =>
+                prevTasks
+                    .map((task) =>
+                        task.id === updatedTask.id ? updatedTask : task
+                    )
+                    .sort(
+                        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                    )
+            );
+
+            setIsCreateModalOpen(false);
+            // setEditingTask(null);
+            setIsEditing(false);
+
+            showNotification({
+                type: "success",
+                title: "Task Updated!",
+                message: `You have successfully updated a task`
+            });
+
+        } catch (err) {
+            console.error(err);
+
+            showNotification({
+                type: "error",
+                title: "Failed To Update A Task!",
+                message: "Unable to update a task"
+            });
+        }
+    };
+
+
+    const handleCreateTask = async (newTask) => {
+
+        // console.log("Received", newTask);
+
+        try {
+            const response = await createTask(newTask);
+
+            console.log(response);
+
+            const createdTask = response.data;
+
+            // console.log("createdTask", createdTask)
+
+            setTasks((prevTasks) =>
+                [createdTask, ...prevTasks].sort(
+                    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                )
+            );
+
+            setIsCreateModalOpen(false);
+            setCurrentPage(1);
+
+            showNotification({
+                type: "success",
+                title: "Task Created!",
+                message: `You have successfully assigned a task`
+            });
+
+        } catch(err) {
+            console.error(err)
+
+            
+            showNotification({
+                type: "error",
+                title: "Failed To Create A Task!",
+                message: "Unable to assign a task"
+            });
+        }
     }
 
-    const handleCreateTask = (newTask) => {
-        setTasks((prev) => [{ id: `task-${Date.now()}`, ...newTask }, ...prev])
-        setIsCreateModalOpen(false)
-        setCurrentPage(1)
-    }
+    const handleConfirmDelete = async () => {
+        if (!deleteTarget) return;
 
-    const handleConfirmDelete = () => {
-        if (!deleteTarget) return
-        setTasks((prev) => prev.filter((t) => !deleteTarget.ids.includes(t.id)))
-        setSelectedIds((prev) => prev.filter((id) => !deleteTarget.ids.includes(id)))
-        setDeleteTarget(null)
-        setOpenMenuId(null)
-    }
+        try {
 
-    if (view === 'kanban') {
-        return (
-            <KanbanTab
-                tasks={tasks}
-                setTasks={setTasks}
-                viewToggle={<ViewToggle view={view} onChange={setView} />}
-            />
-        )
-    }
+            const responses = await Promise.all(
+                deleteTarget.ids.map((id) => deleteTask(id))
+            );
+
+            const deletedTasks = responses.map((response) => response.data);
+
+            const deletedTaskIds = responses.map((response) => response.data.id);
+
+            console.log("deleted tasks:", deletedTasks);
+
+            setTasks((prev) =>
+                prev.filter((task) => !deletedTaskIds.includes(task.id))
+            );
+
+            setSelectedIds((prev) =>
+                prev.filter((id) => !deleteTarget.ids.includes(id))
+            );
+
+            setDeleteTarget(null);
+            setOpenMenuId(null);
+
+            showNotification({
+                type: "success",
+                title: "Task Deleted",
+                message:
+                    deleteTarget.ids.length === 1
+                        ? "Task deleted successfully."
+                        : `${deleteTarget.ids.length} tasks deleted successfully.`
+            });
+        } catch (err) {
+            console.error(err);
+
+            showNotification({
+                type: "error",
+                title: "Delete Failed",
+                message: "Unable to delete the selected task(s)."
+            });
+        }
+    };
+
+    // console.log(tasks);
 
     return (
         <div className='flex flex-col h-full'>
@@ -159,7 +416,7 @@ function TasksTab({ tasks, setTasks }) {
                     <div className='rounded-lg border border-[#0000000D] bg-[#FFFFFF80] p-4 flex items-center justify-between flex-wrap gap-3'>
                         <p className='font-medium text-[12px]/[18px] text-[#090909]'>{selectedIds.length} Selected</p>
                         <div className='flex items-center gap-3 flex-wrap'>
-                            <button
+                            {/* <button
                                 type="button"
                                 disabled
                                 className='px-4 py-2.5 rounded-lg border border-[#0000000D] bg-[#E8E8E8] flex items-center gap-2 cursor-not-allowed opacity-70'
@@ -181,144 +438,228 @@ function TasksTab({ tasks, setTasks }) {
                                 className='px-4 py-2.5 rounded-lg border border-[#0000000D] bg-[#1B3C4A] flex items-center gap-2 cursor-pointer'
                             >
                                 <span className='font-medium text-[14px]/[20px] text-[#FFFFFF]'>Apply Changes</span>
-                            </button>
+                            </button> */}
                             <button
                                 type="button"
+                                disabled={selectedIds.length === 0}
                                 onClick={() => setDeleteTarget({ ids: [...selectedIds] })}
-                                className='h-10 px-4.5 rounded-lg border border-[#D92D20] bg-[#D92D20] shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] flex items-center gap-2 cursor-pointer'
+                                className='h-10 px-4.5 rounded-lg border border-[#D92D20] bg-[#D92D20] shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
                             >
                                 <TrashIcon />
-                                <span className='font-medium text-[16px]/[24px] text-[#FFFFFF]'>Delete Selected</span>
+                                <span className='font-medium text-[16px]/[24px] text-[#FFFFFF]'>Delete Selected ({selectedIds.length})</span>
                             </button>
                         </div>
                     </div>
                 )}
             </div>
 
-            <div className='flex-1 min-h-0 overflow-y-auto no-scrollbar px-4 py-4'>
-                {tasks.length === 0 ? (
-                    <TasksEmptyState onCreateTask={() => setIsCreateModalOpen(true)} />
-                ) : (
-                    <div className='rounded-lg border border-[#0000000D] bg-[#F9FAFB] overflow-x-auto'>
-                        <table className='w-full border-collapse min-w-175'>
-                            <thead>
-                                <tr className='border-b border-[#0000000D]'>
-                                    <th className='w-16 px-6 py-4 text-left'>
-                                        <TaskCheckbox checked={allOnPageSelected} onChange={toggleSelectAllOnPage} />
-                                    </th>
-                                    <th className='px-6 py-4 text-left font-medium text-[12px]/[18px] text-[#636363]'>Task</th>
-                                    <th className='px-6 py-4 text-left font-medium text-[12px]/[18px] text-[#636363]'>Assigned To</th>
-                                    <th className='px-6 py-4 text-left font-medium text-[12px]/[18px] text-[#636363]'>Priority</th>
-                                    <th className='px-6 py-4 text-left font-medium text-[12px]/[18px] text-[#636363]'>Status</th>
-                                    <th className='px-6 py-4 text-left font-medium text-[12px]/[18px] text-[#636363]'>Due Date</th>
-                                    <th className='px-6 py-4 text-right font-medium text-[12px]/[18px] text-[#636363]'>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {paginatedTasks.length === 0 && (
-                                    <tr>
-                                        <td colSpan={7} className='px-6 py-10 text-center font-normal text-[14px]/[20px] text-[#636363]'>
-                                            No tasks match the selected filters.
-                                        </td>
-                                    </tr>
-                                )}
-                                {paginatedTasks.map((task) => (
-                                    <tr key={task.id} className='border-b border-[#0000000D] last:border-b-0'>
-                                        <td className='px-6 py-4'>
-                                            <TaskCheckbox
-                                                checked={selectedIds.includes(task.id)}
-                                                onChange={() => toggleSelectTask(task.id)}
-                                            />
-                                        </td>
-                                        <td className='px-6 py-4 font-medium text-[14px]/[20px] text-[#090909] whitespace-nowrap'>
-                                            {task.title}
-                                        </td>
-                                        <td className='px-6 py-4 font-normal text-[14px]/[20px] text-[#636363] whitespace-nowrap'>
-                                            {task.assignedTo}
-                                        </td>
-                                        <td className='px-6 py-4'>
-                                            <span
-                                                className='inline-flex items-center gap-1 rounded-2xl px-2 py-1 font-medium text-[14px]/[20px] text-[#FFFFFF]'
-                                                style={{ backgroundColor: PRIORITY_BADGE_COLORS[task.priority] ?? "#949494" }}
-                                            >
-                                                {task.priority}
-                                                <ChevronDownIcon stroke='white' />
-                                            </span>
-                                        </td>
-                                        <td className='px-6 py-4'>
-                                            <div className='relative w-36.5 rounded-lg border border-[#D0D5DD] bg-[#FFFFFF] shadow-[0_1px_2px_0_rgba(16,24,40,0.05)]'>
-                                                <select
-                                                    value={task.status}
-                                                    onChange={(e) => handleStatusChange(task.id, e.target.value)}
-                                                    className='w-full appearance-none px-3.5 py-2.5 pr-9 rounded-lg outline-none font-normal text-[16px]/[24px] text-[#667085] bg-transparent cursor-pointer'
-                                                >
-                                                    {TASK_STATUS_OPTIONS.map((option) => (
-                                                        <option key={option} value={option}>{option}</option>
-                                                    ))}
-                                                </select>
-                                                <ChevronDownIcon className='pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2' />
-                                            </div>
-                                        </td>
-                                        <td className='px-6 py-4 font-normal text-[14px]/[20px] text-[#636363] whitespace-nowrap'>
-                                            {task.dueDate}
-                                        </td>
-                                        <td className='px-6 py-4 text-right relative'>
-                                            <button
-                                                type="button"
-                                                onClick={() => setOpenMenuId((prev) => (prev === task.id ? null : task.id))}
-                                                className='w-5 h-5 inline-flex items-center justify-center cursor-pointer'
-                                                aria-label="Task actions"
-                                            >
-                                                <MoreVerticalIcon stroke='#344054' />
-                                            </button>
-                                            {openMenuId === task.id && (
-                                                <div className='absolute right-6 top-12 z-10 w-32 rounded-lg border border-[#0000000D] bg-[#FFFFFF] shadow-[0_4px_6px_-2px_rgba(16,24,40,0.03),0_12px_16px_-4px_rgba(16,24,40,0.08)] overflow-hidden'>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setDeleteTarget({ ids: [task.id] })}
-                                                        className='w-full px-4 py-2.5 text-left font-medium text-[14px]/[20px] text-[#D92D20] hover:bg-[#FEF3F2] cursor-pointer'
-                                                    >
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-            </div>
+            {
+                view === 'kanban' &&
+                    (
+                        <KanbanTab
+                            tasks={tasks}
+                            setTasks={setTasks}
+                            resources={resources}
+                            filteredTasks={filteredTasks}
+                            openModal={setIsCreateModalOpen}
+                            updatePriority={handlePriorityChange}
+                            // viewToggle={<ViewToggle view={view} onChange={setView} />}
+                            setDeleteTarget={setDeleteTarget}
+                        />
+                    )
+            }
 
-            {tasks.length > 0 && (
-                <div className='border-t border-[#0000000D] bg-[#F2F2F2] px-6 py-4 flex items-center justify-between'>
-                    <p className='font-medium text-[14px]/[20px] text-[#636363]'>Page {currentPage} of {totalPages}</p>
-                    <div className='flex items-center gap-2'>
-                        <button
-                            type="button"
-                            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                            disabled={currentPage === 1}
-                            className='rounded-md border border-[#0000000D] shadow-[2px] shadow-[#1018280D] py-2.25 px-4.25 bg-[#E8E8E8] hover:bg-[#1B3C4A] font-medium text-[14px]/[20px] text-[#1B3C4A] hover:text-[#FFFFFF] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#E8E8E8] disabled:hover:text-[#1B3C4A]'
-                        >
-                            Previous
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-                            disabled={currentPage === totalPages}
-                            className='rounded-md border border-[#0000000D] shadow-[2px] shadow-[#1018280D] py-2.25 px-4.25 bg-[#E8E8E8] hover:bg-[#1B3C4A] font-medium text-[14px]/[20px] text-[#1B3C4A] hover:text-[#FFFFFF] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#E8E8E8] disabled:hover:text-[#1B3C4A]'
-                        >
-                            Next
-                        </button>
-                    </div>
-                </div>
-            )}
+            {
+                view === 'list' && 
+                    (
+                        <div className='flex-1 min-h-0 overflow-y-auto no-scrollbar px-4 py-4'>
+                            {tasks.length === 0 ? (
+                                <TasksEmptyState onCreateTask={() => setIsCreateModalOpen(true)} />
+                            ) : (
+                                <div className='rounded-lg border border-[#0000000D] bg-[#F9FAFB] overflow-x-auto'>
+                                    <table className='w-full border-collapse min-w-175'>
+                                        <thead>
+                                            <tr className='border-b border-[#0000000D]'>
+                                                <th className='w-16 px-6 py-4 text-left'>
+                                                    <TaskCheckbox checked={allOnPageSelected} onChange={toggleSelectAllOnPage} />
+                                                </th>
+                                                <th className='px-6 py-4 text-left font-medium text-[12px]/[18px] text-[#636363]'>Task</th>
+                                                <th className='px-6 py-4 text-left font-medium text-[12px]/[18px] text-[#636363]'>Assigned To</th>
+                                                <th className='px-6 py-4 text-left font-medium text-[12px]/[18px] text-[#636363]'>Priority</th>
+                                                <th className='px-6 py-4 text-left font-medium text-[12px]/[18px] text-[#636363]'>Status</th>
+                                                <th className='px-6 py-4 text-left font-medium text-[12px]/[18px] text-[#636363]'>Due Date</th>
+                                                <th className='px-6 py-4 text-right font-medium text-[12px]/[18px] text-[#636363]'>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {paginatedTasks.length === 0 && (
+                                                <tr>
+                                                    <td colSpan={7} className='px-6 py-10 text-center font-normal text-[14px]/[20px] text-[#636363]'>
+                                                        No tasks match the selected filters.
+                                                    </td>
+                                                </tr>
+                                            )}
+                                            {paginatedTasks.map((task) => (
+                                                <tr 
+                                                    key={task.id} 
+                                                    onClick={() => handleEditTask(task)}
+                                                    className='border-b border-[#0000000D] last:border-b-0'>
+                                                    <td className='px-6 py-4'>
+                                                        <TaskCheckbox
+                                                            checked={selectedIds.includes(task.id)}
+                                                            onChange={(e) => {
+                                                                e.stopPropagation();
+                                                                toggleSelectTask(task.id)
+                                                            }}
+                                                        />
+                                                    </td>
+                                                    <td className='px-6 py-4 font-medium text-[14px]/[20px] text-[#090909] whitespace-nowrap'>
+                                                        {task.title}
+                                                    </td>
+                                                    <td className='px-6 py-4 font-normal text-[14px]/[20px] text-[#636363] whitespace-nowrap'>
+                                                        {task.assignee.fullName}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className="relative inline-flex items-center rounded-2xl px-2 py-1"
+                                                            style={{
+                                                                backgroundColor:
+                                                                    PRIORITY_BADGE_COLORS[task.priority] ?? "#949494",
+                                                            }}
+                                                        >
+                                                            <select
+                                                                value={task.priority}
+                                                                onChange={(e) =>
+                                                                    handlePriorityChange(task.id, e.target.value)
+                                                                }
+                                                                className="w-full appearance-none bg-transparent text-white font-normal text-[16px]/[24px] px-3 py-1 pr-8 rounded-2xl cursor-pointer outline-none"
+                                                            >
+                                                                {TASK_PRIORITY_OPTIONS.map((option) => (
+                                                                    <option
+                                                                        key={option}
+                                                                        value={option}
+                                                                        className='text-[#667085]'
+                                                                    >
+                                                                        {option}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+
+                                                            <ChevronDownIcon
+                                                                stroke="white"
+                                                                className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2"
+                                                            />
+                                                        </div>
+                                                    </td>
+                                                    <td className='px-6 py-4'>
+                                                        <div 
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className='relative w-36.5 rounded-lg border border-[#D0D5DD] bg-[#FFFFFF] shadow-[0_1px_2px_0_rgba(16,24,40,0.05)]'>
+                                                            <select
+                                                                value={task.status}
+                                                                onChange={(e) => 
+                                                                    handleStatusChange(task.id, e.target.value)
+                                                                }
+                                                                className='w-full appearance-none px-3.5 py-2.5 pr-9 rounded-lg outline-none font-normal text-[16px]/[24px] text-[#667085] bg-transparent cursor-pointer'
+                                                            >
+                                                                {TASK_STATUS_OPTIONS.map((option, index) => (
+                                                                    <option 
+                                                                        key={index} 
+                                                                        value={option}>
+                                                                        {option}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                            <ChevronDownIcon className='pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2' />
+                                                        </div>
+                                                    </td>
+                                                    <td className='px-6 py-4 font-normal text-[14px]/[20px] text-[#636363] whitespace-nowrap'>
+                                                        {new Date(task.dueDate).toISOString().split("T")[0]}
+                                                    </td>
+                                                    <td className='px-6 py-4 text-right relative'>
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setOpenMenuId((prev) => (prev === task.id ? null : task.id))}
+                                                            }
+                                                            className='w-5 h-5 inline-flex items-center justify-center cursor-pointer'
+                                                            aria-label="Task actions"
+                                                        >
+                                                            <MoreVerticalIcon stroke='#344054' />
+                                                        </button>
+                                                        {openMenuId === task.id && (
+                                                            <div className='absolute right-6 top-12 z-10 w-32 rounded-lg border border-[#0000000D] bg-[#FFFFFF] shadow-[0_4px_6px_-2px_rgba(16,24,40,0.03),0_12px_16px_-4px_rgba(16,24,40,0.08)] overflow-hidden'>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        setOpenMenuId(null);
+                                                                        setDeleteTarget({ ids: [task.id] })}
+                                                                    }
+                                                                    className='w-full px-4 py-2.5 text-left font-medium text-[14px]/[20px] text-[#D92D20] hover:bg-[#FEF3F2] cursor-pointer'
+                                                                >
+                                                                    Delete
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                        </div>
+                    )
+            }
+
+            {
+                view === 'list' && 
+                    (
+                        tasks.length > 0 && (
+                            <div className='border-t border-[#0000000D] bg-[#F2F2F2] px-6 py-4 flex items-center justify-between'>
+                                <p className='font-medium text-[14px]/[20px] text-[#636363]'>Page {currentPage} of {totalPages}</p>
+                                <div className='flex items-center gap-2'>
+                                    <button
+                                        type="button"
+                                        onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                                        disabled={currentPage === 1}
+                                        className='rounded-md border border-[#0000000D] shadow-[2px] shadow-[#1018280D] py-2.25 px-4.25 bg-[#E8E8E8] hover:bg-[#1B3C4A] font-medium text-[14px]/[20px] text-[#1B3C4A] hover:text-[#FFFFFF] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#E8E8E8] disabled:hover:text-[#1B3C4A]'
+                                    >
+                                        Previous
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                                        disabled={currentPage === totalPages}
+                                        className='rounded-md border border-[#0000000D] shadow-[2px] shadow-[#1018280D] py-2.25 px-4.25 bg-[#E8E8E8] hover:bg-[#1B3C4A] font-medium text-[14px]/[20px] text-[#1B3C4A] hover:text-[#FFFFFF] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#E8E8E8] disabled:hover:text-[#1B3C4A]'
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        )
+                    )
+            }
 
             {isCreateModalOpen && (
                 <CreateTaskModal
-                    onClose={() => setIsCreateModalOpen(false)}
+                    onClose={() => {
+                        setIsCreateModalOpen(false),
+                        setIsEditing(false),
+                        setEditValues(null)
+                    }}
                     onCreate={handleCreateTask}
+                    loggedInUser={loggedInUser}
+                    project={project}
+                    resources={resources}
+                    projectManagers={projectManagers}
+
+                    key={isEditing === true ? editValues.id : "create"}
+                    isEditing={isEditing}
+                    editValues={editValues}
+                    onEdit={handleSaveTask}
                 />
             )}
 
@@ -356,9 +697,24 @@ function FilterSelect({ value, onChange, options }) {
                 onChange={(e) => onChange(e.target.value)}
                 className='w-full appearance-none px-4 py-2.5 pr-10 rounded-lg outline-none font-medium text-[14px]/[20px] text-[#1B3C4A] bg-transparent cursor-pointer'
             >
-                {options.map((option) => (
-                    <option key={option} value={option}>{option}</option>
-                ))}
+                {options.map((option) => {
+                    if (typeof option === "string") {
+                        return (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        );
+                    }
+
+                    return (
+                        <option
+                            key={option.value}
+                            value={option.value}
+                        >
+                            {option.label}
+                        </option>
+                    );
+                })}
             </select>
             <ChevronDownIcon className='pointer-events-none absolute right-4 top-1/2 -translate-y-1/2' />
         </div>
@@ -368,7 +724,7 @@ function FilterSelect({ value, onChange, options }) {
 function TasksEmptyState({ onCreateTask }) {
     return (
         <div className='flex items-center justify-center py-20 px-4'>
-            <div className='w-88 flex flex-col items-center gap-6 text-center'>
+            <div className='w-full max-w-88 flex flex-col items-center gap-6 text-center'>
                 <div className='flex flex-col items-center gap-4'>
                     <div className='w-15.5 h-15.5 rounded-lg border border-[#0000000D] bg-[#F3F3F3] flex items-center justify-center'>
                         <i className="fa-solid fa-list-check fa-xl text-[#DBDBDB]"></i>

@@ -1,8 +1,8 @@
 export const STATUS_COLUMNS = [
-    { key: "To-do", label: "To-Do" },
-    { key: "In Progress", label: "In Progress" },
-    { key: "In Review", label: "In Review" },
-    { key: "Done", label: "Done" },
+    { key: "TODO", label: "To-Do" },
+    { key: "IN_PROGRESS", label: "In Progress" },
+    { key: "IN_REVIEW", label: "In Review" },
+    { key: "DONE", label: "Done" },
 ]
 
 export function formatDueDate(dueDate) {

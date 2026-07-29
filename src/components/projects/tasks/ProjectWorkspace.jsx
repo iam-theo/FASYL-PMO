@@ -1,22 +1,23 @@
-import React, { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ProjectBreadcrumb from './ProjectBreadcrumb'
 import ProjectSubTabs from './ProjectSubTabs'
 import ProjectOnboardingEmptyState from './ProjectOnboardingEmptyState'
+import OverviewTab from './overview/OverviewTab'
 import ResourcesTab from './resources/ResourcesTab'
 import TasksTab from './tasks/TasksTab'
-import { INITIAL_TASKS } from './tasks/mockTasks'
 import CalendarTab from './calender/CalendarTab'
 import ViewProjectsBody from '../ViewProjectsBody';
+import { getTasks } from '../../../api'
 
 function ProjectWorkspace({ 
     project, 
-    setSelectedProject,
+    setProject,
     projects,
     setProjects,
+    projectManagers,
     user,
     onNavigateToDashboard, 
-    onNavigateToProjects, 
-    onProjectUpdated, 
+    onNavigateToProjects,  
     setIsSetupModalOpen,
     activeSubTab,
     setActiveSubTab,
@@ -24,7 +25,27 @@ function ProjectWorkspace({
     setActiveDetails
 }) {
     // const [activeTab, setActiveTab] = useState("overview")
-    const [tasks, setTasks] = useState(INITIAL_TASKS)
+    const resources = project?.resources;
+
+    const [tasks, setTasks] = useState([]);
+
+    const { projectId, currentStageOrder } = project
+
+    useEffect(() => {
+
+        const loadTasks = async () => {
+            try {
+                const response  = await getTasks(projectId, currentStageOrder);
+
+                setTasks(response.data);
+
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        loadTasks();
+    }, [projectId, currentStageOrder])
 
     const isSetupComplete = (project?.resources?.length ?? 0) > 0
 
@@ -46,12 +67,17 @@ function ProjectWorkspace({
 
             <div className='flex-1 min-h-0 overflow-y-auto no-scrollbar'>
                 {activeSubTab === "overview" && (
-                    // !isSetupComplete ? (
-                    //     <div className='p-4' />
-                    // ) : (
-                    //     <ProjectOnboardingEmptyState onSetupProject={() => setIsSetupModalOpen(true)} />
-                    // )
-                    <ProjectOnboardingEmptyState onSetupProject={() => setIsSetupModalOpen(true)} />
+                    isSetupComplete ? (
+                        <OverviewTab
+                            project={project}
+                            tasks={tasks}
+                            setTasks={setTasks}
+                            onNavigateToTasks={() => setActiveSubTab("tasks")}
+                            onNavigateToResources={() => setActiveSubTab("resources")}
+                        />
+                    ) : (
+                        <ProjectOnboardingEmptyState onSetupProject={() => setIsSetupModalOpen(true)} />
+                    )
                 )}
 
                 {activeSubTab === "resources" && (
@@ -61,11 +87,22 @@ function ProjectWorkspace({
                 )}
 
                 {activeSubTab === "tasks" && (
-                    <TasksTab tasks={tasks} setTasks={setTasks} />
+                    <TasksTab 
+                        tasks={tasks} 
+                        setTasks={setTasks} 
+                        resources={resources}
+                        loggedInUser={user}
+                        projectManagers={projectManagers}
+                        project={project}
+                        setProject={setProject}
+                    />
                 )}
 
                 {activeSubTab === "calendar" && (
-                    <CalendarTab tasks={tasks} setTasks={setTasks} />
+                    <CalendarTab 
+                        tasks={tasks} 
+                        setTasks={setTasks} 
+                    />
                 )}
 
                 {activeSubTab === "project_lifecycle" && (
@@ -73,7 +110,7 @@ function ProjectWorkspace({
                         projects={projects}
                         setProjects={setProjects}
                         selectedProject={project}
-                        setSelectedProject={setSelectedProject}
+                        setSelectedProject={setProject}
                         onClose={() => setActiveSubTab("overview")}
                         activeDetails={activeDetails}
                         setActiveDetails={setActiveDetails}

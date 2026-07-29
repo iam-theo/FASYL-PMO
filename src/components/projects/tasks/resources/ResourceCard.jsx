@@ -1,7 +1,8 @@
 
 function ResourceCard({ resource }) {
     return (
-        <div className='w-full rounded-lg border border-[#0000000D] bg-[#F3F3F3] p-4 flex flex-col gap-[22px]'>
+        <div
+            className='w-full rounded-lg border border-[#0000000D] bg-[#F3F3F3] p-4 flex flex-col gap-5.5'>
             <div className='flex items-center justify-between'>
                 <div className='flex items-center gap-3'>
                     <div className='w-9.5 h-9.5 rounded-md bg-[#DBDBDB] flex items-center justify-center shrink-0'>

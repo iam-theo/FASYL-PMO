@@ -233,13 +233,13 @@ function ProjectLifeCycle({
                 <p className='font-normal text-[14px]/[20px] text-[#636363] mb-3'>{desc}</p>
 
                 {/* Number of Items */}
-                <div className='flex items-center gap-2 mb-3'>
-                    <div className='w-62.75 h-22 rounded-lg border border-[#0000000D] p-4 flex flex-col justify-between gap-4 bg-[#F3F3F3]'>
+                <div className='flex flex-col sm:flex-row items-stretch gap-2 mb-3'>
+                    <div className='flex-1 h-22 rounded-lg border border-[#0000000D] p-4 flex flex-col justify-between gap-4 bg-[#F3F3F3]'>
                         <p className='font-semibold text-[16px]/[20px] text-[#090909]'>{required}</p>
                         <p className='font-normal text-[16px]/[20px] text-[#636363]'>Mandatory Items</p>
                     </div>
 
-                    <div className='w-62.75 h-22 rounded-lg border border-[#0000000D] p-4 flex flex-col justify-between gap-4 bg-[#F3F3F3]'>
+                    <div className='flex-1 h-22 rounded-lg border border-[#0000000D] p-4 flex flex-col justify-between gap-4 bg-[#F3F3F3]'>
                         <p className='font-semibold text-[16px]/[20px] text-[#090909]'>{completed}/{checklistLength}</p>
                         <p className='font-normal text-[16px]/[20px] text-[#636363]'>Completed</p>
                     </div>
@@ -327,7 +327,7 @@ function ProjectLifeCycle({
             {user?.role === "HEADOFOPS" && ( 
             <div className='flex items-center justify-between gap-3 relative w-full'>
                 {isOpen && (
-                    <div className='absolute z-4000 bottom-10 right-0 w-100'>
+                    <div className='absolute z-4000 bottom-10 right-0 w-full max-w-100'>
                         <textarea
                             value={reasonn}
                             onInput={(e) => handleReason(e)}

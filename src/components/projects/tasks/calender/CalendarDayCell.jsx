@@ -1,4 +1,3 @@
-import React from 'react'
 
 function CalendarDayCell({ date, currentMonth, isToday, items }) {
     return (

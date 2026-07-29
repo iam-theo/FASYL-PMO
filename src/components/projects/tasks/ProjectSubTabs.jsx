@@ -12,13 +12,13 @@ export const PROJECT_WORKSPACE_TABS = [
 
 function ProjectSubTabs({ activeTab, onTabChange }) {
     return (
-        <div className='flex items-center gap-1'>
+        <div className='flex items-center gap-1 overflow-x-auto no-scrollbar'>
             {PROJECT_WORKSPACE_TABS.map((tab) => (
                 <button
                     key={tab.key}
                     type="button"
                     onClick={() => onTabChange(tab.key)}
-                    className={`flex-1 rounded-lg px-4 py-2.5 text-center font-medium text-[14px]/[20px] cursor-pointer whitespace-nowrap ${
+                    className={`shrink-0 md:flex-1 rounded-lg px-4 py-2.5 text-center font-medium text-[14px]/[20px] cursor-pointer whitespace-nowrap ${
                         activeTab === tab.key
                             ? "border border-[#0000000D] bg-[#E8E8E8] text-[#1B3C4A]"
                             : "text-[#636363] hover:text-[#1B3C4A]"

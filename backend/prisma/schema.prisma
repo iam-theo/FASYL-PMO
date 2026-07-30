@@ -7,6 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+// ============================================================
+// ENUMS
+// ============================================================
+
 enum ApprovalStatus {
   PENDING
   SUBMITTED
@@ -73,9 +78,13 @@ enum ReportType {
   CUSTOM
 }
 
-enum ReportFormat {
-  PDF
-  EXCEL
+enum ReportStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  ARCHIVED
 }
 
 enum ReminderType {
@@ -97,6 +106,11 @@ enum ReminderStatus {
   CANCELLED
 }
 
+
+// ============================================================
+// USER
+// ============================================================
+
 model User {
   id        Int      @id @default(autoincrement())
   fullName  String
@@ -106,21 +120,29 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Relations
   auditLogs     AuditLog[]
   refreshTokens RefreshToken[]
   approvals     ProjectApproval[]
 
   assignedProjects Project[] @relation("ProjectManagerRelation")
-  assignedTasks    Task[]    @relation("TaskAssignee")
-  createdTasks     Task[]    @relation("TaskAssigner")
-  ownedTasks       Task[]    @relation("TaskCreator")
 
-  createdReports Report[] @relation("ReportCreator")
+  assignedTasks Task[] @relation("TaskAssignee")
+  createdTasks  Task[] @relation("TaskAssigner")
+  ownedTasks    Task[] @relation("TaskCreator")
+
+  createdReports  Report[] @relation("ReportCreator")
+  approvedReports Report[] @relation("ReportApprover")
 
   reminders Reminder[]
 
   timelineEntries ProjectTimeline[] @relation("TimelineCreatedBy")
 }
+
+
+// ============================================================
+// REFRESH TOKEN
+// ============================================================
 
 model RefreshToken {
   id        String   @id @default(uuid())
@@ -129,57 +151,85 @@ model RefreshToken {
   expiresAt DateTime
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(
+    fields: [userId],
+    references: [id],
+    onDelete: Cascade
+  )
 
   @@index([userId])
   @@index([expiresAt])
 }
 
+
+// ============================================================
+// PROJECT
+// ============================================================
+
 model Project {
   id Int @id @default(autoincrement())
 
-  projectId String @unique // projectId from Sales portal
+  // External Project Identification
+  projectId String @unique
   source    String @default("SALES")
 
-  status String // ACTIVE, etc
+  // Project Status
+  status String
 
+  // Basic Project Information
   projectName String
+  description String?
 
+  // Client Information
   clientId   String?
   clientName String
 
+  // Product Information
   productId   String?
   productName String?
   productType String?
 
+  // Project Management
   projectManagerId Int?
-  projectManager   User? @relation("ProjectManagerRelation", fields: [projectManagerId], references: [id])
 
+  projectManager User? @relation(
+    "ProjectManagerRelation",
+    fields: [projectManagerId],
+    references: [id]
+  )
+
+  // Sales Information
   salesId       String?
   location      String?
   amcPercentage Float?
   saleTypes     String?
 
-  commencementDate  DateTime?
+  // Project Dates
+  commencementDate DateTime?
   purchaseOrderDate DateTime?
 
+  startDate DateTime?
+  endDate   DateTime?
+  dueDate   DateTime?
+
+  completedAt DateTime?
+
+  // Project Configuration / Data
   milestones Json?
   resources  Json?
 
   pmoAddress String?
-  startDate  DateTime?
-  endDate    DateTime?
 
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  completedAt       DateTime?
+  // Project Progress
   currentStageOrder Int            @default(0)
-  dueDate           DateTime?
   progressPercent   Float          @default(0)
   workflowStatus    WorkflowStatus @default(UNASSIGNED)
 
-  description String?
+  // System Dates
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
+  // Relations
   auditLogs   AuditLog[]
   escalations Escalation[]
   stages      ProjectStage[]
@@ -190,6 +240,7 @@ model Project {
   reports   Report[]
   reminders Reminder[]
 
+  // Indexes
   @@index([projectManagerId])
   @@index([status])
   @@index([workflowStatus])
@@ -198,62 +249,101 @@ model Project {
   @@index([endDate])
 }
 
+
+// ============================================================
+// PROJECT STAGE
+// ============================================================
+
 model ProjectStage {
-  id        Int    @id @default(autoincrement())
+  id Int @id @default(autoincrement())
+
+  // Project Reference
   projectId String
 
+  // Stage Information
   stageIndex Int
   stageName  String
   stageOrder Int
   stageKey   String?
 
+  // Workflow
   workflowStatus WorkflowStatus @default(LOCKED)
-  checklist      Json
-  requiredDocs   Json?
 
+  // Stage Configuration
+  checklist    Json
+  requiredDocs Json?
+
+  // Completion
   completed   Boolean   @default(false)
   completedAt DateTime?
 
+  // Submission
   submittedAt DateTime?
   submittedBy Int?
 
+  // Approval
   approvedAt DateTime?
   approvedBy Int?
 
+  // Escalation
   escalated   Boolean   @default(false)
   escalatedAt DateTime?
   escalatedBy Int?
 
+  // Rejection
   rejectedAt      DateTime?
   rejectedBy      Int?
   rejectionReason String?
 
+  // System Dates
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  project   Project    @relation(fields: [projectId], references: [projectId], onDelete: Cascade)
+  // Relations
+  project Project @relation(
+    fields: [projectId],
+    references: [projectId],
+    onDelete: Cascade
+  )
+
   tasks     Task[]
   reports   Report[]
   reminders Reminder[]
 
+  // Constraints and Indexes
   @@unique([projectId, stageOrder])
   @@index([projectId])
   @@index([workflowStatus])
 }
 
+
+// ============================================================
+// PROJECT APPROVAL
+// ============================================================
+
 model ProjectApproval {
-  id          Int            @id(map: "ProjectApproval_pkey") @default(autoincrement())
-  projectId   String
-  stage       Int
-  status      ApprovalStatus @default(PENDING)
-  approvedBy  Int?
-  comment     String?
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  rejectedBy  Int?
+  id Int @id(map: "ProjectApproval_pkey") @default(autoincrement())
+
+  projectId String
+  stage     Int
+
+  status ApprovalStatus @default(PENDING)
+
+  approvedBy Int?
+  rejectedBy Int?
   submittedBy Int?
 
-  approver User? @relation(fields: [approvedBy], references: [id], map: "ProjectApproval_approvedBy_fkey")
+  comment String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  approver User? @relation(
+    fields: [approvedBy],
+    references: [id],
+    map: "ProjectApproval_approvedBy_fkey"
+  )
 
   project Project @relation(
     fields: [projectId],
@@ -262,20 +352,37 @@ model ProjectApproval {
     map: "ProjectApproval_projectId_fkey"
   )
 
-  @@index([projectId, stage], map: "ProjectApproval_projectId_stage_idx")
+  // Indexes
+  @@index(
+    [projectId, stage],
+    map: "ProjectApproval_projectId_stage_idx"
+  )
+
   @@index([approvedBy])
+
   @@map("project_approvals")
 }
 
+
+// ============================================================
+// PROJECT TIMELINE
+// ============================================================
+
 model ProjectTimeline {
-  id        Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
+
   projectId String
-  stage     Int
-  action    String
-  note      String?
+
+  // Timeline Information
+  stage  Int
+  action String
+  note   String?
+
+  // Audit Information
   createdBy Int?
   createdAt DateTime @default(now())
 
+  // Relations
   project Project @relation(
     fields: [projectId],
     references: [projectId],
@@ -289,58 +396,84 @@ model ProjectTimeline {
     onDelete: SetNull
   )
 
+  // Indexes
   @@index([projectId])
   @@index([createdBy])
   @@index([createdAt])
 }
 
-model Escalation {
-  id         Int             @id @default(autoincrement())
-  projectId  String
-  stage      Int
-  level      EscalationLevel @default(LOW)
-  reason     String
-  resolved   Boolean         @default(false)
-  resolvedAt DateTime?
-  createdAt  DateTime        @default(now())
 
+// ============================================================
+// ESCALATION
+// ============================================================
+
+model Escalation {
+  id Int @id @default(autoincrement())
+
+  projectId String
+  stage     Int
+
+  level EscalationLevel @default(LOW)
+
+  reason String
+
+  resolved   Boolean   @default(false)
+  resolvedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  // Relations
   project Project @relation(
     fields: [projectId],
     references: [projectId],
     onDelete: Cascade
   )
 
+  // Indexes
   @@index([projectId, resolved])
   @@index([level])
   @@index([createdAt])
 }
 
+
+// ============================================================
+// TASK
+// ============================================================
+
 model Task {
   id Int @id @default(autoincrement())
 
+  // Project / Stage
   projectId Int
   stageId   Int?
 
+  // User Assignment
   assignedById Int
   createdById  Int
 
   assignedToUserId Int?
 
+  // Resource Assignment
   assignedResourceId String?
 
+  // Task Information
   title       String
   description String?
 
+  // Task Status
   status   TaskStatus   @default(TODO)
   priority TaskPriority @default(MEDIUM)
 
+  // Task Dates
   startDate   DateTime?
   dueDate     DateTime?
   completedAt DateTime?
 
+  // System Dates
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Relations
   project Project @relation(
     fields: [projectId],
     references: [id],
@@ -373,47 +506,56 @@ model Task {
 
   reminders Reminder[]
 
+  // Indexes
   @@index([projectId])
   @@index([stageId])
   @@index([assignedToUserId])
 }
 
-model Report {
-  id          Int    @id @default(autoincrement())
-  projectId   String
-  stageId     Int?
-  createdById Int?
 
+// ============================================================
+// REPORT
+// ============================================================
+
+model Report {
+  id Int @id @default(autoincrement())
+
+  // Project / Stage
+  projectId String
+  stageId   Int?
+
+  // Report Ownership
+  createdById  Int?
+  approvedById Int?
+
+  // Report Information
   title       String
   description String?
 
-  // Defines the type of analytics report generated
-  type ReportType @default(PROJECT)
+  // Report Classification
+  type   ReportType   @default(PROJECT)
+  status ReportStatus @default(DRAFT)
 
-  // Defines the exported report format
-  format ReportFormat
-
-  // Snapshot of the project analytics at the time
-  // the report was generated.
-  // This preserves historical report data even when
-  // the project changes later.
+  // Generated Report Content
   content Json?
 
-  // Generated file information
+  // Generated File
   fileUrl  String?
   fileName String?
-  fileType String?
 
-  // Optional reporting period
+  // Reporting Period
   periodStart DateTime?
   periodEnd   DateTime?
 
-  // Report generation timestamp
-  generatedAt DateTime @default(now())
+  // Workflow Dates
+  submittedAt DateTime?
+  approvedAt  DateTime?
 
+  // System Dates
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Relations
   project Project @relation(
     fields: [projectId],
     references: [projectId],
@@ -433,37 +575,58 @@ model Report {
     onDelete: SetNull
   )
 
+  approvedBy User? @relation(
+    "ReportApprover",
+    fields: [approvedById],
+    references: [id],
+    onDelete: SetNull
+  )
+
+  // Indexes
   @@index([projectId])
   @@index([stageId])
   @@index([createdById])
+  @@index([approvedById])
   @@index([type])
-  @@index([format])
-  @@index([generatedAt])
-  @@index([projectId, type, generatedAt])
+  @@index([status])
+  @@index([createdAt])
 }
 
+
+// ============================================================
+// REMINDER
+// ============================================================
+
 model Reminder {
-  id        Int  @id @default(autoincrement())
+  id Int @id @default(autoincrement())
+
+  // Relations / References
   userId    Int
   projectId String?
   taskId    Int?
   stageId   Int?
 
+  // Reminder Information
   title   String
   message String?
 
+  // Reminder Classification
   type   ReminderType   @default(GENERAL)
   status ReminderStatus @default(PENDING)
 
+  // Scheduling
   remindAt DateTime
 
+  // Lifecycle Dates
   sentAt      DateTime?
   dismissedAt DateTime?
   completedAt DateTime?
 
+  // System Dates
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Relations
   user User @relation(
     fields: [userId],
     references: [id],
@@ -488,6 +651,7 @@ model Reminder {
     onDelete: Cascade
   )
 
+  // Indexes
   @@index([userId])
   @@index([projectId])
   @@index([taskId])
@@ -497,15 +661,26 @@ model Reminder {
   @@index([type])
 }
 
+
+// ============================================================
+// AUDIT LOG
+// ============================================================
+
 model AuditLog {
-  id        Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
+
+  // References
   userId    Int?
   projectId String?
-  module    String
-  action    String
-  details   String?
+
+  // Audit Information
+  module  String
+  action  String
+  details String?
+
   createdAt DateTime @default(now())
 
+  // Relations
   project Project? @relation(
     fields: [projectId],
     references: [projectId]
@@ -516,6 +691,7 @@ model AuditLog {
     references: [id]
   )
 
+  // Indexes
   @@index([projectId])
   @@index([userId])
   @@index([module])

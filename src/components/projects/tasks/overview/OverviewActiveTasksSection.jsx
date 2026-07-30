@@ -48,14 +48,14 @@ function OverviewActiveTasksSection({ tasks = [], setTasks, onSeeAll }) {
                 </button>
             </div>
 
-            <div className='rounded-lg border border-[#0000000D] bg-[#F9FAFB] overflow-x-auto'>
+            <div className='rounded-lg border border-[#0000000D] bg-[#F9FAFB] overflow-auto max-h-100'>
                 {previewTasks.length === 0 ? (
                     <div className='px-6 py-10 text-center font-normal text-[14px]/[20px] text-[#636363]'>
                         No active tasks yet.
                     </div>
                 ) : (
                     <table className='w-full border-collapse min-w-175'>
-                        <thead>
+                        <thead className='sticky top-0 bg-[#F9FAFB] z-10'>
                             <tr className='border-b border-[#0000000D]'>
                                 <th className='px-6 py-4 text-left font-medium text-[12px]/[18px] text-[#636363]'>Task</th>
                                 <th className='px-6 py-4 text-left font-medium text-[12px]/[18px] text-[#636363]'>Assigned To</th>

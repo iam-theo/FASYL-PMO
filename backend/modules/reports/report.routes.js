@@ -7,42 +7,51 @@ import {
     getReportsByProject,
     getReportsByStage,
     updateReport,
-    submitReport,
-    approveReport,
-    rejectReport,
     deleteReport
 } from "./report.controller.js";
 
 const router = express.Router();
 
-// Create report
+/**
+ * Create / Generate Report
+ * POST /api/v1/reports
+ */
 router.post("/", createReport);
 
-// Get all reports
+/**
+ * Get All Generated Reports
+ * GET /api/v1/reports
+ */
 router.get("/", getReports);
 
-// Get reports by project
+/**
+ * Get Reports By Project
+ * GET /api/v1/reports/project/:projectId
+ */
 router.get("/project/:projectId", getReportsByProject);
 
-// Get reports by stage
+/**
+ * Get Reports By Stage
+ * GET /api/v1/reports/stage/:stageId
+ */
 router.get("/stage/:stageId", getReportsByStage);
 
-// Get single report
+/**
+ * Get Single Report
+ * GET /api/v1/reports/:id
+ */
 router.get("/:id", getReport);
 
-// Update report
+/**
+ * Update Generated Report
+ * PATCH /api/v1/reports/:id
+ */
 router.patch("/:id", updateReport);
 
-// Submit report
-router.post("/:id/submit", submitReport);
-
-// Approve report
-router.post("/:id/approve", approveReport);
-
-// Reject report
-router.post("/:id/reject", rejectReport);
-
-// Delete report
+/**
+ * Delete Generated Report
+ * DELETE /api/v1/reports/:id
+ */
 router.delete("/:id", deleteReport);
 
 export default router;

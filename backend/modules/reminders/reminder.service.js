@@ -113,3 +113,50 @@ export const createReminderService = async (body) => {
         }
     });
 };
+
+export const getMyRemindersService = async (user) => {
+
+    const now = new Date();
+
+    const reminders = await prisma.reminder.findMany({
+        where: {
+            userId: user.id,
+            status: "PENDING",
+            remindAt: {
+                lte: now
+            }
+        },
+
+        include: {
+            project: {
+                select: {
+                    projectId: true,
+                    projectName: true
+                }
+            },
+
+            task: {
+                select: {
+                    id: true,
+                    title: true,
+                    dueDate: true,
+                    priority: true,
+                    status: true
+                }
+            },
+
+            stage: {
+                select: {
+                    id: true,
+                    stageName: true
+                }
+            }
+        },
+
+        orderBy: {
+            remindAt: "asc"
+        }
+    });
+
+    return reminders;
+}

@@ -9,7 +9,8 @@ import {
   completeReminder,
   dismissReminder,
   cancelReminder,
-  deleteReminder
+  deleteReminder,
+  getMyReminders
 } from "./reminder.controller.js";
 import { authMiddleWare } from "../../middleware/auth.middleware.js";
 // import { allowRoles } from "../../middleware/rbac.middleware.js";
@@ -22,6 +23,12 @@ router.post(
   "/", 
   authMiddleWare,
   createReminder
+);
+
+router.get(
+  "/my",
+  authMiddleWare,
+  getMyReminders
 );
 
 // Get all reminders

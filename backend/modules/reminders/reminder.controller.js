@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { createReminderService } from "./reminder.service.js";
+import { createReminderService, getMyRemindersService } from "./reminder.service.js";
 
 const prisma = new PrismaClient();
 
@@ -31,6 +31,29 @@ export const createReminder = async (
       remindAt
   });
 };
+
+export const getMyReminders = async (req, res, next) => {
+
+  try {
+
+      const reminders = await getMyRemindersService(req.user);
+
+      return res.json({
+          success: true,
+          data: reminders
+      });
+
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to get remainders"
+    });
+
+    next(error);
+  }
+
+}
 
 
 /**

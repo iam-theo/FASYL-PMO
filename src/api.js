@@ -241,7 +241,7 @@ export const deleteTask = async (taskId) => {
         return data;
 
     } catch (error) {
-        
+
         console.error(
             "Delete Task Error:",
             error.response?.data
@@ -250,3 +250,21 @@ export const deleteTask = async (taskId) => {
         throw error.response?.data || error;
     }
 };
+
+export const getReminders = async () => {
+
+    try {
+        const { data } = await api.get(`/reminders/my`);
+
+        return data;
+
+    } catch (error) {
+
+        console.error(
+            "Delete Task Error:",
+            error.response?.data
+        );
+
+        throw error.response?.data || error;
+    }
+}

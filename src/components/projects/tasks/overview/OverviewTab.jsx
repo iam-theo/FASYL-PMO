@@ -1,6 +1,7 @@
 import StatCard from './StatCard'
 import OverviewCalendarSection from './OverviewCalendarSection'
 import OverviewResourcesSection from './OverviewResourcesSection'
+import OverviewReminderSection from './OverviewReminderSection'
 import OverviewActiveTasksSection from './OverviewActiveTasksSection'
 import { TotalTasksIcon, OverdueTasksIcon, AssignedResourcesIcon } from './icons'
 import { matchesDueDateFilter } from '../tasks/dueDateFilters'
@@ -37,14 +38,20 @@ function OverviewTab({ project, tasks, setTasks, onNavigateToTasks, onNavigateTo
 
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
                 <OverviewCalendarSection tasks={tasks} />
-                <OverviewResourcesSection resources={resources} />
+                <OverviewReminderSection />
+                {/* <OverviewResourcesSection resources={resources} /> */}
             </div>
 
-            <OverviewActiveTasksSection
-                tasks={tasks}
-                setTasks={setTasks}
-                onSeeAll={onNavigateToTasks}
-            />
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+                {/* <OverviewReminderSection /> */}
+
+                <OverviewActiveTasksSection
+                    tasks={tasks}
+                    setTasks={setTasks}
+                    onSeeAll={onNavigateToTasks}
+                />
+                <OverviewResourcesSection resources={resources} />
+            </div>
         </div>
     )
 }

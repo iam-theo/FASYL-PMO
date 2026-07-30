@@ -66,7 +66,6 @@ enum ReportType {
   PROGRESS
   WEEKLY
   MONTHLY
-  FINANCIAL
   RESOURCE
   RISK
   STATUS
@@ -74,13 +73,9 @@ enum ReportType {
   CUSTOM
 }
 
-enum ReportStatus {
-  DRAFT
-  SUBMITTED
-  UNDER_REVIEW
-  APPROVED
-  REJECTED
-  ARCHIVED
+enum ReportFormat {
+  PDF
+  EXCEL
 }
 
 enum ReminderType {
@@ -120,8 +115,7 @@ model User {
   createdTasks     Task[]    @relation("TaskAssigner")
   ownedTasks       Task[]    @relation("TaskCreator")
 
-  createdReports  Report[] @relation("ReportCreator")
-  approvedReports Report[] @relation("ReportApprover")
+  createdReports Report[] @relation("ReportCreator")
 
   reminders Reminder[]
 
@@ -134,7 +128,8 @@ model RefreshToken {
   userId    Int
   expiresAt DateTime
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([expiresAt])
@@ -184,6 +179,7 @@ model Project {
   workflowStatus    WorkflowStatus @default(UNASSIGNED)
 
   description String?
+
   auditLogs   AuditLog[]
   escalations Escalation[]
   stages      ProjectStage[]
@@ -235,7 +231,7 @@ model ProjectStage {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  project  Project    @relation(fields: [projectId], references: [projectId], onDelete: Cascade)
+  project   Project    @relation(fields: [projectId], references: [projectId], onDelete: Cascade)
   tasks     Task[]
   reports   Report[]
   reminders Reminder[]
@@ -259,7 +255,12 @@ model ProjectApproval {
 
   approver User? @relation(fields: [approvedBy], references: [id], map: "ProjectApproval_approvedBy_fkey")
 
-  project Project @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "ProjectApproval_projectId_fkey")
+  project Project @relation(
+    fields: [projectId],
+    references: [projectId],
+    onDelete: Cascade,
+    map: "ProjectApproval_projectId_fkey"
+  )
 
   @@index([projectId, stage], map: "ProjectApproval_projectId_stage_idx")
   @@index([approvedBy])
@@ -274,9 +275,19 @@ model ProjectTimeline {
   note      String?
   createdBy Int?
   createdAt DateTime @default(now())
-  project   Project  @relation(fields: [projectId], references: [projectId], onDelete: Cascade)
 
-  createdByUser User? @relation("TimelineCreatedBy", fields: [createdBy], references: [id], onDelete: SetNull)
+  project Project @relation(
+    fields: [projectId],
+    references: [projectId],
+    onDelete: Cascade
+  )
+
+  createdByUser User? @relation(
+    "TimelineCreatedBy",
+    fields: [createdBy],
+    references: [id],
+    onDelete: SetNull
+  )
 
   @@index([projectId])
   @@index([createdBy])
@@ -293,7 +304,11 @@ model Escalation {
   resolvedAt DateTime?
   createdAt  DateTime        @default(now())
 
-  project Project @relation(fields: [projectId], references: [projectId], onDelete: Cascade)
+  project Project @relation(
+    fields: [projectId],
+    references: [projectId],
+    onDelete: Cascade
+  )
 
   @@index([projectId, resolved])
   @@index([level])
@@ -301,13 +316,13 @@ model Escalation {
 }
 
 model Task {
-  id           Int  @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  projectId    Int
-  stageId      Int?
+  projectId Int
+  stageId   Int?
 
-  assignedById  Int
-  createdById    Int
+  assignedById Int
+  createdById  Int
 
   assignedToUserId Int?
 
@@ -323,18 +338,38 @@ model Task {
   dueDate     DateTime?
   completedAt DateTime?
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  project    Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project Project @relation(
+    fields: [projectId],
+    references: [id],
+    onDelete: Cascade
+  )
 
-  stage      ProjectStage? @relation(fields: [stageId], references: [id], onDelete: SetNull)
+  stage ProjectStage? @relation(
+    fields: [stageId],
+    references: [id],
+    onDelete: SetNull
+  )
 
-  assignedToUser User?         @relation("TaskAssignee", fields: [assignedToUserId], references: [id])
+  assignedToUser User? @relation(
+    "TaskAssignee",
+    fields: [assignedToUserId],
+    references: [id]
+  )
 
-  assignedBy    User @relation("TaskAssigner", fields:[assignedById], references:[id])
+  assignedBy User @relation(
+    "TaskAssigner",
+    fields: [assignedById],
+    references: [id]
+  )
 
-  createdBy     User @relation("TaskCreator", fields:[createdById], references:[id])
+  createdBy User @relation(
+    "TaskCreator",
+    fields: [createdById],
+    references: [id]
+  )
 
   reminders Reminder[]
 
@@ -344,44 +379,67 @@ model Task {
 }
 
 model Report {
-  id           Int  @id @default(autoincrement())
-  projectId    String
-  stageId      Int?
-  createdById  Int?
-  approvedById Int?
+  id          Int    @id @default(autoincrement())
+  projectId   String
+  stageId     Int?
+  createdById Int?
 
   title       String
   description String?
 
-  type   ReportType   @default(PROJECT)
-  status ReportStatus @default(DRAFT)
+  // Defines the type of analytics report generated
+  type ReportType @default(PROJECT)
 
+  // Defines the exported report format
+  format ReportFormat
+
+  // Snapshot of the project analytics at the time
+  // the report was generated.
+  // This preserves historical report data even when
+  // the project changes later.
   content Json?
 
+  // Generated file information
   fileUrl  String?
   fileName String?
+  fileType String?
 
+  // Optional reporting period
   periodStart DateTime?
   periodEnd   DateTime?
 
-  submittedAt DateTime?
-  approvedAt  DateTime?
+  // Report generation timestamp
+  generatedAt DateTime @default(now())
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  project    Project       @relation(fields: [projectId], references: [projectId], onDelete: Cascade)
-  stage      ProjectStage? @relation(fields: [stageId], references: [id], onDelete: SetNull)
-  createdBy  User?         @relation("ReportCreator", fields: [createdById], references: [id], onDelete: SetNull)
-  approvedBy User?         @relation("ReportApprover", fields: [approvedById], references: [id], onDelete: SetNull)
+  project Project @relation(
+    fields: [projectId],
+    references: [projectId],
+    onDelete: Cascade
+  )
+
+  stage ProjectStage? @relation(
+    fields: [stageId],
+    references: [id],
+    onDelete: SetNull
+  )
+
+  createdBy User? @relation(
+    "ReportCreator",
+    fields: [createdById],
+    references: [id],
+    onDelete: SetNull
+  )
 
   @@index([projectId])
   @@index([stageId])
   @@index([createdById])
-  @@index([approvedById])
   @@index([type])
-  @@index([status])
-  @@index([createdAt])
+  @@index([format])
+  @@index([generatedAt])
+  @@index([projectId, type, generatedAt])
 }
 
 model Reminder {
@@ -406,10 +464,29 @@ model Reminder {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user    User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  project Project?      @relation(fields: [projectId], references: [projectId], onDelete: Cascade)
-  task    Task?         @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  stage   ProjectStage? @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  user User @relation(
+    fields: [userId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  project Project? @relation(
+    fields: [projectId],
+    references: [projectId],
+    onDelete: Cascade
+  )
+
+  task Task? @relation(
+    fields: [taskId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  stage ProjectStage? @relation(
+    fields: [stageId],
+    references: [id],
+    onDelete: Cascade
+  )
 
   @@index([userId])
   @@index([projectId])
@@ -428,8 +505,16 @@ model AuditLog {
   action    String
   details   String?
   createdAt DateTime @default(now())
-  project   Project? @relation(fields: [projectId], references: [projectId])
-  user      User?    @relation(fields: [userId], references: [id])
+
+  project Project? @relation(
+    fields: [projectId],
+    references: [projectId]
+  )
+
+  user User? @relation(
+    fields: [userId],
+    references: [id]
+  )
 
   @@index([projectId])
   @@index([userId])

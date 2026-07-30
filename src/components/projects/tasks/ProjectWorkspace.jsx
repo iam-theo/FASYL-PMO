@@ -6,6 +6,7 @@ import OverviewTab from './overview/OverviewTab'
 import ResourcesTab from './resources/ResourcesTab'
 import TasksTab from './tasks/TasksTab'
 import CalendarTab from './calender/CalendarTab'
+import ReportsTab from './reports/ReportsTab'
 import ViewProjectsBody from '../ViewProjectsBody';
 import { getTasks } from '../../../api'
 
@@ -103,6 +104,10 @@ function ProjectWorkspace({
                         tasks={tasks} 
                         setTasks={setTasks} 
                     />
+                )}
+
+                {activeSubTab === "reports" && (
+                    <ReportsTab />
                 )}
 
                 {activeSubTab === "project_lifecycle" && (

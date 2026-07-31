@@ -118,13 +118,13 @@ function MainSection({
                             </div>
                             <p className='text-[#090909]'>0</p>
                         </li>
-                        <li className='shrink-0 h-10 flex items-center justify-between gap-2 rounded-md px-3 py-2 bg-[#0000000D]'>
+                        {/* <li className='shrink-0 h-10 flex items-center justify-between gap-2 rounded-md px-3 py-2 bg-[#0000000D]'>
                             <div className='flex items-center gap-2'>
                                 <TicketsIcon />
                                 <p className='hidden sm:block font-medium text-[14px]/[20px] text-[#636363] whitespace-nowrap'>Tickets</p>
                             </div>
                             <p className='text-[#090909]'>0</p>
-                            </li>
+                        </li> */}
                     </ul>
                 </div>
                 <div className='flex gap-3 shrink-0'>

@@ -478,8 +478,8 @@ function TasksTab({
                             {tasks.length === 0 ? (
                                 <TasksEmptyState onCreateTask={() => setIsCreateModalOpen(true)} />
                             ) : (
-                                <div className='rounded-lg border border-[#0000000D] bg-[#F9FAFB] overflow-x-auto'>
-                                    <table className='w-full border-collapse min-w-175'>
+                                <div className='rounded-lg border border-[#0000000D] bg-[#F9FAFB] w-full overflow-x-auto'>
+                                    <table className='border-collapse table-auto min-w-max'>
                                         <thead>
                                             <tr className='border-b border-[#0000000D]'>
                                                 <th className='w-16 px-6 py-4 text-left'>
@@ -531,7 +531,7 @@ function TasksTab({
                                                             }}
                                                         >
                                                             <select
-                                                                value={task.priority}
+                                                                value={task?.priority}
                                                                 onChange={(e) =>
                                                                     handlePriorityChange(task.id, e.target.value)
                                                                 }

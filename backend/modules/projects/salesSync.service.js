@@ -54,16 +54,16 @@ export const syncProjects = async (projects) => {
         const project = await prisma.project.upsert({
         where: { externalId: mapped.externalId },
 
-        update: {
-            ...mapped,
-        },
+            update: {
+                ...mapped,
+            },
 
-        create: {
-            ...mapped,
-            source: "SALES",
-            workflowStatus: "UNASSIGNED",
-            currentStageOrder: 0,
-        },
+            create: {
+                ...mapped,
+                source: "SALES",
+                workflowStatus: "UNASSIGNED",
+                currentStageOrder: 0,
+            },
         });
 
         if (!existing) {

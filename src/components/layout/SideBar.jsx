@@ -19,6 +19,16 @@ function ProjectsIcon({ active }) {
     )
 }
 
+function ReportsIcon({ active }) {
+    const color = active ? "#1B3C4A" : "#000000"
+    return (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 10.5C3 6.72876 3 4.84315 4.17157 3.67157C5.34315 2.5 7.22876 2.5 11 2.5H13C16.7712 2.5 18.6569 2.5 19.8284 3.67157C21 4.84315 21 6.72876 21 10.5V13.5C21 17.2712 21 19.1569 19.8284 20.3284C18.6569 21.5 16.7712 21.5 13 21.5H11C7.22876 21.5 5.34315 21.5 4.17157 20.3284C3 19.1569 3 17.2712 3 13.5V10.5Z" fill={color} fillOpacity={active ? "0.3" : "0"} stroke={color} strokeWidth="1.5" strokeLinejoin="round" />
+            <path d="M8 16.5V11.5M12 16.5V8.5M16 16.5V13.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+    )
+}
+
 function LogoutIcon() {
     return (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -32,6 +42,7 @@ function SideBar({ activeTab, setActiveTab, setOpenProject, handleLogout, isSide
     const tabs = [
         { name: "dashboard", label: "Dashboard" },
         { name: "projects", label: "Projects" },
+        { name: "reports", label: "Reports" },
         // { name: "tasks", label: "Tasks"}
     ]
 
@@ -75,6 +86,8 @@ function SideBar({ activeTab, setActiveTab, setOpenProject, handleLogout, isSide
                                                     ? <DashboardIcon active={isActive} />
                                                     : tab.name === "projects"
                                                     ? <ProjectsIcon active={isActive} />
+                                                    : tab.name === "reports"
+                                                    ? <ReportsIcon active={isActive} />
                                                     : null
                                             }
                                         </div>

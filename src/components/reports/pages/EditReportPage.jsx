@@ -1,157 +1,105 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, FilePenLine, AlertTriangle } from "lucide-react";
+import { ERROR_MESSAGES } from "../constants/messages.constants";
+import { REPORTS_ROUTES } from "../constants/routes.constants";
+import {
+  useDocumentTitle,
+  useProjectStages,
+  useProjects,
+  useReport,
+  useReportMutations,
+} from "../hooks";
+import { toFormValues } from "../services/report.mapper";
+import { ArrowLeft } from "lucide-react";
+import { ErrorState } from "../components/ui/ErrorState";
+import { PageHeader } from "../components/ui/PageHeader";
+import { FormSkeleton } from "../components/ui/Skeleton";
+import { ReportForm } from "../components/forms/ReportForm";
 
-import ReportForm from "../components/ReportForm";
-import useReportStore from "../stores/reportStore";
-import useProjectStore from "../stores/projectStore";
-
-export default function EditReportPage() {
-  const { id } = useParams();
+/**
+ * Edit report — the same form as Create, prepopulated.
+ *
+ * The original report is passed to `updateReport` so the service can diff it
+ * and PATCH only what changed. That is why the page keeps hold of `report`
+ * rather than discarding it once the form has its defaults.
+ */
+export const EditReportPage = () => {
+  const { reportId } = useParams();
   const navigate = useNavigate();
 
-  const currentReport = useReportStore((state) => state.currentReport);
-  const detailLoading = useReportStore((state) => state.detailLoading);
-  const submitting = useReportStore((state) => state.submitting);
-  const error = useReportStore((state) => state.error);
-  const fetchReport = useReportStore((state) => state.fetchReport);
-  const updateReport = useReportStore((state) => state.updateReport);
-  const clearCurrentReport = useReportStore((state) => state.clearCurrentReport);
+  const { report, isLoading, error, isInvalidId, refetch } =
+    useReport(reportId);
+  const { projects, isLoading: isLoadingProjects } = useProjects();
+  const { updateReport, isSubmitting, fieldErrors } = useReportMutations();
 
-  const projects = useProjectStore((state) => state.projects);
-  const fetchProjects = useProjectStore((state) => state.fetchProjects);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const { stages, isLoading: isLoadingStages } =
+    useProjectStages(selectedProjectId);
 
+  useDocumentTitle(report ? `Edit ${report.title}` : "Edit report");
+
+  // The report arrives after mount, so the first stages request starts here.
   useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+    if (report?.projectId) setSelectedProjectId(report.projectId);
+  }, [report?.projectId]);
 
-  /**
-   * Clearing on unmount stops the next report's edit screen from briefly
-   * rendering this one's values while its own request is still in flight.
-   */
-  useEffect(() => {
-    fetchReport(id).catch(() => {});
+  // Memoised: a new object each render would retrigger the form's reset effect.
+  const defaultValues = useMemo(() => toFormValues(report), [report]);
 
-    return () => clearCurrentReport();
-  }, [id, fetchReport, clearCurrentReport]);
-
-  const handleSubmit = async (payload) => {
-    try {
-      await updateReport(id, payload);
-
-      navigate(`/reports/${id}`, { replace: true });
-    } catch {
-      // Message surfaced from store.error.
-    }
+  const handleSubmit = async (values) => {
+    const result = await updateReport(report.id, values, report);
+    if (result.ok) navigate(REPORTS_ROUTES.details(report.id));
   };
 
-  if (detailLoading && !currentReport) {
+  const backToList = {
+    label: "Back to reports",
+    icon: ArrowLeft,
+    onClick: () => navigate(REPORTS_ROUTES.list()),
+  };
+
+  if (isInvalidId) {
     return (
-      <div className="mx-auto max-w-7xl rounded-xl bg-white p-10 shadow">
-        <div className="space-y-4">
-          {Array.from({ length: 6 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-12 animate-pulse rounded-lg bg-slate-100"
-            />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (!detailLoading && !currentReport) {
-    return (
-      <div className="mx-auto max-w-7xl rounded-xl bg-white p-10 shadow text-center">
-        <h2 className="text-xl font-semibold text-slate-900">
-          Report not found
-        </h2>
-
-        <p className="mt-2 text-slate-500">
-          {error || "This report may have been deleted."}
-        </p>
-
-        <button
-          type="button"
-          onClick={() => navigate("/reports")}
-          className="mt-6 rounded-lg bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
-        >
-          Back to reports
-        </button>
-      </div>
+      <ErrorState
+        error={{ message: ERROR_MESSAGES.notFound }}
+        title="Report not found"
+        action={backToList}
+      />
     );
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-slate-500">
-        <button
-          type="button"
-          onClick={() => navigate("/reports")}
-          className="hover:text-blue-600"
-        >
-          Reports
-        </button>
+    <div className="ml-5 mx-auto flex w-full max-w-5xl flex-col gap-6">
+      <PageHeader
+        title={report ? `Edit ${report.title}` : "Edit report"}
+        description="Only the fields you change are sent to the server."
+        breadcrumbs={[
+          { label: "Reports", to: REPORTS_ROUTES.list() },
+          ...(report
+            ? [{ label: report.title, to: REPORTS_ROUTES.details(report.id) }]
+            : []),
+          { label: "Edit" },
+        ]}
+      />
 
-        <span>/</span>
-
-        <span className="text-slate-900 font-medium">Edit report</span>
-      </div>
-
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow">
-        {/* Header */}
-        <div className="border-b border-slate-200 bg-slate-50 px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="rounded-xl bg-amber-100 p-3">
-                <FilePenLine className="text-amber-600" size={24} />
-              </div>
-
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900">
-                  Edit report
-                </h1>
-
-                <p className="mt-1 text-slate-500">
-                  Update this generated report.
-                </p>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => navigate(-1)}
-              className="flex items-center gap-2 rounded-lg border border-slate-300 px-5 py-2 hover:bg-slate-100"
-            >
-              <ArrowLeft size={18} />
-              Back
-            </button>
-          </div>
-        </div>
-
-        {/* Form */}
-        <div className="p-8">
-          {error && (
-            <div className="mb-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-5 py-4">
-              <AlertTriangle
-                className="mt-0.5 shrink-0 text-red-600"
-                size={20}
-              />
-
-              <p className="text-sm text-red-800">{error}</p>
-            </div>
-          )}
-
-          <ReportForm
-            mode="edit"
-            initialValues={currentReport}
-            projects={projects}
-            loading={submitting}
-            onSubmit={handleSubmit}
-          />
-        </div>
-      </div>
+      {error ? (
+        <ErrorState error={error} onRetry={refetch} action={backToList} />
+      ) : isLoading || isLoadingProjects || !report ? (
+        <FormSkeleton fields={8} />
+      ) : (
+        <ReportForm
+          defaultValues={defaultValues}
+          projects={projects}
+          stages={stages}
+          isLoadingStages={isLoadingStages}
+          isSubmitting={isSubmitting}
+          serverErrors={fieldErrors}
+          submitLabel="Save changes"
+          requireDirty
+          onProjectChange={setSelectedProjectId}
+          onSubmit={handleSubmit}
+          onCancel={() => navigate(REPORTS_ROUTES.details(report.id))}
+        />
+      )}
     </div>
   );
-}
+};

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Outlet, useLocation } from 'react-router-dom'
 import Dashboard from './Dashboard'
 import Projects from '../projects/Projects'
 import ProjectWorkspace from '../projects/tasks/ProjectWorkspace'
@@ -44,6 +45,9 @@ function MainSection({
     setIsSidebarOpen
     }) {
 
+    const location = useLocation()
+    const isReportsRoute = location.pathname.startsWith('/app/reports')
+
     const [currentPage, setCurrentPage] = useState(1)
     const [value, setValue] = useState("")
     const [filter, setFilter] = useState("")
@@ -51,6 +55,12 @@ function MainSection({
     const [filteringing, setFiltering] = useState(false)
     // const [openProject, setOpenProject] = useState(false)
     // const [activeSubTab, setActiveSubTab] = useState("overview")
+
+    useEffect(() => {
+        if (isReportsRoute) {
+            setActiveTab("reports")
+        }
+    }, [isReportsRoute, setActiveTab])
 
     useEffect(() => {
         if (!value) return
@@ -135,9 +145,9 @@ function MainSection({
                     </div>
                 </div>
             </header>
-            <section className='mt-18 h-full'>
+            <section className='mt-18 h-[calc(100%-4.5rem)]'>
 
-                {activeTab === "dashboard" && openProject === false && (
+                {!isReportsRoute && activeTab === "dashboard" && openProject === false && (
                     <Dashboard
                         projects={projects}
                         user={user}
@@ -150,7 +160,7 @@ function MainSection({
                     />
                 )}
 
-                {activeTab === "projects" && openProject === false && (
+                {!isReportsRoute && activeTab === "projects" && openProject === false && (
                     <Projects
                         projects={projects} 
                         currentProjects={currentProjects}
@@ -170,7 +180,7 @@ function MainSection({
                     />
                 )}
 
-                {openProject === true && selectedProject?.projectManager && (
+                {!isReportsRoute && openProject === true && selectedProject?.projectManager && (
                     <ProjectWorkspace 
                         project={selectedProject}
                         setProject={setSelectedProject}
@@ -192,6 +202,12 @@ function MainSection({
                             setOpenProject(false);
                         }}
                     />
+                )}
+
+                {isReportsRoute && (
+                    <div className='h-full min-w-0 overflow-y-auto overflow-x-hidden no-scrollbar'>
+                        <Outlet />
+                    </div>
                 )}
             </section>
         </div>

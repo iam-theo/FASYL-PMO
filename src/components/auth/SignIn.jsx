@@ -12,6 +12,7 @@ function SignIn({ setUser }) {
     const [email, setEmail] = useState(null)
     const [password, setPassword] = useState(null)
     const { showNotification } = useNotification()
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate()
 
@@ -19,6 +20,9 @@ function SignIn({ setUser }) {
         e.preventDefault();
 
         try {
+
+            setLoading(true);
+
             const { data } = await api.post("/auth/login", {
                 email,
                 password
@@ -58,6 +62,7 @@ function SignIn({ setUser }) {
             
             setEmail("");
             setPassword("");
+            setLoading(false);
         }
     };
 
@@ -165,8 +170,9 @@ function SignIn({ setUser }) {
 
                         <button 
                             type='submit' 
-                            className='text-[16px]/[24px] tracking-[0%] text-[#FFFFFF] font-medium bg-[#1B3C4A] shadow-[#1018280D] shadow-[2px] w-90 h-11 rounded-lg py-2.5 px-4.5 mt-2 cursor-pointer' >
-                                Sign in
+                            disabled={loading}
+                            className='text-[16px]/[24px] tracking-[0%] text-[#FFFFFF] font-medium bg-[#1B3C4A] shadow-[#1018280D] shadow-[2px] w-90 h-11 rounded-lg py-2.5 px-4.5 mt-2 cursor-pointer disabled:opacity-80' >
+                                {!loading ? "Sign in" : "Signing in..."}
                         </button>
 
                     </form>

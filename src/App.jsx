@@ -1,13 +1,14 @@
-import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import SignIn from "./components/auth/SignIn";
 import MainBody from "./components/layout/MainBody";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNotification } from "./components/NotificationContext";
-import { FaCheckCircle, FaTimes, FaExclamationCircle } from "react-icons/fa";
+import { FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import ReportsPage from "./components/reports/pages/ReportsPage";
 import CreateReportPage from "./components/reports/pages/CreateReportPage";
+import EditReportPage from "./components/reports/pages/EditReportPage";
+import ReportDetailsPage from "./components/reports/pages/ReportDetailsPage";
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -15,7 +16,7 @@ function App() {
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  const { notification, showNotification } = useNotification();
+  const { notification } = useNotification();
 
   return (
     <>
@@ -54,12 +55,12 @@ function App() {
               <MainBody user={user} setUser={setUser} />
             </ProtectedRoute>
           }
-        />
-
-        <Route path="/reports" element={<ReportsPage />} />
-        <Route path="/reports/create" element={<CreateReportPage />} />
-        <Route path="/reports" element={<ReportsPage />} />
-        <Route path="/reports/edit" element={<CreateReportPage />} />
+        >
+          <Route path="reports" element={<ReportsPage />} />
+          <Route path="reports/create" element={<CreateReportPage />} />
+          <Route path="reports/:id" element={<ReportDetailsPage />} />
+          <Route path="reports/:id/edit" element={<EditReportPage />} />
+        </Route>
       </Routes>
     </>
   );

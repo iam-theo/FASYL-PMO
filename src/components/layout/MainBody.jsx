@@ -189,10 +189,8 @@ function MainBody({ user, setUser }) {
             isSidebarCollapsed={isSidebarCollapsed}
             onToggleSidebarCollapse={toggleSidebarCollapse}
           />
-          <main className="mt-18 h-[calc(100vh-4.5rem)] overflow-y-auto">
-            <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
-              {outlet}
-            </div>
+          <main className="h-screen overflow-y-auto pt-18 no-scrollbar">
+            <div className="w-full px-4 py-6 sm:px-6 lg:px-8">{outlet}</div>
           </main>
         </div>
       ) : (

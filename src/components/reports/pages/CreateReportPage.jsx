@@ -74,7 +74,14 @@ export const CreateReportPage = () => {
   };
 
   return (
-    <div className="ml-5 mx-auto flex w-full max-w-5xl flex-col gap-6">
+    <div
+      style={{
+        overflowY: "auto",
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
+      }}
+      className="no-scrollbar ml-5 mx-auto flex w-full max-w-5xl flex-col gap-6 "
+    >
       <PageHeader
         title="Create report"
         description="Generate a project analytics report and attach its output."

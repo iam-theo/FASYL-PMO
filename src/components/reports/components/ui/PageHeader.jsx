@@ -48,7 +48,7 @@ export const PageHeader = ({
 
     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
       <div className="min-w-0">
-        <h1 className="truncate text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+        <h1 className="truncate text-lg font-semibold tracking-tight text-slate-900 sm:text-lg">
           {title}
         </h1>
         {description && (

@@ -1,131 +1,132 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, FilePlus, AlertTriangle } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { FolderOpen } from "lucide-react";
+import { EMPTY_STATES } from "../constants/messages.constants";
+import {
+  QUERY_PARAM_KEYS,
+  REPORTS_ROUTES,
+} from "../constants/routes.constants";
+import { REPORT_FORM_DEFAULT_VALUES } from "../schemas/report.schema";
+import {
+  useDocumentTitle,
+  useProjectStages,
+  useProjects,
+  useReportMutations,
+} from "../hooks";
+import { EmptyState } from "../components/ui/EmptyState";
+import { ErrorState } from "../components/ui/ErrorState";
+import { PageHeader } from "../components/ui/PageHeader";
+import { FormSkeleton } from "../components/ui/Skeleton";
+import { ReportForm } from "../components/forms/ReportForm";
 
-import ReportForm from "../components/ReportForm";
-import useReportStore from "../stores/reportStore";
-import useProjectStore from "../stores/projectStore";
-import { getEntityId } from "../utils/normalize";
+/**
+ * Create report.
+ *
+ * The selected project is page state rather than form state, because two
+ * separate things need it: the form (as a field value) and the stages request.
+ * The form reports the change upward through `onProjectChange`; the page turns
+ * that into a fetch.
+ *
+ * `?project=PROJ-001` pre-selects a project, so a "Create report" button on a
+ * project dashboard can deep-link straight into a scoped form.
+ */
+export const CreateReportPage = () => {
+  useDocumentTitle("Create report");
 
-export default function CreateReportPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const presetProjectId = searchParams.get(QUERY_PARAM_KEYS.projectId) ?? "";
 
-  const createReport = useReportStore((state) => state.createReport);
-  const submitting = useReportStore((state) => state.submitting);
-  const error = useReportStore((state) => state.error);
-  const clearError = useReportStore((state) => state.clearError);
+  const [selectedProjectId, setSelectedProjectId] = useState(
+    presetProjectId || null,
+  );
 
-  const projects = useProjectStore((state) => state.projects);
-  const projectsLoading = useProjectStore((state) => state.loading);
-  const projectsError = useProjectStore((state) => state.error);
-  const fetchProjects = useProjectStore((state) => state.fetchProjects);
+  const {
+    projects,
+    isLoading: isLoadingProjects,
+    error: projectsError,
+    refetch,
+  } = useProjects();
+  const { stages, isLoading: isLoadingStages } =
+    useProjectStages(selectedProjectId);
+  const { createReport, isSubmitting, fieldErrors } = useReportMutations();
 
-  /**
-   * The project lookup now lives in the store rather than inside ReportForm.
-   * The form fetched its own list through `projectLookupService`, which is what
-   * created the temporal-dead-zone crash and duplicated a request the reports
-   * list had already made.
-   */
-  useEffect(() => {
-    fetchProjects();
+  // Stable identity: ReportForm resets whenever this object changes.
+  const defaultValues = useMemo(
+    () => ({ ...REPORT_FORM_DEFAULT_VALUES, projectId: presetProjectId }),
+    [presetProjectId],
+  );
 
-    return () => clearError();
-  }, [fetchProjects, clearError]);
+  const handleSubmit = async (values) => {
+    const result = await createReport(values);
+    if (!result.ok) return;
 
-  const handleSubmit = async (payload) => {
-    try {
-      const report = await createReport(payload);
-
-      const id = getEntityId(report);
-
-      navigate(id ? `/reports/${id}` : "/reports", { replace: true });
-    } catch {
-      // Message is already in store.error and rendered below.
-    }
+    // Land on the thing that was just made, not back in a list to hunt for it —
+    // unless the server's response carried no id, in which case the list is the
+    // only honest destination.
+    const created = result.data;
+    navigate(
+      created?.id === null || created?.id === undefined
+        ? REPORTS_ROUTES.list()
+        : REPORTS_ROUTES.details(created.id),
+      { replace: true },
+    );
   };
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-slate-500">
-        <button
-          type="button"
-          onClick={() => navigate("/reports")}
-          className="hover:text-blue-600 transition"
-        >
-          Reports
-        </button>
+    <div
+      style={{
+        overflowY: "auto",
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
+      }}
+      className="no-scrollbar ml-5 mx-auto flex w-full max-w-5xl flex-col gap-6 "
+    >
+      <PageHeader
+        title="Create report"
+        description="Generate a project analytics report and attach its output."
+        breadcrumbs={[
+          { label: "Reports", to: REPORTS_ROUTES.list() },
+          { label: "Create" },
+        ]}
+      />
 
-        <span>/</span>
-
-        <span className="text-slate-900 font-medium">Generate report</span>
-      </div>
-
-      {/* Card */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        {/* Header */}
-        <div className="border-b border-slate-200 bg-slate-50 px-8 py-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
-            <div className="flex items-center gap-3">
-              <div className="rounded-xl bg-blue-100 p-3">
-                <FilePlus size={24} className="text-blue-600" />
-              </div>
-
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900">
-                  Generate report
-                </h1>
-
-                <p className="mt-1 text-slate-500">
-                  Create a project report and export it in your preferred
-                  format.
-                </p>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => navigate(-1)}
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium hover:bg-slate-100 transition"
-            >
-              <ArrowLeft size={18} />
-              Back
-            </button>
-          </div>
-        </div>
-
-        {/* Form */}
-        <div className="p-8">
-          {(error || projectsError) && (
-            <div className="mb-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-5 py-4">
-              <AlertTriangle
-                className="mt-0.5 shrink-0 text-red-600"
-                size={20}
-              />
-
-              <p className="text-sm text-red-800">{error || projectsError}</p>
-            </div>
-          )}
-
-          {projectsLoading && !projects.length ? (
-            <div className="space-y-4">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="h-12 animate-pulse rounded-lg bg-slate-100"
-                />
-              ))}
-            </div>
-          ) : (
-            <ReportForm
-              mode="create"
-              projects={projects}
-              loading={submitting}
-              onSubmit={handleSubmit}
-            />
-          )}
-        </div>
-      </div>
+      {projectsError && projects.length === 0 ? (
+        <ErrorState
+          error={projectsError}
+          onRetry={refetch}
+          title="Projects could not be loaded"
+        />
+      ) : isLoadingProjects ? (
+        <FormSkeleton fields={8} />
+      ) : projects.length === 0 ? (
+        // Every report is scoped to a project, so an empty project list is a
+        // dead end. Say so plainly instead of rendering a form that cannot be
+        // submitted.
+        <EmptyState
+          icon={FolderOpen}
+          title={EMPTY_STATES.noProjects.title}
+          description={EMPTY_STATES.noProjects.body}
+          action={{
+            label: "Back to reports",
+            onClick: () => navigate(REPORTS_ROUTES.list()),
+          }}
+          secondaryAction={{ label: "Check again", onClick: refetch }}
+        />
+      ) : (
+        <ReportForm
+          defaultValues={defaultValues}
+          projects={projects}
+          stages={stages}
+          isLoadingStages={isLoadingStages}
+          isSubmitting={isSubmitting}
+          serverErrors={fieldErrors}
+          submitLabel="Create report"
+          onProjectChange={setSelectedProjectId}
+          onSubmit={handleSubmit}
+          onCancel={() => navigate(REPORTS_ROUTES.list())}
+        />
+      )}
     </div>
   );
-}
+};

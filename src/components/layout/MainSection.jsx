@@ -23,7 +23,10 @@ function MainSection({
     setActiveSubTab,
     activeDetails,
     setActiveDetails,
-    setIsSidebarOpen
+    setIsSidebarOpen,
+    isSidebarOpen,
+    isSidebarCollapsed,
+    onToggleSidebarCollapse
     }) {
 
     const [currentPage, setCurrentPage] = useState(1)
@@ -82,9 +85,23 @@ function MainSection({
     )
 
     return (
-        <div className='w-full lg:w-[80.55%] h-screen lg:ml-[19.44%] relative'>
+        <div
+            /* Width and offset follow the sidebar rail via --pmo-sidebar-width,
+               so the rail owns its width and nothing hardcodes a matching
+               percentage. Mobile opts out: the rail overlays there. */
+            style={{
+                width: 'calc(100% - var(--pmo-sidebar-width, 19.44%))',
+                marginLeft: 'var(--pmo-sidebar-width, 19.44%)',
+            }}
+            className='h-screen relative max-lg:w-full! max-lg:ml-0! transition-[width,margin] duration-300 ease-in-out'>
 
-            <TopBar user={user} setIsSidebarOpen={setIsSidebarOpen} />
+            <TopBar
+                user={user}
+                setIsSidebarOpen={setIsSidebarOpen}
+                isSidebarOpen={isSidebarOpen}
+                isSidebarCollapsed={isSidebarCollapsed}
+                onToggleSidebarCollapse={onToggleSidebarCollapse}
+            />
 
             <section className='mt-18 h-full'>
 

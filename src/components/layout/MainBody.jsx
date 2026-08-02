@@ -34,6 +34,31 @@ function MainBody({ user, setUser }) {
   const [activeSubTab, setActiveSubTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  /**
+   * Collapse state is owned here because two children need it: SideBar renders
+   * at that width, TopBar renders the control. Persisted so the choice survives
+   * a refresh.
+   */
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem("pmo.sidebarCollapsed") === "true";
+    } catch {
+      return false;
+    }
+  });
+
+  const toggleSidebarCollapse = () => {
+    setIsSidebarCollapsed((previous) => {
+      const next = !previous;
+      try {
+        localStorage.setItem("pmo.sidebarCollapsed", String(next));
+      } catch {
+        // Private browsing can refuse writes; the rail still works this session.
+      }
+      return next;
+    });
+  };
+
   // const isSetupComplete = (selectedProject?.resources?.length ?? 0) > 0
   const [activeDetails, setActiveDetails] = useState("project_lifecycle");
   const [selectedProject, setSelectedProject] = useState(null);
@@ -122,6 +147,8 @@ function MainBody({ user, setUser }) {
         setOpenProject={setOpenProject}
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
+        isCollapsed={isSidebarCollapsed}
+        onCollapsedChange={setIsSidebarCollapsed}
       />
 
       {selectedProject &&
@@ -148,8 +175,20 @@ function MainBody({ user, setUser }) {
         // Mirrors MainSection's shell exactly — the sidebar is `fixed`, so the
         // content column owns the offset and the header sits above a scrolling
         // region that starts below it.
-        <div className="w-full lg:w-[80.55%] h-screen lg:ml-[19.44%] relative">
-          <TopBar user={user} setIsSidebarOpen={setIsSidebarOpen} />
+        <div
+          style={{
+            width: "calc(100% - var(--pmo-sidebar-width, 19.44%))",
+            marginLeft: "var(--pmo-sidebar-width, 19.44%)",
+          }}
+          className="h-screen relative max-lg:w-full! max-lg:ml-0! transition-[width,margin] duration-300 ease-in-out"
+        >
+          <TopBar
+            user={user}
+            setIsSidebarOpen={setIsSidebarOpen}
+            isSidebarOpen={isSidebarOpen}
+            isSidebarCollapsed={isSidebarCollapsed}
+            onToggleSidebarCollapse={toggleSidebarCollapse}
+          />
           <main className="mt-18 h-[calc(100vh-4.5rem)] overflow-y-auto">
             <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
               {outlet}
@@ -176,6 +215,9 @@ function MainBody({ user, setUser }) {
           activeDetails={activeDetails}
           setActiveDetails={setActiveDetails}
           setIsSidebarOpen={setIsSidebarOpen}
+          isSidebarOpen={isSidebarOpen}
+          isSidebarCollapsed={isSidebarCollapsed}
+          onToggleSidebarCollapse={toggleSidebarCollapse}
         />
       )}
 

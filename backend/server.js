@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
-import path from "path"
+// import path from "path"
 import cors from "cors";
 import helmet from "helmet";
 import swaggerUi from "swagger-ui-express";
@@ -17,7 +17,20 @@ import {
 } from "./middleware/rateLimit.middleware.js"
 import { startSalesSync } from "./modules/projects/salesSync.job.js";
 
-startSalesSync();
+import {
+  startReminderScheduler,
+} from "./modules/reminders/reminder.scheduler.js";
+
+/* =========================
+    ROUTES IMPORTS
+========================= */
+import authRoutes from "./modules/auth/auth.routes.js";
+import projectRoutes from "./modules/projects/project.routes.js";
+import workflowRoutes from "./modules/workflow/workflow.routes.js";
+// import { ErrorHandler } from "./middleware/error.middleware.js";
+import taskRoutes from "./modules/tasks/tasks.routes.js";
+import reportRoutes from "./modules/reports/report.routes.js";
+import reminderRoutes from "./modules/reminders/reminder.routes.js";
 
 /* =========================
     INIT
@@ -46,8 +59,6 @@ const API_LEGACY = "/api";
 
 app.use(apiLimiter);
 
-app.use("/uploads", express.static("backend/uploads"));
-
 /* =========================
    TRUST PROXY
 ========================= */
@@ -69,20 +80,15 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.use("/uploads", express.static("backend/uploads"));
+
 /* =========================
-   REQUEST LOGGER
+    REQUEST LOGGER
 ========================= */
 app.use((req, res, next) => {
   console.log(`[${req.method}] ${req.originalUrl}`);
   next();
 });
-
-/* =========================
-    ROUTES IMPORTS
-========================= */
-import authRoutes from "./modules/auth/auth.routes.js";
-import projectRoutes from "./modules/projects/project.routes.js";
-import workflowRoutes from "./modules/workflow/workflow.routes.js";
 
 /* =========================
     ROUTE MOUNTING (DUAL SUPPORT)
@@ -106,11 +112,46 @@ app.use(`${API_LEGACY}/projects`, projectRoutes);
 app.use(`${API_V1}/workflow`, workflowRoutes);
 app.use(`${API_LEGACY}/workflow`, workflowRoutes);
 
+// =========================
+// TASKS
+// =========================
+
+app.use(`${API_V1}/tasks`, taskRoutes);
+app.use(`${API_LEGACY}/tasks`,taskRoutes);
+
+// =========================
+// REPORTS
+// =========================
+
+app.use(
+  `${API_V1}/reports`,
+  reportRoutes
+);
+
+app.use(
+  `${API_LEGACY}/reports`,
+  reportRoutes
+);
+
+// =========================
+// REMINDERS
+// =========================
+
+app.use(
+  `${API_V1}/reminders`,
+  reminderRoutes
+);
+
+app.use(
+  `${API_LEGACY}/reminders`,
+  reminderRoutes
+);
+
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`Server running on ${PORT}`);
+// });
 
 /* =========================
     HEALTH CHECK
@@ -145,7 +186,7 @@ app.get(`${API_V1}/test-db`, async (req, res) => {
 });
 
 /* =========================
-   GLOBAL 404
+    GLOBAL 404
 ========================= */
 app.use((req, res) => {
   res.status(404).json({
@@ -155,9 +196,9 @@ app.use((req, res) => {
 });
 
 /* =========================
-   GLOBAL ERROR HANDLER
+    GLOBAL ERROR HANDLER
 ========================= */
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   console.error("🔥 SERVER ERROR:", err);
 
   res.status(err.status || 500).json({
@@ -166,12 +207,95 @@ app.use((err, req, res, next) => {
   });
 });
 
+// app.use(ErrorHandler);
+
+startSalesSync();
+
+startReminderScheduler();
+
 /* =========================
-   START SERVER
+    START SERVER
 ========================= */
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`🌍 API (v1): ${API_V1}`);
   console.log(`📦 Legacy API: ${API_LEGACY}`);
   console.log(`📚 Docs: http://localhost:${PORT}/docs`);
+  console.log(`📊 Reports API: ${API_V1}/reports`);
+  console.log(`⏰ Reminders API: ${API_V1}/reminders`);
+  console.log(`❤️ Health Check: ${API_V1}/health`);
 });
+
+// ============================================================
+// GRACEFUL SHUTDOWN
+// ============================================================
+
+const gracefulShutdown = async (signal) => {
+  console.log(
+    `\n🛑 ${signal} received. Shutting down server...`
+  );
+
+  try {
+
+    // Stop reminder scheduler
+    // This prevents new scheduler executions
+    // during server shutdown.
+    console.log(
+      "⏰ Stopping reminder scheduler..."
+    );
+
+    // Stop sales sync if your job exposes
+    // a stop function in the future.
+
+    // Close HTTP server
+    await new Promise((resolve) => {
+      server.close(() => {
+        console.log(
+          "🌐 HTTP server closed."
+        );
+
+        resolve();
+      });
+    });
+
+
+    // Disconnect Prisma
+    await prisma.$disconnect();
+
+    console.log(
+      "🗄️ Prisma disconnected."
+    );
+
+    console.log(
+      "✅ Server shutdown completed."
+    );
+
+    process.exit(0);
+
+  } catch (error) {
+
+    console.error(
+      "❌ Error during server shutdown:",
+      error
+    );
+
+    await prisma.$disconnect();
+
+    process.exit(1);
+  }
+};
+
+
+// =========================
+// PROCESS SIGNALS
+// =========================
+
+process.on(
+  "SIGINT",
+  () => gracefulShutdown("SIGINT")
+);
+
+process.on(
+  "SIGTERM",
+  () => gracefulShutdown("SIGTERM")
+);

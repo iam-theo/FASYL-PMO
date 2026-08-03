@@ -1,10 +1,10 @@
-import { PrismaClient, WorkflowStatus } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { canApproveStage, canSubmitStage } from "./workflow.policy.js";
 
 const prisma = new PrismaClient();
 
 import workflowService from "./workflow.service.js";
-import * as policy from "./workflow.policy.js";
+// import * as policy from "./workflow.policy.js";
 /**
  * =========================
  * GET STAGE STATE
@@ -15,7 +15,7 @@ export const getStageState = async (req, res) => {
     const { projectId, stageId } = req.params;
 
     const result = await workflowService.getStageState(
-      Number(projectId),
+      projectId,
       Number(stageId)
     );
 
@@ -41,8 +41,6 @@ export const submitStage = async (req, res) => {
   try {
 
     const { projectId, stageOrder } = req.params;
-
-    const pid = Number(projectId);
     const order = Number(stageOrder);
 
     const userId = req.user.id;
@@ -52,7 +50,7 @@ export const submitStage = async (req, res) => {
     // =========================
     const stage = await prisma.projectStage.findFirst({
       where: {
-        projectId: pid,
+        projectId: projectId,
         stageOrder: order,
       },
     });
@@ -84,7 +82,7 @@ export const submitStage = async (req, res) => {
     // SUBMIT STAGE
     // =========================
     const result = await workflowService.submitStage({
-      projectId: pid,
+      projectId: projectId,
       stageOrder: order,
       userId,
     });
@@ -114,13 +112,11 @@ export const approveStage = async (req, res) => {
   try {
     const { projectId, stageOrder } = req.params;
     const userId = req.user.id;
-
-    const pid = Number(projectId);
     const order = Number(stageOrder);
 
     const stage = await prisma.projectStage.findFirst({
       where: {
-        projectId: pid,
+        projectId: projectId,
         stageOrder: order,
       },
     });
@@ -146,7 +142,7 @@ export const approveStage = async (req, res) => {
     }
 
     const result = await workflowService.approveStage({
-      projectId: pid,
+      projectId: projectId,
       stageOrder: order,
       userId,
     });
@@ -177,13 +173,11 @@ export const rejectStage = async (req, res) => {
     const { reason } = req.body;
 
     const userId = req.user.id;
-
-    const pid = Number(projectId);
     const order = Number(stageOrder);
 
     const stage = await prisma.projectStage.findFirst({
       where: {
-        projectId: pid,
+        projectId: projectId,
         stageOrder: order,
       },
     });
@@ -216,7 +210,7 @@ export const rejectStage = async (req, res) => {
     }
 
     const result = await workflowService.rejectStage({
-      projectId: pid,
+      projectId: projectId,
       stageOrder: order,
       userId,
       reason,

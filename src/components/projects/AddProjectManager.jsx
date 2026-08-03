@@ -1,17 +1,14 @@
-import React from 'react'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { assignProject } from '../../api'
 import { useNotification } from '../NotificationContext'
 
 function AddProjectManager({
-    projects, 
     setProjects, 
     selectedProject, 
     setSelectedProject, 
     projectManagers, 
     assignedManager,
     setAssignedManager, 
-    user,
     onClose
     }) {
 
@@ -51,7 +48,7 @@ function AddProjectManager({
 
             showNotification({
                 type: "error",
-                title: "Failed To AssignProject Manager!",
+                title: "Failed To Assign Project Manager!",
                 message: "Unable to assign a project manager"
             });
         }

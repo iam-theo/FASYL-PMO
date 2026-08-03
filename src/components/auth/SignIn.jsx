@@ -24,7 +24,7 @@ function SignIn({ setUser }) {
                 password
             })
 
-            console.log(data)
+            // console.log(data)
 
             // store token and user
             localStorage.setItem("user", JSON.stringify(data.user));
@@ -55,6 +55,7 @@ function SignIn({ setUser }) {
                 }
             )
         } finally {
+            
             setEmail("");
             setPassword("");
         }

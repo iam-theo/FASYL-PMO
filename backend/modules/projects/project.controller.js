@@ -6,7 +6,7 @@ import {
   deleteProjectService,
   updateChecklistBulkService,
   uploadStageDocumentService,
-  deleteStageDocumentService
+  deleteStageDocumentService,
 } from "./project.service.js";
 
 import fs from "fs";
@@ -58,12 +58,13 @@ export const getProjects = async (req, res) => {
 
     const projects = await getProjectsService(req.user);
 
+    console.log("PROJECT COUNT:", projects.length);
+
     return res.status(200).json({
       success: true,
       message: "Projects retrieved successfully",
       data: projects,
     });
-
   } catch (err) {
     console.error("GET PROJECTS ERROR:", err);
 
@@ -77,7 +78,7 @@ export const getProjects = async (req, res) => {
 
 export const assignProject = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { projectId } = req.params;
     const { projectManagerEmail } = req.body;
 
     if (!projectManagerEmail) {
@@ -87,14 +88,16 @@ export const assignProject = async (req, res) => {
       });
     }
 
-    const project = await assignProjectService(id, projectManagerEmail);
+    const project = await assignProjectService(
+      Number(projectId),
+      projectManagerEmail,
+    );
 
     return res.status(200).json({
       success: true,
       message: "Project assigned successfully",
       data: project,
     });
-
   } catch (err) {
     return res.status(500).json({
       success: false,
@@ -109,9 +112,9 @@ export const assignProject = async (req, res) => {
 ========================================= */
 export const getProjectById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { projectId } = req.params;
 
-    const project = await getProjectByIdService(id);
+    const project = await getProjectByIdService(projectId);
 
     if (!project) {
       return res.status(404).json({
@@ -125,7 +128,6 @@ export const getProjectById = async (req, res) => {
       message: "Project retrieved successfully",
       data: project,
     });
-
   } catch (err) {
     console.error("GET PROJECT BY ID ERROR:", err);
 
@@ -142,7 +144,6 @@ export const getProjectById = async (req, res) => {
 ========================================= */
 
 export const updateChecklistBulk = async (req, res) => {
-  
   try {
     const { projectId, stageId } = req.params;
     const { checklist } = req.body;
@@ -150,14 +151,13 @@ export const updateChecklistBulk = async (req, res) => {
     const result = await updateChecklistBulkService(
       projectId,
       stageId,
-      checklist
+      checklist,
     );
 
     return res.json({
       success: true,
       data: result,
     });
-
   } catch (err) {
     console.log(err);
 
@@ -176,9 +176,9 @@ export const uploadStageDocument = async (req, res) => {
   try {
     const { projectId, stageId, docKey } = req.params;
 
-    console.log("RESPONSE:", req.params)
+    console.log("RESPONSE:", req.params);
 
-    const file = req.file
+    const file = req.file;
 
     if (!file) {
       return res.status(400).json({
@@ -189,14 +189,14 @@ export const uploadStageDocument = async (req, res) => {
 
     const fileUrl = `http://localhost:5000/uploads/${file.filename}`;
 
-    const filename = `${file.originalname}`
+    const filename = `${file.originalname}`;
 
     const updatedStage = await uploadStageDocumentService(
       projectId,
       stageId,
       docKey,
       fileUrl,
-      filename
+      filename,
     );
 
     return res.json({
@@ -205,7 +205,7 @@ export const uploadStageDocument = async (req, res) => {
       data: updatedStage,
     });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return res.status(500).json({
       success: false,
       message: err.message,
@@ -219,13 +219,12 @@ export const uploadStageDocument = async (req, res) => {
 
 export const deleteStageDocument = async (req, res) => {
   try {
-
     const { projectId, stageId, docKey } = req.params;
 
     const updatedStage = await deleteStageDocumentService(
       projectId,
       stageId,
-      docKey
+      docKey,
     );
 
     return res.json({
@@ -233,16 +232,13 @@ export const deleteStageDocument = async (req, res) => {
       message: "Document deleted successfully",
       data: updatedStage,
     });
-
   } catch (err) {
-
     console.log(err);
 
     return res.status(500).json({
       success: false,
       message: err.message,
     });
-
   }
 };
 
@@ -251,14 +247,13 @@ export const deleteStageDocument = async (req, res) => {
 ========================================= */
 export const updateProject = async (req, res) => {
   try {
-    const updated = await updateProjectService(req.params.id, req.body);
+    const updated = await updateProjectService(req.params.projectId, req.body);
 
     return res.status(200).json({
       success: true,
       message: "Project updated successfully",
       data: updated,
     });
-
   } catch (err) {
     console.error("UPDATE PROJECT ERROR:", err);
 
@@ -275,13 +270,12 @@ export const updateProject = async (req, res) => {
 ========================================= */
 export const deleteProject = async (req, res) => {
   try {
-    await deleteProjectService(req.params.id);
+    await deleteProjectService(req.params.projectId);
 
     return res.status(200).json({
       success: true,
       message: "Project deleted successfully",
     });
-
   } catch (err) {
     console.error("DELETE PROJECT ERROR:", err);
 

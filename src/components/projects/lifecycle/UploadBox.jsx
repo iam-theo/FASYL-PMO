@@ -1,6 +1,5 @@
-import React from 'react'
 import { useState, useRef } from 'react'
-import { processFile, getFileFromInput, handleDragOver, handleDragLeave, handleDrop, getFileFromDrop } from './utils/UploadFiles'
+import { processFile, getFileFromInput, handleDragOver, handleDragLeave,  getFileFromDrop } from './utils/UploadFiles'
 import { uploadStageDocument, deleteStageDocument } from '../../../api'
 
 function UploadBox({
@@ -15,13 +14,12 @@ function UploadBox({
     stageId,
     user,
     setProjects,
-    setSelectedProject,
-    setSelectedStage
+    setSelectedProject
 }) {
     const inputRef = useRef(null)
     const [isDragging, setIsDragging] = useState(false)
 
-    const [selectedFile, setSelectedFile] = useState(null);
+    // const [selectedFile, setSelectedFile] = useState(null);
 
     const [uploadState, setUploadState] = useState({})
 
@@ -150,12 +148,6 @@ function UploadBox({
 
             const updatedStage = res.data.data;
 
-            setSelectedStage(prev =>
-                prev?.id === updatedStage.id
-                    ? updatedStage
-                    : prev
-            );
-
             setSelectedProject(prev => ({
                 ...prev,
                 stages: prev.stages.map(stage =>
@@ -168,7 +160,7 @@ function UploadBox({
             setProjects(prev =>
                 prev.map(project => {
 
-                    if (project.id !== projectId) {
+                    if (project.projectId !== projectId) {
                         return project;
                     }
 
@@ -209,12 +201,6 @@ function UploadBox({
 
             const updatedStage = res.data.data;
 
-            setSelectedStage(prev =>
-                prev?.id === updatedStage.id
-                    ? updatedStage
-                    : prev
-            );
-
             setSelectedProject(prev => ({
                 ...prev,
                 stages: prev.stages.map(stage =>
@@ -227,7 +213,7 @@ function UploadBox({
             setProjects(prev =>
                 prev.map(project => {
 
-                    if (project.id !== projectId) {
+                    if (project.projectId !== projectId) {
                         return project;
                     }
 

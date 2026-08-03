@@ -1,20 +1,32 @@
-import React from 'react'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import Dashboard from './Dashboard'
 import Projects from '../projects/Projects'
-import ViewProjectsBody from '../projects/ViewProjectsBody'
-import { FaBell, FaUserTag } from 'react-icons/fa'
+import ProjectWorkspace from '../projects/tasks/ProjectWorkspace'
+import TopBar from './TopBar'
 
 function MainSection({
     activeTab, 
     setActiveTab,
     selectedProject,
     setSelectedProject,
-    selectedStage,
-    setSelectedStage,
     projects, 
+    setProjects,
+    projectManagers,
     user,
-    isLoading 
+    isLoading,
+    setOpenProject,
+    openProject,
+    isSetupModalOpen,
+    setIsSetupModalOpen,
+    isSetupComplete,
+    activeSubTab,
+    setActiveSubTab,
+    activeDetails,
+    setActiveDetails,
+    setIsSidebarOpen,
+    isSidebarOpen,
+    isSidebarCollapsed,
+    onToggleSidebarCollapse
     }) {
 
     const [currentPage, setCurrentPage] = useState(1)
@@ -22,6 +34,8 @@ function MainSection({
     const [filter, setFilter] = useState("")
     const [searching, setSearching] = useState(false)
     const [filteringing, setFiltering] = useState(false)
+    // const [openProject, setOpenProject] = useState(false)
+    // const [activeSubTab, setActiveSubTab] = useState("overview")
 
     useEffect(() => {
         if (!value) return
@@ -37,6 +51,8 @@ function MainSection({
 
     const safeProjects = Array.isArray(projects) ? projects : []
 
+    // console.log(safeProjects);
+
     let filteredProjects = safeProjects.filter((project) => {
         if (user?.role === "HEADOFOPS") return true; // sees everything
 
@@ -47,6 +63,8 @@ function MainSection({
 
         return false;
     });
+
+    // console.log(filteredProjects);
 
     if (value) {
         filteredProjects = filteredProjects.filter((project) => project.projectName.toLowerCase().includes(value.toLowerCase()))
@@ -67,37 +85,27 @@ function MainSection({
     )
 
     return (
-        <div className='w-[80.55%] h-screen ml-[19.44%] relative'>
+        <div
+            /* Width and offset follow the sidebar rail via --pmo-sidebar-width,
+               so the rail owns its width and nothing hardcodes a matching
+               percentage. Mobile opts out: the rail overlays there. */
+            style={{
+                width: 'calc(100% - var(--pmo-sidebar-width, 19.44%))',
+                marginLeft: 'var(--pmo-sidebar-width, 19.44%)',
+            }}
+            className='h-screen relative max-lg:w-full! max-lg:ml-0! transition-[width,margin] duration-300 ease-in-out'>
 
-            {/* header */}
-            <header className='border-b-[1.5px] border-[#0000000D] p-4 flex items-center justify-between bg-[#FFFFFF] fixed w-[80.55%] h-18 z-1000'>
-                <ul className='flex gap-2'>
-                    <li className='w-43.5 h-10 flex justify-between rounded-md px-3 py-2 bg-[#0000000D]'>
-                        <div className='flex items-center'>
-                            <FaBell className='text-[#7dbaf3] text-2xl rounded-full' />
-                            <p className='font-medium text-[14px]/[20px] text-[#636363] ml-2'>Notifications</p> 
-                        </div> 
-                        <p className='text-[#090909]'>0</p>
-                    </li>
-                    <li className='w-43.5 h-10 flex justify-between rounded-md px-3 py-2 bg-[#0000000D]'>
-                        <div className='flex items-center'>
-                            <FaUserTag className='text-[#D18A00] text-2xl rounded-full' />
-                            <p className='font-medium text-[14px]/[20px] text-[#636363] ml-2'>Tickets</p> 
-                        </div>   
-                        <p className='text-[#090909]'>0</p>
-                        </li>
-                </ul>
-                <div className='flex gap-3'>
-                    <div className='flex items-center justify-center w-10 h-10 rounded-full bg-[#0000000D] font-medium text-[16px]/[24px] text-[#000000]'>{(user.fullName || "").split(" ").map(word => word[0]).join("")}</div>
-                    <div>
-                        <p className='font-medium text-[14px]/[20px] text-[#090909]'>{user.fullName}</p>
-                        <p className='font-normal text-[14px]/[20px] text-[#636363]'>{user.email}</p>
-                    </div>
-                </div>
-            </header>
+            <TopBar
+                user={user}
+                setIsSidebarOpen={setIsSidebarOpen}
+                isSidebarOpen={isSidebarOpen}
+                isSidebarCollapsed={isSidebarCollapsed}
+                onToggleSidebarCollapse={onToggleSidebarCollapse}
+            />
+
             <section className='mt-18 h-full'>
 
-                {activeTab === "dashboard" && (
+                {activeTab === "dashboard" && openProject === false && (
                     <Dashboard
                         projects={projects}
                         user={user}
@@ -105,11 +113,12 @@ function MainSection({
                         setActiveTab={setActiveTab}
                         selectedProject={selectedProject}
                         setSelectedProject={setSelectedProject}
-                        setSelectedStage={setSelectedStage}
+                        setOpenProject={setOpenProject}
+                        setActiveSubTab={setActiveSubTab}
                     />
                 )}
 
-                {activeTab === "projects" && (
+                {activeTab === "projects" && openProject === false && (
                     <Projects
                         projects={projects} 
                         currentProjects={currentProjects}
@@ -122,10 +131,34 @@ function MainSection({
                         setCurrentPage={setCurrentPage} 
                         itemsPerPage={itemsPerPage}
                         setSelectedProject={setSelectedProject}
-                        selectedStage={selectedStage}
-                        setSelectedStage={setSelectedStage}
                         user={user} 
                         isLoading={isLoading}
+                        setOpenProject={setOpenProject}
+                        setActiveSubTab={setActiveSubTab}
+                    />
+                )}
+
+                {openProject === true && selectedProject?.projectManager && (
+                    <ProjectWorkspace 
+                        project={selectedProject}
+                        setProject={setSelectedProject}
+                        projects={projects}
+                        setProjects={setProjects}
+                        projectManagers={projectManagers}
+                        user={user}
+                        setIsSetupModalOpen={setIsSetupModalOpen}
+                        activeSubTab={activeSubTab}
+                        setActiveSubTab={setActiveSubTab}
+                        activeDetails={activeDetails}
+                        setActiveDetails={setActiveDetails}
+                        onNavigateToDashboard={() => {
+                            setActiveTab("dashboard");
+                            setOpenProject(false);
+                        }}
+                        onNavigateToProjects={() => {
+                            setActiveTab("projects");
+                            setOpenProject(false);
+                        }}
                     />
                 )}
             </section>

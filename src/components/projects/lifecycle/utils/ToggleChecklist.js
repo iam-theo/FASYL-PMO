@@ -13,7 +13,7 @@ export const toggleChecklist = async (
 
     setProjects(prev =>
         prev.map(project => {
-            if (project.id !== projectId) return project;
+            if (project.projectId !== projectId) return project;
 
             return {
                 ...project,

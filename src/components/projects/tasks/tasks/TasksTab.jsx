@@ -474,7 +474,7 @@ function TasksTab({
             {
                 view === 'list' && 
                     (
-                        <div className='flex-1 min-h-0 overflow-y-auto no-scrollbar px-4 py-4'>
+                        <div className='flex-1 min-h-0 w-full overflow-y-auto no-scrollbar px-4 py-4'>
                             {tasks.length === 0 ? (
                                 <TasksEmptyState onCreateTask={() => setIsCreateModalOpen(true)} />
                             ) : (
@@ -535,7 +535,7 @@ function TasksTab({
                                                                 onChange={(e) =>
                                                                     handlePriorityChange(task.id, e.target.value)
                                                                 }
-                                                                className="w-full appearance-none bg-transparent text-white font-normal text-[16px]/[24px] px-3 py-1 pr-8 rounded-2xl cursor-pointer outline-none"
+                                                                className="w-full appearance-none bg-transparent text-white font-normal text-[12px]/[24px] px-3 py-1 pr-8 rounded-2xl cursor-pointer outline-none"
                                                             >
                                                                 {TASK_PRIORITY_OPTIONS.map((option) => (
                                                                     <option
@@ -563,7 +563,7 @@ function TasksTab({
                                                                 onChange={(e) => 
                                                                     handleStatusChange(task.id, e.target.value)
                                                                 }
-                                                                className='w-full appearance-none px-3.5 py-2.5 pr-9 rounded-lg outline-none font-normal text-[16px]/[24px] text-[#667085] bg-transparent cursor-pointer'
+                                                                className='w-full appearance-none px-3.5 py-2.5 pr-9 rounded-lg outline-none font-normal text-[12px]/[24px] text-[#667085] bg-transparent cursor-pointer'
                                                             >
                                                                 {TASK_STATUS_OPTIONS.map((option, index) => (
                                                                     <option 

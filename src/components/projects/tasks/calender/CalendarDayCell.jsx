@@ -23,7 +23,7 @@ function CalendarDayCell({ date, currentMonth, isToday, items }) {
                     <span
                         key={`${task.id}-${type}`}
                         title={`${type === "start" ? "Start" : "Due"}: ${task.title}`}
-                        className='rounded px-1.5 py-1 font-medium text-[11px]/[14px] text-[#090909] bg-[#EBEBEB] truncate'
+                        className={`rounded px-1.5 py-1 font-medium text-[11px]/[14px] ${type === "start" ? "text-[#08BD66]" : "text-[#D18A00]"} bg-[#EBEBEB]/30 truncate`}
                     >
                         {type === "start" ? "Start" : "Due"}: {task.title}
                     </span>

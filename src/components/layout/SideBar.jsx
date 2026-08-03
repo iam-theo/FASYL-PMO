@@ -253,8 +253,8 @@ function SideBar({
   const tabs = [
     { name: "dashboard", label: "Dashboard", path: "/app" },
     { name: "projects", label: "Projects", path: "/app" },
-        { name: "reports", label: "Reports", path: "/app/reports" },
-    { name: "reports", label: "Reports" },
+    { name: "reports", label: "Reports", path: "/app/reports" },
+    // { name: "reports", label: "Reports" },
     // { name: "tasks", label: "Tasks"}
   ];
 

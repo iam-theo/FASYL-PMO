@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { PlusCircleIcon } from "../icons";
 import CreateTaskModal from "../tasks/CreateTaskModal";
 import CalendarGrid from "./CalendarGrid";

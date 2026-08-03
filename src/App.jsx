@@ -1,35 +1,22 @@
-<<<<<<< HEAD
-=======
 import { useState } from "react";
->>>>>>> e92ffc09ec23cfd0024b52ed3dcba816791ec6d5
 import { Routes, Route, Navigate } from "react-router-dom";
 import { FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 import SignIn from "./components/auth/SignIn";
 import MainBody from "./components/layout/MainBody";
-<<<<<<< HEAD
-import { useState } from "react";
 import { useNotification } from "./components/NotificationContext";
-import { FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
-import ReportsPage from "./components/reports/pages/ReportsPage";
-import CreateReportPage from "./components/reports/pages/CreateReportPage";
-import EditReportPage from "./components/reports/pages/EditReportPage";
-import ReportDetailsPage from "./components/reports/pages/ReportDetailsPage";
-=======
-import { ProtectedRoute } from "./components/auth/ProtectedRoute";
-import { useNotification } from "./components/NotificationContext";
+// import ReportsPage from "./components/reports/pages/ReportsPage";
+// import CreateReportPage from "./components/reports/pages/CreateReportPage";
+// import EditReportPage from "./components/reports/pages/EditReportPage";
+// import ReportDetailsPage from "./components/reports/pages/ReportDetailsPage";
 import { ReportsRoutes, REPORTS_BASE_PATH } from "./components/reports";
->>>>>>> e92ffc09ec23cfd0024b52ed3dcba816791ec6d5
 
 function App() {
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
-<<<<<<< HEAD
 
-=======
->>>>>>> e92ffc09ec23cfd0024b52ed3dcba816791ec6d5
   const { notification } = useNotification();
 
   return (

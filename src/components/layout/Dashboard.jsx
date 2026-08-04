@@ -428,7 +428,7 @@ function Dashboard({
                       )}
                       <td className="px-4 py-4 font-normal text-[14px]/[20px] text-[#FFFFFF] text-center">
                         <p
-                          className="rounded-full py-1"
+                          className="inline-block rounded-full px-2 py-1"
                           style={{
                             backgroundColor:
                               statusStyles[project?.workflowStatus]?.bg,
@@ -440,12 +440,12 @@ function Dashboard({
                       </td>
                       <td className="px-4 py-4 font-normal text-[14px]/[20px] text-[#FFFFFF] text-center">
                         <p
-                          className={`py-1 rounded-full ${setCurrentStage(project.currentStageOrder) !== "LOCKED" ? "bg-[#228CEE] text-[#FFFFFF]" : "bg-[#52525B] text-[#F4F4F5]"}`}
+                          className={`inline-block px-2 py-1 rounded-full ${setCurrentStage(project.currentStageOrder) !== "LOCKED" ? "bg-[#228CEE] text-[#FFFFFF]" : "bg-[#52525B] text-[#F4F4F5]"}`}
                         >
                           {setCurrentStage(project.currentStageOrder)}
                         </p>
                       </td>
-                      <td className="px-4 py-4 font-normal text-[14px]/[20px] text-[#636363] relative">
+                      {/* <td className="px-4 py-4 font-normal text-[14px]/[20px] text-[#636363] relative">
                         <FaEllipsisV
                           onClick={() => {
                             if (project.projectManager === null) {
@@ -493,7 +493,7 @@ function Dashboard({
                             </ul>
                           </div>
                         )}
-                      </td>
+                      </td> */}
                     </tr>
                   ))}
                 </tbody>

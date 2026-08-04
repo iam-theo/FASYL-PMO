@@ -206,9 +206,9 @@ function Projects({
                       : project.projectManager?.email}
                   </td>
                 )}
-                <td className="px-4 py-4 font-normal text-[14px]/[20px] text-[#FFFFFF] text-center">
+                <td className="px-4 py-4 font-normal text-[14px]/[20px] text-[#FFFFFF]">
                   <p
-                    className="rounded-full py-1"
+                    className="rounded-full inline-block px-2 py-1"
                     style={{
                       backgroundColor:
                         statusStyles[project?.workflowStatus]?.bg,
@@ -218,9 +218,9 @@ function Projects({
                     {project?.workflowStatus}
                   </p>
                 </td>
-                <td className="px-4 py-4 font-normal text-[14px]/[20px] text-[#FFFFFF] text-center">
+                <td className="px-4 py-4 font-normal text-[14px]/[20px] text-[#FFFFFF]">
                   <p
-                    className={`rounded-2xl p-1 ${setCurrentStage(project.currentStageOrder) !== "LOCKED" ? "bg-[#228CEE] text-[#FFFFFF]" : "bg-[#52525B] text-[#F4F4F5]"} text-center`}
+                    className={`rounded-2xl inline-block px-2 p-1 ${setCurrentStage(project.currentStageOrder) !== "LOCKED" ? "bg-[#228CEE] text-[#FFFFFF]" : "bg-[#52525B] text-[#F4F4F5]"}`}
                   >
                     {setCurrentStage(project.currentStageOrder)}
                   </p>
